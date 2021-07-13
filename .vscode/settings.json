@@ -1,0 +1,5 @@
+{
+    "java.format.settings.url": "/.vscode/formatting.xml",
+    "java.format.settings.profile": "style",
+    "java.configuration.updateBuildConfiguration": "automatic"
+}
