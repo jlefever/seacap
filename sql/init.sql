@@ -50,18 +50,56 @@ CREATE TABLE changes (
     -- TODO: Somehow ensure commit.repo_id == tag.path.repo_id at the database-level
 );
 
-CREATE TABLE dep_kinds (
+CREATE TABLE change_details (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    change_id INT REFERENCES changes (id) NOT NULL,
+    note TEXT NOT NULL
 );
 
 CREATE TABLE deps (
     id SERIAL PRIMARY KEY,
     src_id INT REFERENCES tags (id) NOT NULL,
     dst_id INT REFERENCES tags (id) NOT NULL,
-    kind_id INT REFERENCES dep_kinds (id) NOT NULL,
-    weight INT NOT NULL
+    kind TEXT NOT NULL,
+    weight INT NOT NULL,
+    UNIQUE (src_id, dst_id, kind),
+    CHECK (weight > 0)
 );
+
+CREATE TABLE change_sets (
+    id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE change_set_members (
+    id SERIAL PRIMARY KEY,
+    set_id INT REFERENCES change_sets (id) NOT NULL,
+    change_id INT REFERENCES changes (id) NOT NULL,
+    UNIQUE (set_id, change_id)
+);
+
+CREATE TABLE dep_sets (
+    id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE dep_set_members (
+    id SERIAL PRIMARY KEY,
+    set_id INT REFERENCES dep_sets (id) NOT NULL,
+    dep_id INT REFERENCES deps (id) NOT NULL,
+    UNIQUE (set_id, dep_id)
+);
+
+CREATE TABLE antipatterns (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    center_id INT REFERENCES paths (id) NOT NULL,
+    dep_set_id INT REFERENCES dep_sets (id) NOT NULL,
+    change_set_id INT REFERENCES dep_sets (id) NOT NULL
+);
+
+
+
+
+
 
 -- CREATE TYPE nested_tag AS (
 --     path_id INT NOT NULL,

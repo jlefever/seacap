@@ -9,22 +9,21 @@ import java.util.stream.Stream;
 
 import com.google.gson.Gson;
 
+import net.jlefever.dsmutils.PathFilter;
+
 public class GetChanges
 {
     private final String dir;
     private final String rev;
-    private final List<String> whitelist;
-    private final List<String> blacklist;
+    private final PathFilter pathFilter;
     private final int maxCommits;
     private final int maxCommitSize;
 
-    public GetChanges(String dir, String rev, List<String> whitelist, List<String> blacklist, int maxCommits,
-            int maxCommitSize)
+    public GetChanges(String dir, String rev, PathFilter pathFilter, int maxCommits, int maxCommitSize)
     {
         this.dir = dir;
         this.rev = rev;
-        this.whitelist = whitelist;
-        this.blacklist = blacklist;
+        this.pathFilter = pathFilter;
         this.maxCommits = maxCommits;
         this.maxCommitSize = maxCommitSize;
     }
@@ -39,34 +38,32 @@ public class GetChanges
 
         var gitLogArgs = new StringBuilder();
         gitLogArgs.append(this.getRev() + " -n " + this.getMaxCommits() + " -- ");
-
-        for (var path : this.getWhitelist())
-        {
-            gitLogArgs.append(" " + path);
-        }
-
-        for (var path : this.getBlacklist())
-        {
-            gitLogArgs.append(" :^" + path);
-        }
-
-        args.add("--git-log-args=" + gitLogArgs.toString() + "");
+        gitLogArgs.append(String.join(" ", getPathFilter().toArgs()));
+        args.add("--git-log-args=" + gitLogArgs.toString());
 
         var process = new ProcessBuilder(args).start();
         var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
         var gson = new Gson();
 
-        return reader.lines().map(line ->
+        var changes = new ArrayList<FlatChange>();
+
+        reader.lines().forEach(line ->
         {
             var arr = line.split("\t");
             var rev = arr[0];
             var churn = Integer.parseInt(arr[1]);
             var tag = gson.fromJson(arr[2], Tag.class);
 
-            return new FlatChange(tag.getName(),tag.getKind(), tag.getPath(), tag.getScope(), tag.getScopeKind(), rev,
-                    churn);
+            if (tag.getKind().equals("file") || tag.getKind().equals("enumConstant"))
+            {
+                return;
+            }
+
+            changes.add(new FlatChange(tag.getName(),tag.getKind(), tag.getPath(), tag.getScope(), tag.getScopeKind(), rev, churn));
         });
+
+        return changes.stream();
     }
 
     public String getDir()
@@ -79,14 +76,9 @@ public class GetChanges
         return rev;
     }
 
-    public List<String> getWhitelist()
+    public PathFilter getPathFilter()
     {
-        return whitelist;
-    }
-
-    public List<String> getBlacklist()
-    {
-        return blacklist;
+        return pathFilter;
     }
 
     public int getMaxCommits()

@@ -1,11 +1,19 @@
 package net.jlefever.dsmutils.git;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
+import net.jlefever.dsmutils.PathFilter;
 import net.jlefever.dsmutils.ProcessUtils;
 
 public class GitDriver
@@ -32,6 +40,15 @@ public class GitDriver
 
         ProcessUtils.run(new ProcessBuilder(this.gitBin, "clone", url, repo.getDir()));
         return repo;
+    }
+
+    public List<String> lsFiles(Repo repo, PathFilter filter) throws IOException
+    {
+        var args = new ArrayList<String>(Arrays.asList(this.gitBin, "-C", repo.getDir(), "ls-files"));
+        args.addAll(filter.toArgs());
+        var process = new ProcessBuilder(args).start();
+        var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        return reader.lines().collect(Collectors.toList());
     }
 
     public void checkout(Repo repo, String ref)

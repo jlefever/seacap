@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class ProcessUtils
 {
-    public static void run(ProcessBuilder builder)
+    public static Process run(ProcessBuilder builder)
     {
         try
         {
@@ -14,6 +14,8 @@ public class ProcessUtils
             {
                 throw new RuntimeException();
             }
+
+            return process;
         }
         catch (IOException | InterruptedException e)
         {

@@ -25,7 +25,7 @@ public class StoreAllChanges implements DbCommand<Void>
     {
         for (var change : this.getChanges())
         {
-            if (change.hasParent() || change.getKind().equals("file"))
+            if (change.hasParent())
             {
                 continue;
             }
