@@ -1,6 +1,5 @@
 package net.jlefever.dsmutils.depends;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.sql2o.Connection;

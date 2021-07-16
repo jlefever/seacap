@@ -4,6 +4,7 @@ public interface Change
 {
     String getName();
     String getKind();
+    String getRealKind();
     String getPath();
     String getScope();
     String getScopeKind();

@@ -5,7 +5,6 @@ import java.util.Objects;
 public abstract class Entity {
     public abstract String getName();
     public abstract String getKind();
-    public abstract String getPath();
     public abstract boolean hasParent();
     public abstract Entity getParent();
 
@@ -18,19 +17,17 @@ public abstract class Entity {
     @Override
     public int hashCode()
     {
-        return Objects.hash(getName(), getKind(), getPath(), getParent());
+        return Objects.hash(getName(), getKind(), getParent());
     }
 
     @Override
     public String toString()
     {
-        var name = getName() + " (" + getKind() + ")";
-
         if (!hasParent())
         {
-            return name;
+            return getName();
         }
 
-        return getParent().toString() + " > " + name;
+        return getParent() + " > " + getName() + " (" + getKind() + ")";
     }
 }

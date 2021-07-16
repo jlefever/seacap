@@ -4,19 +4,17 @@ public class DependsEntity extends Entity
 {
     private final String name;
     private final String kind;
-    private final String path;
     private final DependsEntity parent;
 
-    public DependsEntity(String name, String kind, String path)
+    public DependsEntity(String name, String kind)
     {
-        this(name, kind, path, null);
+        this(name, kind, null);
     }
 
-    public DependsEntity(String name, String kind, String path, DependsEntity parent)
+    public DependsEntity(String name, String kind, DependsEntity parent)
     {
         this.name = name;
         this.kind = kind;
-        this.path = path;
         this.parent = parent;
     }
 
@@ -30,12 +28,6 @@ public class DependsEntity extends Entity
     public String getKind()
     {
         return this.kind;
-    }
-
-    @Override
-    public String getPath()
-    {
-        return this.path;
     }
 
     @Override

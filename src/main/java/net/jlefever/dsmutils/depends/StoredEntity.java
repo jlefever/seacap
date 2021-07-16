@@ -6,16 +6,14 @@ public class StoredEntity extends Entity
     private final Integer parentId;
     private final String name;
     private final String kind;
-    private final String path;
     private StoredEntity parent;
 
-    public StoredEntity(int id, Integer parentId, String name, String kind, String path)
+    public StoredEntity(int id, Integer parentId, String name, String kind)
     {
         this.id = id;
         this.parentId = parentId;
         this.name = name;
         this.kind = kind;
-        this.path = path;
         this.parent = null;
     }
 
@@ -50,23 +48,17 @@ public class StoredEntity extends Entity
         {
             return "type";
         }
-        else if (this.kind.equals("enumConstant"))
-        {
-            // I'm not sure what this is.
-            throw new RuntimeException();
-        }
         else if (this.kind.equals("field"))
         {
             return "var";
         }
+        else if (this.kind.equals("file"))
+        {
+            return "file";
+        }
         else if (this.kind.equals("interface"))
         {
             return "type";
-        }
-        else if (this.kind.equals("local"))
-        {
-            // I'm not sure what this is.
-            throw new RuntimeException();
         }
         else if (this.kind.equals("method"))
         {
@@ -78,12 +70,6 @@ public class StoredEntity extends Entity
         }
         
         throw new RuntimeException();
-    }
-
-    @Override
-    public String getPath()
-    {
-        return this.path;
     }
 
     @Override

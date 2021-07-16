@@ -11,9 +11,9 @@ public class TreeChange implements Change
     private final List<TreeChange> children = new ArrayList<TreeChange>();
     private TreeChange parent = null;
 
-    public TreeChange(Change tag)
+    public TreeChange(Change inner)
     {
-        this.inner = tag;
+        this.inner = inner;
     }
 
     public String getName()
@@ -23,7 +23,12 @@ public class TreeChange implements Change
 
     public String getFullName()
     {
-        if (!this.hasParent())
+        if (this.getKind().equals("file"))
+        {
+            return this.getName();
+        }
+
+        if (!this.hasParent() || this.getParent().getKind().equals("file"))
         {
             return this.getName();
         }
@@ -34,6 +39,11 @@ public class TreeChange implements Change
     public String getKind()
     {
         return this.inner.getKind();
+    }
+
+    public String getRealKind()
+    {
+        return this.inner.getRealKind();
     }
 
     public String getPath()

@@ -37,6 +37,11 @@ public class FlatChange implements Change
         return this.kind;
     }
 
+    public String getRealKind()
+    {
+        return this.kind;
+    }
+
     public String getPath()
     {
         return this.path;
@@ -44,6 +49,11 @@ public class FlatChange implements Change
 
     public String getScope()
     {
+        if (this.scope == null && !this.getKind().equals("file"))
+        {
+            return this.getPath();
+        }
+
         return this.scope;
     }
 
@@ -59,6 +69,11 @@ public class FlatChange implements Change
 
     public String getScopeKind()
     {
+        if (this.scope == null && !this.getKind().equals("file"))
+        {
+            return "file";
+        }
+
         // Java-specific hack. Other languages may have similiar special-cases.
         if (this.scopeKind.equals("enum"))
         {

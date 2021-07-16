@@ -10,34 +10,22 @@ CREATE TABLE commits (
     sha1 CHAR(40) NOT NULL
 );
 
-CREATE TABLE paths (
-    id SERIAL PRIMARY KEY,
-    repo_id INT REFERENCES repos (id) NOT NULL,
-    name TEXT NOT NULL,
-    UNIQUE (repo_id, name)
-);
-
-CREATE TABLE langs (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
-);
-
-CREATE TABLE tag_kinds (
-    id SERIAL PRIMARY KEY,
-    lang_id INT REFERENCES langs (id) NOT NULL,
-    letter CHAR(1) NOT NULL,
-    name TEXT NOT NULL,
-    detail TEXT NOT NULL
-);
+-- CREATE TABLE paths (
+--     id SERIAL PRIMARY KEY,
+--     repo_id INT REFERENCES repos (id) NOT NULL,
+--     name TEXT NOT NULL,
+--     UNIQUE (repo_id, name)
+-- );
 
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
-    path_id INT REFERENCES paths (id) NOT NULL,
     parent_id INT REFERENCES tags (id),
-    kind_id INT REFERENCES tag_kinds (id) NOT NULL,
+    repo_id INT REFERENCES repos (id) NOT NULL,
     name TEXT NOT NULL,
-    UNIQUE (path_id, parent_id, kind_id, name)
-    -- TODO: Somehow ensure path_id == parent.path_id at the database-level
+    kind TEXT NOT NULL,
+    UNIQUE (parent_id, repo_id, name, kind)
+    -- TODO: Somehow ensure repo_id == parent.repo_id at the database-level
+    -- TODO: Somehow ennsure parent_id is null iff kind = 'file'
 );
 
 CREATE TABLE changes (
@@ -50,11 +38,11 @@ CREATE TABLE changes (
     -- TODO: Somehow ensure commit.repo_id == tag.path.repo_id at the database-level
 );
 
-CREATE TABLE change_details (
-    id SERIAL PRIMARY KEY,
-    change_id INT REFERENCES changes (id) NOT NULL,
-    note TEXT NOT NULL
-);
+-- CREATE TABLE change_details (
+--     id SERIAL PRIMARY KEY,
+--     change_id INT REFERENCES changes (id) NOT NULL,
+--     note TEXT NOT NULL
+-- );
 
 CREATE TABLE deps (
     id SERIAL PRIMARY KEY,
@@ -66,38 +54,63 @@ CREATE TABLE deps (
     CHECK (weight > 0)
 );
 
-CREATE TABLE change_sets (
-    id SERIAL PRIMARY KEY
-);
+-- CREATE FUNCTION ancestory(tag_id INT) RETURNS SETOF tags AS
+-- $$
+-- WITH RECURSIVE ancestory AS (
+-- 	SELECT id, parent_id, repo_id, name, kind
+-- 	FROM tags WHERE id = tag_id
+-- 	UNION ALL
+-- 	SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind
+-- 	FROM ancestory C, tags P WHERE C.parent_id = P.id
+-- )
+-- SELECT id, parent_id, repo_id, name, kind FROM ancestory
+-- $$
+-- LANGUAGE SQL;
 
-CREATE TABLE change_set_members (
-    id SERIAL PRIMARY KEY,
-    set_id INT REFERENCES change_sets (id) NOT NULL,
-    change_id INT REFERENCES changes (id) NOT NULL,
-    UNIQUE (set_id, change_id)
-);
-
-CREATE TABLE dep_sets (
-    id SERIAL PRIMARY KEY
-);
-
-CREATE TABLE dep_set_members (
-    id SERIAL PRIMARY KEY,
-    set_id INT REFERENCES dep_sets (id) NOT NULL,
-    dep_id INT REFERENCES deps (id) NOT NULL,
-    UNIQUE (set_id, dep_id)
-);
-
-CREATE TABLE antipatterns (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    center_id INT REFERENCES paths (id) NOT NULL,
-    dep_set_id INT REFERENCES dep_sets (id) NOT NULL,
-    change_set_id INT REFERENCES dep_sets (id) NOT NULL
-);
+CREATE FUNCTION filename(tag_id INT) RETURNS TEXT AS
+$$
+WITH RECURSIVE ancestory AS (
+	SELECT id, parent_id, repo_id, name, kind
+	FROM tags WHERE id = tag_id
+	UNION ALL
+	SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind
+	FROM ancestory C, tags P WHERE C.parent_id = P.id
+)
+SELECT name FROM ancestory
+WHERE parent_id IS NULL
+$$
+LANGUAGE SQL;
 
 
+-- CREATE TABLE change_sets (
+--     id SERIAL PRIMARY KEY
+-- );
 
+-- CREATE TABLE change_set_members (
+--     id SERIAL PRIMARY KEY,
+--     set_id INT REFERENCES change_sets (id) NOT NULL,
+--     change_id INT REFERENCES changes (id) NOT NULL,
+--     UNIQUE (set_id, change_id)
+-- );
+
+-- CREATE TABLE dep_sets (
+--     id SERIAL PRIMARY KEY
+-- );
+
+-- CREATE TABLE dep_set_members (
+--     id SERIAL PRIMARY KEY,
+--     set_id INT REFERENCES dep_sets (id) NOT NULL,
+--     dep_id INT REFERENCES deps (id) NOT NULL,
+--     UNIQUE (set_id, dep_id)
+-- );
+
+-- CREATE TABLE antipatterns (
+--     id SERIAL PRIMARY KEY,
+--     name TEXT NOT NULL,
+--     center_id INT REFERENCES paths (id) NOT NULL,
+--     dep_set_id INT REFERENCES dep_sets (id) NOT NULL,
+--     change_set_id INT REFERENCES dep_sets (id) NOT NULL
+-- );
 
 
 

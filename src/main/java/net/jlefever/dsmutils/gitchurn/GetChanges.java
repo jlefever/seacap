@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import com.google.gson.Gson;
@@ -55,12 +54,13 @@ public class GetChanges
             var churn = Integer.parseInt(arr[1]);
             var tag = gson.fromJson(arr[2], Tag.class);
 
-            if (tag.getKind().equals("file") || tag.getKind().equals("enumConstant"))
+            if (tag.getKind().equals("enumConstant") || tag.getKind().equals("package"))
             {
                 return;
             }
 
-            changes.add(new FlatChange(tag.getName(),tag.getKind(), tag.getPath(), tag.getScope(), tag.getScopeKind(), rev, churn));
+            var name = tag.getKind().equals("file") ? tag.getPath() : tag.getName();
+            changes.add(new FlatChange(name, tag.getKind(), tag.getPath(), tag.getScope(), tag.getScopeKind(), rev, churn));
         });
 
         return changes.stream();

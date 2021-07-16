@@ -31,23 +31,21 @@ public class StoreAllChanges implements DbCommand<Void>
             }
 
             var commitId = this.cache.get(new StoreCommit(this.getRepoId(), change.getRev()), con);
-            var pathId = this.cache.get(new StorePath(this.getRepoId(), change.getPath()), con);
-            this.insert(con, commitId, pathId, null, change);
+            this.insert(con, commitId, null, this.getRepoId(), change);
         }
         
         return null;
     }
 
-    private void insert(Connection con, Integer commitId, Integer pathId, Integer parentId, TreeChange tag)
+    private void insert(Connection con, Integer commitId, Integer parentId, int repoId, TreeChange tag)
     {
-        var kindId = this.cache.get(new GetTagKindId("Java", tag.getKind()), con);
-        var id = this.cache.get(new StoreTag(pathId, kindId, parentId, tag.getName()), con);
+        var id = this.cache.get(new StoreTag(parentId, repoId, tag.getName(), tag.getRealKind()), con);
 
         new StoreChange(commitId, id, tag.getChurn()).execute(con);
 
         for (var child : tag.getChildren())
         {
-            this.insert(con, commitId, pathId, id, child);
+            this.insert(con, commitId, id, repoId, child);
         }
     }
 

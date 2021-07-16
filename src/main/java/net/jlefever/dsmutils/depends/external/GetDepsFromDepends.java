@@ -61,12 +61,6 @@ public class GetDepsFromDepends
 
             for (var dependency : pair.getDependencies())
             {
-                if (getEntityKind(from).equals("file") || getEntityKind(to).equals("file"))
-                {
-                    System.out.println("Warning: Skipping file...");
-                    continue;
-                }
-
                 if (getEntityKind(from).equals("package") || getEntityKind(to).equals("package"))
                 {
                     System.out.println("Warning: Skipping package...");
@@ -103,16 +97,16 @@ public class GetDepsFromDepends
         var name = getEntityName(entity);
         var kind = getEntityKind(entity);
 
-        if (getEntityKind(entity.getParent()).equals("file"))
+        if (kind.equals("file"))
         {
-            var path = getEntityName(entity.getParent()).substring(getDir().length());
-            var depEntity = new DependsEntity(name, kind, path);
+            var path = name.substring(getDir().length());
+            var depEntity = new DependsEntity(path, kind);
             return new LinkedList<DependsEntity>(Arrays.asList(depEntity));
         }
 
         var ancestors = getAncestory(entity.getParent());
         var parent = ancestors.getLast();
-        var depEntity = new DependsEntity(name, kind, parent.getPath(), parent);
+        var depEntity = new DependsEntity(name, kind, parent);
         ancestors.addLast(depEntity);
         return ancestors;
     }

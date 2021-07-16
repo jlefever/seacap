@@ -6,43 +6,33 @@ import org.sql2o.Connection;
 
 public class StoreTag implements DbCommand<Integer>
 {
-    private final int pathId;
-    private final int kindId;
     private final Integer parentId;
+    private final int repoId;
     private final String name;
+    private final String kind;
 
-    public StoreTag(int pathId, int kindId, Integer parentId, String name)
+    public StoreTag(Integer parentId, int repoId, String name, String kind)
     {
-        this.pathId = pathId;
-        this.kindId = kindId;
         this.parentId = parentId;
+        this.repoId = repoId;
         this.name = name;
+        this.kind = kind;
     }
 
     @Override
     public Integer execute(Connection con)
     {
-        var sql = "INSERT INTO tags (path_id, parent_id, kind_id, name) "
-                + "VALUES (:path_id, :parent_id, :kind_id, :name) "
+        var sql = "INSERT INTO tags (parent_id, repo_id, name, kind) "
+                + "VALUES (:parent_id, :repo_id, :name, :kind) "
                 + "RETURNING id";
 
         return con.createQuery(sql)
-            .addParameter("path_id", this.getPathId())
             .addParameter("parent_id", this.getParentId())
-            .addParameter("kind_id", this.getKindId())
+            .addParameter("repo_id", this.getRepoId())
             .addParameter("name", this.getName())
+            .addParameter("kind", this.getKind())
             .executeAndFetch(Integer.class)
             .get(0);
-    }
-
-    public int getPathId()
-    {
-        return pathId;
-    }
-
-    public int getKindId()
-    {
-        return kindId;
     }
 
     public Integer getParentId()
@@ -50,9 +40,19 @@ public class StoreTag implements DbCommand<Integer>
         return parentId;
     }
 
+    public int getRepoId()
+    {
+        return repoId;
+    }
+
     public String getName()
     {
         return name;
+    }
+
+    public String getKind()
+    {
+        return kind;
     }
 
     @Override
@@ -64,6 +64,6 @@ public class StoreTag implements DbCommand<Integer>
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.getPathId(), this.getKindId(), this.getParentId(), this.getName());
+        return Objects.hash(this.getParentId(), this.getName(), this.getKind());
     }
 }
