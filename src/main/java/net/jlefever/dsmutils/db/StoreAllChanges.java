@@ -10,13 +10,13 @@ import net.jlefever.dsmutils.gitchurn.TreeChange;
 public class StoreAllChanges implements DbCommand<Void>
 {
     private final int repoId;
-    private final List<TreeChange> tags;
+    private final List<TreeChange> changes;
     private final DbCommandCache cache;
 
     public StoreAllChanges(int repoId, List<TreeChange> changes)
     {
         this.repoId = repoId;
-        this.tags = changes;
+        this.changes = changes;
         this.cache = new DbCommandCache();
     }
 
@@ -37,13 +37,13 @@ public class StoreAllChanges implements DbCommand<Void>
         return null;
     }
 
-    private void insert(Connection con, Integer commitId, Integer parentId, int repoId, TreeChange tag)
+    private void insert(Connection con, Integer commitId, Integer parentId, int repoId, TreeChange change)
     {
-        var id = this.cache.get(new StoreTag(parentId, repoId, tag.getName(), tag.getRealKind()), con);
+        var id = this.cache.get(new StoreEntity(parentId, repoId, change.getName(), change.getRealKind()), con);
 
-        new StoreChange(commitId, id, tag.getChurn()).execute(con);
+        new StoreChange(commitId, id, change.getChurn()).execute(con);
 
-        for (var child : tag.getChildren())
+        for (var child : change.getChildren())
         {
             this.insert(con, commitId, id, repoId, child);
         }
@@ -56,7 +56,7 @@ public class StoreAllChanges implements DbCommand<Void>
 
     public List<TreeChange> getChanges()
     {
-        return tags;
+        return changes;
     }
 
     @Override

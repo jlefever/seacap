@@ -25,7 +25,7 @@ public class GetEntityIdMap implements DbCommand<Map<? extends Entity, Integer>>
     public Map<? extends Entity, Integer> execute(Connection con)
     {
         var sql = "SELECT id, parent_id AS parentId, name, kind "
-                + "FROM tags WHERE repo_id = :repo_id";
+                + "FROM entities WHERE repo_id = :repo_id";
 
         var entities = con.createQuery(sql)
             .addParameter("repo_id", this.getRepoId())

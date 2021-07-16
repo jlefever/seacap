@@ -10,16 +10,9 @@ CREATE TABLE commits (
     sha1 CHAR(40) NOT NULL
 );
 
--- CREATE TABLE paths (
---     id SERIAL PRIMARY KEY,
---     repo_id INT REFERENCES repos (id) NOT NULL,
---     name TEXT NOT NULL,
---     UNIQUE (repo_id, name)
--- );
-
-CREATE TABLE tags (
+CREATE TABLE entities (
     id SERIAL PRIMARY KEY,
-    parent_id INT REFERENCES tags (id),
+    parent_id INT REFERENCES entities (id),
     repo_id INT REFERENCES repos (id) NOT NULL,
     name TEXT NOT NULL,
     kind TEXT NOT NULL,
@@ -31,11 +24,11 @@ CREATE TABLE tags (
 CREATE TABLE changes (
     id SERIAL PRIMARY KEY,
     commit_id INT REFERENCES commits (id) NOT NULL,
-    tag_id INT REFERENCES tags (id) NOT NULL,
+    entity_id INT REFERENCES entities (id) NOT NULL,
     churn INT NOT NULL,
-    UNIQUE (commit_id, tag_id)
+    UNIQUE (commit_id, entity_id)
     -- TODO: action (ex: Added, Modified, Deleted)
-    -- TODO: Somehow ensure commit.repo_id == tag.path.repo_id at the database-level
+    -- TODO: Somehow ensure commit.repo_id == entity.repo_id at the database-level
 );
 
 -- CREATE TABLE change_details (
@@ -46,35 +39,35 @@ CREATE TABLE changes (
 
 CREATE TABLE deps (
     id SERIAL PRIMARY KEY,
-    src_id INT REFERENCES tags (id) NOT NULL,
-    dst_id INT REFERENCES tags (id) NOT NULL,
+    src_id INT REFERENCES entities (id) NOT NULL,
+    dst_id INT REFERENCES entities (id) NOT NULL,
     kind TEXT NOT NULL,
     weight INT NOT NULL,
     UNIQUE (src_id, dst_id, kind),
     CHECK (weight > 0)
 );
 
--- CREATE FUNCTION ancestory(tag_id INT) RETURNS SETOF tags AS
+-- CREATE FUNCTION ancestory(entity_id INT) RETURNS SETOF entities AS
 -- $$
 -- WITH RECURSIVE ancestory AS (
 -- 	SELECT id, parent_id, repo_id, name, kind
--- 	FROM tags WHERE id = tag_id
+-- 	FROM entities WHERE id = entity_id
 -- 	UNION ALL
 -- 	SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind
--- 	FROM ancestory C, tags P WHERE C.parent_id = P.id
+-- 	FROM ancestory C, entities P WHERE C.parent_id = P.id
 -- )
--- SELECT id, parent_id, repo_id, name, kind FROM ancestory
+-- SELECT id, parent_id, repo_id, name, kind FROM ancestorygetTagId
 -- $$
 -- LANGUAGE SQL;
 
-CREATE FUNCTION filename(tag_id INT) RETURNS TEXT AS
+CREATE FUNCTION filename(entity_id INT) RETURNS TEXT AS
 $$
 WITH RECURSIVE ancestory AS (
 	SELECT id, parent_id, repo_id, name, kind
-	FROM tags WHERE id = tag_id
+	FROM entities WHERE id = entity_id
 	UNION ALL
 	SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind
-	FROM ancestory C, tags P WHERE C.parent_id = P.id
+	FROM ancestory C, entities P WHERE C.parent_id = P.id
 )
 SELECT name FROM ancestory
 WHERE parent_id IS NULL
@@ -111,52 +104,3 @@ LANGUAGE SQL;
 --     dep_set_id INT REFERENCES dep_sets (id) NOT NULL,
 --     change_set_id INT REFERENCES dep_sets (id) NOT NULL
 -- );
-
-
-
--- CREATE TYPE nested_tag AS (
---     path_id INT NOT NULL,
---     kind_id INT NOT NULL,
---     name TEXT NOT NULL,
---     children JSON NOT NULL
--- );
-
--- CREATE PROCEDURE add_path(my_repo_id INT, my_name TEXT)
--- LANGUAGE SQL
--- AS $$
--- INSERT INTO paths (repo_id, name)
--- VALUES (my_repo_id, my_name)
--- ON CONFLICT (repo_id, name) DO UPDATE
-
--- INSERT INTO otp.routes (otp_id, name, short_name, mode, color)
--- SELECT
---     id AS otp_id,
---     "longName" AS name,
---     "shortName" AS short_name,
---     mode,
---     color
--- FROM json_populate_recordset(null::otp.api_route_short, otp_data);
--- $$;
-
-
-
--- CREATE TYPE otp.api_route_short AS (
---     id TEXT,
---     "longName" TEXT,
---     "shortName" TEXT,
---     mode TEXT,
---     color TEXT
--- );
-
--- CREATE PROCEDURE otp.load_routes(otp_data json)
--- LANGUAGE SQL
--- AS $$
--- INSERT INTO otp.routes (otp_id, name, short_name, mode, color)
--- SELECT
---     id AS otp_id,
---     "longName" AS name,
---     "shortName" AS short_name,
---     mode,
---     color
--- FROM json_populate_recordset(null::otp.api_route_short, otp_data);
--- $$;

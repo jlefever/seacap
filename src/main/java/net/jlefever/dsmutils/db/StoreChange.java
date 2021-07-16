@@ -7,13 +7,13 @@ import org.sql2o.Connection;
 public class StoreChange implements DbCommand<Integer>
 {
     private final int commitId;
-    private final int tagId;
+    private final int entityId;
     private final int churn;
 
-    public StoreChange(int commitId, int tagId, int churn)
+    public StoreChange(int commitId, int entityId, int churn)
     {
         this.commitId = commitId;
-        this.tagId = tagId;
+        this.entityId = entityId;
         this.churn = churn;
     }
 
@@ -22,9 +22,9 @@ public class StoreChange implements DbCommand<Integer>
         return commitId;
     }
 
-    public int getTagId()
+    public int getEntityId()
     {
-        return tagId;
+        return entityId;
     }
 
     public int getChurn()
@@ -35,14 +35,14 @@ public class StoreChange implements DbCommand<Integer>
     @Override
     public Integer execute(Connection con)
     {
-        var sql = "INSERT INTO changes (commit_id, tag_id, churn) "
-                + "VALUES (:commit_id, :tag_id, :churn) "
+        var sql = "INSERT INTO changes (commit_id, entity_id, churn) "
+                + "VALUES (:commit_id, :entity_id, :churn) "
                 + "RETURNING id";
 
         return con.createQuery(sql)
-            .addParameter("commit_id", this.getCommitId())
-            .addParameter("tag_id", this.getTagId())
-            .addParameter("churn", this.getChurn())
+            .addParameter("commit_id", getCommitId())
+            .addParameter("entity_id", getEntityId())
+            .addParameter("churn", getChurn())
             .executeAndFetch(Integer.class)
             .get(0);
     }
@@ -56,6 +56,6 @@ public class StoreChange implements DbCommand<Integer>
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.getCommitId(), this.getTagId());
+        return Objects.hash(this.getCommitId(), this.getEntityId());
     }
 }
