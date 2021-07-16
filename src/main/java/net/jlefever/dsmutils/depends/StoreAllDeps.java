@@ -21,8 +21,8 @@ public class StoreAllDeps implements DbCommand<Void> {
     {
         var ids = this.getIds();
 
-        var sql = "INSERT INTO deps (src_id, dst_id, kind, weight)"
-                + "VALUES (:src_id, :dst_id, :kind, :weight)";
+        var sql = "INSERT INTO deps (source_id, target_id, kind, weight)"
+                + "VALUES (:source_id, :target_id, :kind, :weight)";
         
         var query = con.createQuery(sql);
 
@@ -31,14 +31,14 @@ public class StoreAllDeps implements DbCommand<Void> {
             var dep = pair.getKey();
             var weight = pair.getValue();
 
-            if (!ids.containsKey(dep.getSrc()) || !ids.containsKey(dep.getDst()))
+            if (!ids.containsKey(dep.getSource()) || !ids.containsKey(dep.getTarget()))
             {
                 System.out.println("Warning: Skipping " + dep.toString());
                 continue;
             }
 
-            query.addParameter("src_id", ids.get(dep.getSrc()))
-                 .addParameter("dst_id", ids.get(dep.getDst()))
+            query.addParameter("source_id", ids.get(dep.getSource()))
+                 .addParameter("target_id", ids.get(dep.getTarget()))
                  .addParameter("kind", dep.getKind())
                  .addParameter("weight", weight)
                  .addToBatch();

@@ -3,25 +3,25 @@ package net.jlefever.dsmutils.depends;
 import java.util.Objects;
 
 public class Dep {
-    private final Entity src;
-    private final Entity dst;
+    private final Entity source;
+    private final Entity target;
     private final String kind;
 
-    public Dep(Entity src, Entity dst, String kind)
+    public Dep(Entity source, Entity target, String kind)
     {
-        this.src = src;
-        this.dst = dst;
+        this.source = source;
+        this.target = target;
         this.kind = kind;
     }
 
-    public Entity getSrc()
+    public Entity getSource()
     {
-        return src;
+        return source;
     }
 
-    public Entity getDst()
+    public Entity getTarget()
     {
-        return dst;
+        return target;
     }
 
     public String getKind()
@@ -38,12 +38,12 @@ public class Dep {
     @Override
     public int hashCode()
     {
-        return Objects.hash(getSrc(), getDst(), getKind());
+        return Objects.hash(getSource(), getTarget(), getKind());
     }
 
     @Override
     public String toString()
     {
-        return getSrc().toString() + " <" + getKind() + "> " + getDst().toString();
+        return getSource().toString() + " <" + getKind() + "> " + getTarget().toString();
     }
 }

@@ -67,11 +67,11 @@ public class GetDepsFromDepends
                     continue;
                 }
 
-                var src = getDependsEntity(from);
-                var dst = getDependsEntity(to);
+                var source = getDependsEntity(from);
+                var target = getDependsEntity(to);
                 var kind = dependency.getType().toLowerCase();
                 var weight = dependency.getWeight();
-                var dep = new Dep(src, dst, kind);
+                var dep = new Dep(source, target, kind);
 
                 if (deps.containsKey(dep))
                 {
