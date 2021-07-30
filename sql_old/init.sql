@@ -227,9 +227,27 @@ SELECT
     COALESCE(D.dep_ids, '{}') AS dep_ids,
 	COALESCE(CO.commit_ids, '{}') AS commit_ids,
 	COALESCE(CO.change_ids, '{}') AS change_ids
-FROM get_deps('{call,use}') D
+FROM get_deps(dep_kinds) D
 FULL OUTER JOIN get_cocommits() CO
 ON D.source_id = CO.x_id AND D.target_id = CO.y_id
+$$
+LANGUAGE SQL IMMUTABLE;
+
+CREATE FUNCTION get_fl_cdeps2(dep_kinds TEXT[]) RETURNS SETOF fl_cdep AS
+$$
+SELECT
+	SFN.filename AS src,
+	TFN.filename AS tgt,
+	CAST(SUM(CD.dep_count) AS INT) AS dep_count,
+	icount(int_union_agg(CD.commit_ids)) AS cochange,
+	sort(int_union_agg(CD.dep_ids)) AS dep_ids,
+    sort(int_union_agg(CD.commit_ids)) AS commit_ids,
+	sort(int_union_agg(CD.change_ids)) AS change_ids
+FROM get_cdeps('{call,use}') CD
+LEFT JOIN filenames SFN ON CD.source_id = SFN.id
+LEFT JOIN filenames TFN ON CD.target_id = TFN.id
+WHERE SFN.filename <> TFN.filename
+GROUP BY SFN.filename, TFN.filename
 $$
 LANGUAGE SQL IMMUTABLE;
 
