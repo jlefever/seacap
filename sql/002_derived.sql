@@ -42,6 +42,29 @@ CREATE MATERIALIZED VIEW filenames AS
 SELECT id AS entity_id, filename(id)
 FROM entities;
 
+CREATE FUNCTION files_of(dep_ids INT[]) RETURNS TEXT[] AS
+$$
+SELECT ARRAY_AGG(Q.fn) FROM (
+    WITH dep_filenames AS (
+        SELECT DISTINCT SFN.filename AS src, TFN.filename AS tgt
+        FROM deps D
+        JOIN filenames SFN ON SFN.entity_id = D.source_id
+        JOIN filenames TFN ON TFN.entity_id = D.target_id
+        WHERE id = ANY(dep_ids)
+    )
+    SELECT src AS fn FROM dep_filenames
+    UNION
+    SELECT tgt AS fn FROM dep_filenames
+) Q
+$$
+LANGUAGE SQL IMMUTABLE;
+
+CREATE FUNCTION n_files_of(dep_ids INT[]) RETURNS INT AS
+$$
+SELECT CARDINALITY(files_of(dep_ids))
+$$
+LANGUAGE SQL IMMUTABLE;
+
 CREATE MATERIALIZED VIEW cochanges AS
 SELECT
     XE.repo_id,
@@ -65,7 +88,7 @@ CREATE TYPE pdep AS (
     dep_ids INT[]
 );
 
-CREATE FUNCTION pdeps(dep_kinds TEXT[]) RETURNS SETOF pdep AS
+CREATE FUNCTION find_pdeps(dep_kinds TEXT[]) RETURNS SETOF pdep AS
 $$
 SELECT
     SE.repo_id,
@@ -91,7 +114,7 @@ CREATE TYPE cdep AS (
     change_ids INT[]
 );
 
-CREATE FUNCTION cdeps(dep_kinds TEXT[]) RETURNS SETOF cdep AS
+CREATE FUNCTION find_cdeps(dep_kinds TEXT[]) RETURNS SETOF cdep AS
 $$
 SELECT
     COALESCE(PD.repo_id, CO.repo_id) AS repo_id,
@@ -102,7 +125,7 @@ SELECT
     COALESCE(PD.dep_ids, '{}') AS dep_ids,
 	COALESCE(CO.commit_ids, '{}') AS commit_ids,
 	COALESCE(CO.change_ids, '{}') AS change_ids
-FROM pdeps(dep_kinds) PD
+FROM find_pdeps(dep_kinds) PD
 FULL OUTER JOIN cochanges CO
 ON PD.source_id = CO.x_id AND PD.target_id = CO.y_id
 $$
@@ -119,7 +142,7 @@ CREATE TYPE fl_cdep AS (
     change_ids INT[]
 );
 
-CREATE FUNCTION fl_cdeps(dep_kinds TEXT[]) RETURNS SETOF fl_cdep AS
+CREATE FUNCTION find_fl_cdeps(dep_kinds TEXT[]) RETURNS SETOF fl_cdep AS
 $$
 SELECT
     CD.repo_id,
@@ -130,20 +153,13 @@ SELECT
 	sort(int_union_agg(CD.dep_ids)) AS dep_ids,
     sort(int_union_agg(CD.commit_ids)) AS commit_ids,
 	sort(int_union_agg(CD.change_ids)) AS change_ids
-FROM cdeps(dep_kinds) CD
+FROM find_cdeps(dep_kinds) CD
 LEFT JOIN filenames SFN ON CD.source_id = SFN.entity_id
 LEFT JOIN filenames TFN ON CD.target_id = TFN.entity_id
 WHERE SFN.filename <> TFN.filename
 GROUP BY CD.repo_id, SFN.filename, TFN.filename
 $$
 LANGUAGE SQL IMMUTABLE;
-
-CREATE PROCEDURE refresh_mat_views() AS
-$$
-REFRESH MATERIALIZED VIEW filenames;
-REFRESH MATERIALIZED VIEW cochanges;
-$$
-LANGUAGE SQL;
 
 -- Fan-out and fan-in
 
@@ -161,7 +177,7 @@ SELECT
     CD.src,
     CAST(COUNT(*) AS INT) AS fanout,
     sort(int_union_agg(CD.dep_ids)) AS outdep_ids
-FROM fl_cdeps(dep_kinds) CD
+FROM find_fl_cdeps(dep_kinds) CD
 WHERE CD.dep_count > 0
 GROUP BY CD.repo_id, CD.src
 $$
@@ -181,7 +197,7 @@ SELECT
     CD.tgt,
     CAST(COUNT(*) AS INT) AS fanin,
     sort(int_union_agg(CD.dep_ids)) AS indep_ids
-FROM fl_cdeps(dep_kinds) CD
+FROM find_fl_cdeps(dep_kinds) CD
 WHERE CD.dep_count > 0
 GROUP BY CD.repo_id, CD.tgt
 $$
@@ -207,7 +223,7 @@ SELECT
     sort(int_union_agg(CD.dep_ids)) AS evo_outdep_ids,
     sort(int_union_agg(CD.commit_ids)) AS commit_ids,
     sort(int_union_agg(CD.change_ids)) AS change_ids
-FROM fl_cdeps(dep_kinds) CD
+FROM find_fl_cdeps(dep_kinds) CD
 WHERE CD.dep_count > 0 AND CD.cochange >= min_cochange
 GROUP BY CD.repo_id, CD.src
 $$
@@ -231,7 +247,7 @@ SELECT
     sort(int_union_agg(CD.dep_ids)) AS evo_indep_ids,
     sort(int_union_agg(CD.commit_ids)) AS commit_ids,
     sort(int_union_agg(CD.change_ids)) AS change_ids
-FROM fl_cdeps(dep_kinds) CD
+FROM find_fl_cdeps(dep_kinds) CD
 WHERE CD.dep_count > 0 AND CD.cochange >= min_cochange
 GROUP BY CD.repo_id, CD.tgt
 $$
@@ -242,31 +258,38 @@ CREATE TYPE uif AS (
     src TEXT,
     fanout INT,
     evo_fanout INT,
+    n_evo_files INT,
     outdep_ids INT[],
     evo_outdep_ids INT[],
     commit_ids INT[],
     change_ids INT[]
 );
 
-CREATE FUNCTION uifs(min_fanout INT, min_evo_fanout INT, min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF uif AS
+CREATE FUNCTION find_uifs(min_fanout INT, min_evo_fanout INT, min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF uif AS
 $$
-WITH fanout AS (
-    SELECT FO.repo_id, FO.src, FO.fanout, FO.outdep_ids
-    FROM count_fl_fanout(dep_kinds) FO
-    WHERE FO.fanout >= min_fanout
-),
-evo_fanout AS (
-    SELECT EFO.repo_id, EFO.src, EFO.evo_fanout, EFO.evo_outdep_ids, EFO.commit_ids, EFO.change_ids
-    FROM count_fl_evo_fanout(dep_kinds, min_cochange) EFO
-    WHERE EFO.evo_fanout >= min_evo_fanout
-)
-SELECT C.repo_id, C.src, FO.fanout, EFO.evo_fanout, FO.outdep_ids, EFO.evo_outdep_ids, EFO.commit_ids, EFO.change_ids
+WITH
+    fanout AS (SELECT * FROM count_fl_fanout(dep_kinds) WHERE fanout >= min_fanout),
+    evo_fanout AS (SELECT * FROM count_fl_evo_fanout(dep_kinds, min_cochange) WHERE evo_fanout >= min_evo_fanout)
+SELECT
+    C.repo_id,
+    C.src,
+    FO.fanout,
+    EFO.evo_fanout,
+    n_files_of(EFO.evo_outdep_ids) AS n_evo_files,
+    FO.outdep_ids,
+    EFO.evo_outdep_ids,
+    EFO.commit_ids,
+    EFO.change_ids
 FROM (SELECT repo_id, src FROM fanout INTERSECT SELECT repo_id, src FROM evo_fanout) C
 JOIN fanout FO ON C.repo_id = FO.repo_id AND C.src = FO.src
 JOIN evo_fanout EFO ON C.repo_id = EFO.repo_id AND C.src = EFO.src
-ORDER BY repo_id, EFO.evo_fanout DESC, FO.fanout DESC
 $$
 LANGUAGE SQL IMMUTABLE;
+
+CREATE MATERIALIZED VIEW uifs AS
+SELECT ROW_NUMBER() OVER (PARTITION BY UIF.repo_id ORDER BY UIF.n_evo_files DESC, UIF.src) AS num, *
+FROM find_uifs(4, 4, 2, all_dep_kinds()) UIF
+ORDER BY UIF.repo_id, num;
 
 CREATE TYPE crs AS (
     repo_id INT,
@@ -275,6 +298,7 @@ CREATE TYPE crs AS (
     evo_fanout INT,
     fanin INT,
     evo_fanin INT,
+    n_evo_files INT,
     outdep_ids INT[],
     evo_outdep_ids INT[],
     indep_ids INT[],
@@ -283,28 +307,13 @@ CREATE TYPE crs AS (
     change_ids INT[]
 );
 
-CREATE FUNCTION crss(min_fanout INT, min_evo_fanout INT, min_fanin INT, min_evo_fanin INT, min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF crs AS
+CREATE FUNCTION find_crss(min_fanout INT, min_evo_fanout INT, min_fanin INT, min_evo_fanin INT, min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF crs AS
 $$
-WITH fanout AS (
-    SELECT FO.repo_id, FO.src, FO.fanout, FO.outdep_ids
-    FROM count_fl_fanout(dep_kinds) FO
-    WHERE FO.fanout >= min_fanout
-),
-evo_fanout AS (
-    SELECT EFO.repo_id, EFO.src, EFO.evo_fanout, EFO.evo_outdep_ids, EFO.commit_ids, EFO.change_ids
-    FROM count_fl_evo_fanout(dep_kinds, min_cochange) EFO
-    WHERE EFO.evo_fanout >= min_evo_fanout
-),
-fanin AS (
-    SELECT FI.repo_id, FI.tgt, FI.fanin, FI.indep_ids
-    FROM count_fl_fanin(dep_kinds) FI
-    WHERE FI.fanin >= min_fanin
-),
-evo_fanin AS (
-    SELECT EFI.repo_id, EFI.tgt, EFI.evo_fanin, EFI.evo_indep_ids, EFI.commit_ids, EFI.change_ids
-    FROM count_fl_evo_fanin(dep_kinds, min_cochange) EFI
-    WHERE EFI.evo_fanin >= min_evo_fanin
-)
+WITH
+    fanout AS (SELECT * FROM count_fl_fanout(dep_kinds) WHERE fanout >= min_fanout),
+    evo_fanout AS (SELECT * FROM count_fl_evo_fanout(dep_kinds, min_cochange) WHERE evo_fanout >= min_evo_fanout),
+    fanin AS (SELECT * FROM count_fl_fanin(dep_kinds) WHERE fanin >= min_fanin),
+    evo_fanin AS (SELECT * FROM count_fl_evo_fanin(dep_kinds, min_cochange) WHERE evo_fanin >= min_evo_fanin)
 SELECT
     C.repo_id,
     C.center,
@@ -312,6 +321,7 @@ SELECT
     EFO.evo_fanout,
     FI.fanin,
     EFI.evo_fanin,
+    n_files_of(int_union(EFO.evo_outdep_ids, EFI.evo_indep_ids)) AS n_evo_files,
     FO.outdep_ids,
     EFO.evo_outdep_ids,
     FI.indep_ids,
@@ -331,9 +341,14 @@ JOIN fanout FO ON C.repo_id = FO.repo_id AND C.center = FO.src
 JOIN evo_fanout EFO ON C.repo_id = EFO.repo_id AND C.center = EFO.src
 JOIN fanin FI ON C.repo_id = FI.repo_id AND C.center = FI.tgt
 JOIN evo_fanin EFI ON C.repo_id = EFI.repo_id AND C.center = EFI.tgt
-ORDER BY C.repo_id, (EFO.evo_fanout + EFI.evo_fanin) DESC, (FO.fanout + FI.fanin) DESC
+ORDER BY C.repo_id, n_evo_files DESC, C.center
 $$
 LANGUAGE SQL IMMUTABLE;
+
+CREATE MATERIALIZED VIEW crss AS
+SELECT ROW_NUMBER() OVER (PARTITION BY CRS.repo_id ORDER BY CRS.n_evo_files DESC, CRS.center) AS num, *
+FROM find_crss(4, 4, 4, 4, 2, all_dep_kinds()) CRS
+ORDER BY CRS.repo_id, num;
 
 CREATE TYPE mvp AS (
     repo_id INT,
@@ -344,7 +359,7 @@ CREATE TYPE mvp AS (
     change_ids INT[]
 );
 
-CREATE FUNCTION mvps(min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF mvp AS
+CREATE FUNCTION find_mvps(min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF mvp AS
 $$
 SELECT DISTINCT
     CD.repo_id,
@@ -353,11 +368,29 @@ SELECT DISTINCT
     CD.cochange,
     CD.commit_ids,
     CD.change_ids
-FROM fl_cdeps(dep_kinds) CD
+FROM find_fl_cdeps(dep_kinds) CD
 WHERE CD.dep_count = 0 AND CD.cochange >= min_cochange
 ORDER BY CD.repo_id, CD.cochange DESC, x, y
 $$
 LANGUAGE SQL IMMUTABLE;
+
+CREATE MATERIALIZED VIEW mvps AS
+SELECT ROW_NUMBER() OVER (PARTITION BY MVP.repo_id ORDER BY MVP.cochange DESC, x, y) AS num, *
+FROM find_mvps(2, all_dep_kinds()) MVP
+ORDER BY MVP.repo_id, num;
+
+CREATE PROCEDURE refresh_mat_views() AS
+$$
+REFRESH MATERIALIZED VIEW filenames;
+REFRESH MATERIALIZED VIEW cochanges;
+REFRESH MATERIALIZED VIEW uifs;
+REFRESH MATERIALIZED VIEW crss;
+REFRESH MATERIALIZED VIEW mvps;
+$$
+LANGUAGE SQL;
+
+-- CREATE MATERIALIZED VIEW mvps AS
+-- SELECT
 
 -------
 
