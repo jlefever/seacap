@@ -51,7 +51,7 @@ public class App
         var changes = flatChanges.stream().map(c -> new ChangeImpl<>(builder.add(c.getTag()), c.getRev(), c.getChurn())).collect(toList());
         var roots = builder.build();
 
-        var repoId = new StoreRepo(db).call(repoName, repoUrl, repoUrl);
+        var repoId = new StoreRepo(db).call(repoName, repoUrl, repoUrl, repoRev);
 
         for (var root : roots)
         {
