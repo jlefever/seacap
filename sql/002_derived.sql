@@ -59,6 +59,39 @@ SELECT ARRAY_AGG(Q.fn) FROM (
 $$
 LANGUAGE SQL IMMUTABLE;
 
+CREATE FUNCTION entities_of(dep_ids INT[]) RETURNS SETOF entities AS
+$$
+WITH
+    req_deps AS (
+        SELECT source_id, target_id
+        FROM deps D
+        WHERE D.id = ANY(dep_ids)
+    ),
+    entity_ids AS (
+        SELECT source_id AS id FROM req_deps
+        UNION
+        SELECT target_id AS id FROM req_deps
+    )
+SELECT E.* FROM entities E
+JOIN entity_ids ON E.id = entity_ids.id
+ORDER BY E.id
+$$
+LANGUAGE SQL IMMUTABLE;
+
+CREATE FUNCTION closed_entities_of(dep_ids INT[]) RETURNS SETOF entities AS
+$$
+WITH RECURSIVE ids AS (SELECT id FROM entities_of(dep_ids)),
+ancestory AS (
+    SELECT id, parent_id, repo_id, name, kind
+    FROM entities WHERE id IN (SELECT id FROM ids)
+    UNION ALL
+    SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind
+    FROM ancestory C, entities P WHERE C.parent_id = P.id
+)
+SELECT DISTINCT * FROM ancestory ORDER BY id
+$$
+LANGUAGE SQL IMMUTABLE;
+
 CREATE FUNCTION n_files_of(dep_ids INT[]) RETURNS INT AS
 $$
 SELECT CARDINALITY(files_of(dep_ids))

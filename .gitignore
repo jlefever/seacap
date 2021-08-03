@@ -6,3 +6,4 @@
 pgdata/
 target/
 .assets/
+dump/
