@@ -29,9 +29,9 @@ public class App
         var db = new Sql2o("jdbc:postgresql://localhost:5433/postgres", "postgres", "password");
         var pathFilter = new PathFilter(Arrays.asList("**/*.java"), Arrays.asList("**/src/test/**"));
 
-        // run(db, "deltaspike", "https://github.com/apache/deltaspike", "tags/deltaspike-1.9.5", pathFilter);
+        run(db, "deltaspike", "https://github.com/apache/deltaspike", "tags/deltaspike-1.9.5", pathFilter);
         // run(db, "flume", "https://github.com/apache/flume", "tags/release-1.9.0-rc3", pathFilter);
-        run(db, "hbase", "https://github.com/apache/hbase", "tags/rel/1.4.12", pathFilter);
+        // run(db, "hbase", "https://github.com/apache/hbase", "tags/rel/1.4.12", pathFilter);
 
         new RefreshMatViews(db).call();
     }
@@ -51,7 +51,7 @@ public class App
         var changes = flatChanges.stream().map(c -> new ChangeImpl<>(builder.add(c.getTag()), c.getRev(), c.getChurn())).collect(toList());
         var roots = builder.build();
 
-        var repoId = new StoreRepo(db).call(repoName, repoUrl);
+        var repoId = new StoreRepo(db).call(repoName, repoUrl, repoUrl);
 
         for (var root : roots)
         {

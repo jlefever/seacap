@@ -1,7 +1,8 @@
 CREATE TABLE repos (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    git_url TEXT UNIQUE NOT NULL
+    git_url TEXT UNIQUE NOT NULL,
+    github_url TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE commits (

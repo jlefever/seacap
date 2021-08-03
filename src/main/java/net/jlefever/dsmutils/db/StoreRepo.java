@@ -11,15 +11,18 @@ public class StoreRepo
         this.db = db;
     }
 
-    public int call(String name, String url)
+    public int call(String name, String gitUrl, String githubUrl)
     {
-        var sql = "INSERT INTO repos (name, git_url) VALUES (:name, :url) RETURNING id";
+        var sql = "INSERT INTO repos (name, git_url, github_url) "
+                + "VALUES (:name, :git_url, :github_url) "
+                + "RETURNING id";
 
         try (var con = this.db.open())
         {
             return con.createQuery(sql)
                 .addParameter("name", name)
-                .addParameter("url", url)
+                .addParameter("git_url", gitUrl)
+                .addParameter("github_url", githubUrl)
                 .executeAndFetch(Integer.class)
                 .get(0);
         }
