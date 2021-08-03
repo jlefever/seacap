@@ -268,7 +268,7 @@ CREATE TYPE uif AS (
     src TEXT,
     fanout INT,
     evo_fanout INT,
-    n_evo_files INT,
+    size INT,
     outdep_ids INT[],
     evo_outdep_ids INT[],
     commit_ids INT[],
@@ -285,7 +285,7 @@ SELECT
     C.src,
     FO.fanout,
     EFO.evo_fanout,
-    n_files_of(EFO.evo_outdep_ids) AS n_evo_files,
+    n_files_of(EFO.evo_outdep_ids) AS size,
     FO.outdep_ids,
     EFO.evo_outdep_ids,
     EFO.commit_ids,
@@ -297,7 +297,7 @@ $$
 LANGUAGE SQL IMMUTABLE;
 
 CREATE MATERIALIZED VIEW uifs AS
-SELECT ROW_NUMBER() OVER (PARTITION BY UIF.repo_id ORDER BY UIF.n_evo_files DESC, UIF.src) AS num, *
+SELECT ROW_NUMBER() OVER (PARTITION BY UIF.repo_id ORDER BY UIF.size DESC, UIF.src) AS num, *
 FROM find_uifs(4, 4, 2, all_dep_kinds()) UIF
 ORDER BY UIF.repo_id, num;
 
@@ -308,7 +308,7 @@ CREATE TYPE crs AS (
     evo_fanout INT,
     fanin INT,
     evo_fanin INT,
-    n_evo_files INT,
+    size INT,
     outdep_ids INT[],
     evo_outdep_ids INT[],
     indep_ids INT[],
@@ -331,7 +331,7 @@ SELECT
     EFO.evo_fanout,
     FI.fanin,
     EFI.evo_fanin,
-    n_files_of(int_union(EFO.evo_outdep_ids, EFI.evo_indep_ids)) AS n_evo_files,
+    n_files_of(int_union(EFO.evo_outdep_ids, EFI.evo_indep_ids)) AS size,
     FO.outdep_ids,
     EFO.evo_outdep_ids,
     FI.indep_ids,
@@ -351,12 +351,12 @@ JOIN fanout FO ON C.repo_id = FO.repo_id AND C.center = FO.src
 JOIN evo_fanout EFO ON C.repo_id = EFO.repo_id AND C.center = EFO.src
 JOIN fanin FI ON C.repo_id = FI.repo_id AND C.center = FI.tgt
 JOIN evo_fanin EFI ON C.repo_id = EFI.repo_id AND C.center = EFI.tgt
-ORDER BY C.repo_id, n_evo_files DESC, C.center
+ORDER BY C.repo_id, size DESC, C.center
 $$
 LANGUAGE SQL IMMUTABLE;
 
 CREATE MATERIALIZED VIEW crss AS
-SELECT ROW_NUMBER() OVER (PARTITION BY CRS.repo_id ORDER BY CRS.n_evo_files DESC, CRS.center) AS num, *
+SELECT ROW_NUMBER() OVER (PARTITION BY CRS.repo_id ORDER BY CRS.size DESC, CRS.center) AS num, *
 FROM find_crss(4, 4, 4, 4, 2, all_dep_kinds()) CRS
 ORDER BY CRS.repo_id, num;
 
