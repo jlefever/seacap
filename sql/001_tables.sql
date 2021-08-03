@@ -10,12 +10,15 @@ CREATE TABLE commits (
     sha1 CHAR(40) NOT NULL
 );
 
+-- CREATE TYPE lineno_range AS (start INT, end INT);
+
 CREATE TABLE entities (
     id SERIAL PRIMARY KEY,
     parent_id INT REFERENCES entities (id),
     repo_id INT REFERENCES repos (id) NOT NULL,
     name TEXT NOT NULL,
     kind TEXT NOT NULL,
+    -- linenos lineno_range
     UNIQUE (parent_id, repo_id, name, kind)
     -- TODO: Somehow ensure repo_id == parent.repo_id at the database-level
     -- TODO: Somehow ennsure parent_id is null iff kind = 'file'

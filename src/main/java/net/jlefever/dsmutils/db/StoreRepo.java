@@ -1,51 +1,27 @@
 package net.jlefever.dsmutils.db;
 
-import java.util.Objects;
+import org.sql2o.Sql2o;
 
-import org.sql2o.Connection;
-
-public class StoreRepo implements DbCommand<Integer>
+public class StoreRepo
 {
-    private final String name;
-    private final String url;
+    private final Sql2o db;
 
-    public StoreRepo(String name, String url)
+    public StoreRepo(Sql2o db)
     {
-        this.name = name;
-        this.url = url;
+        this.db = db;
     }
 
-    @Override
-    public Integer execute(Connection con)
+    public int call(String name, String url)
     {
         var sql = "INSERT INTO repos (name, git_url) VALUES (:name, :url) RETURNING id";
 
-        return con.createQuery(sql)
-            .addParameter("name", this.getName())
-            .addParameter("url", this.getUrl())
-            .executeAndFetch(Integer.class)
-            .get(0);
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public String getUrl()
-    {
-        return url;
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        return Objects.hashCode(this) == Objects.hashCode(obj);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(this.getName(), this.getUrl());
+        try (var con = this.db.open())
+        {
+            return con.createQuery(sql)
+                .addParameter("name", name)
+                .addParameter("url", url)
+                .executeAndFetch(Integer.class)
+                .get(0);
+        }
     }
 }

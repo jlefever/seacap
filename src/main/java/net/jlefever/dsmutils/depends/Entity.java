@@ -8,6 +8,16 @@ public abstract class Entity {
     public abstract boolean hasParent();
     public abstract Entity getParent();
 
+    public String getPath()
+    {
+        if (this.hasParent())
+        {
+            return this.getParent().getPath();
+        }
+
+        return this.getName();
+    }
+
     @Override
     public boolean equals(Object obj)
     {

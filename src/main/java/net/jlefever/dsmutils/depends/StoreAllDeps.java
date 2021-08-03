@@ -1,22 +1,22 @@
 package net.jlefever.dsmutils.depends;
 
+import java.util.List;
 import java.util.Map;
 
 import org.sql2o.Connection;
 
-import net.jlefever.dsmutils.db.DbCommand;
-
-public class StoreAllDeps implements DbCommand<Void> {
+public class StoreAllDeps {
     private final Map<? extends Dep, Integer> deps;
     private final Map<? extends Entity, Integer> ids;
+    private final List<String> paths;
 
-    public StoreAllDeps(Map<? extends Dep, Integer> deps, Map<? extends Entity, Integer> ids)
+    public StoreAllDeps(Map<? extends Dep, Integer> deps, Map<? extends Entity, Integer> ids, List<String> paths)
     {
         this.deps = deps;
         this.ids = ids;
+        this.paths = paths;
     }
 
-    @Override
     public Void execute(Connection con)
     {
         var ids = this.getIds();
@@ -30,6 +30,11 @@ public class StoreAllDeps implements DbCommand<Void> {
         {
             var dep = pair.getKey();
             var weight = pair.getValue();
+
+            if (!this.paths.contains(dep.getSource().getPath()) && !this.paths.contains(dep.getTarget().getPath()))
+            {
+                continue;
+            }
 
             if (!ids.containsKey(dep.getSource()) || !ids.containsKey(dep.getTarget()))
             {

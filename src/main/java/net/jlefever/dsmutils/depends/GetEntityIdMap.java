@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.sql2o.Connection;
 
-import net.jlefever.dsmutils.db.DbCommand;
-
-public class GetEntityIdMap implements DbCommand<Map<? extends Entity, Integer>>
+public class GetEntityIdMap
 {
     private final int repoId;
 
@@ -21,7 +19,6 @@ public class GetEntityIdMap implements DbCommand<Map<? extends Entity, Integer>>
         return repoId;
     }
 
-    @Override
     public Map<? extends Entity, Integer> execute(Connection con)
     {
         var sql = "SELECT id, parent_id AS parentId, name, kind "

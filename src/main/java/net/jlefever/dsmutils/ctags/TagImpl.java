@@ -1,28 +1,31 @@
-package net.jlefever.dsmutils.gitchurn;
+package net.jlefever.dsmutils.ctags;
 
-public class FlatChange implements Change
+import java.util.Objects;
+
+public class TagImpl implements Tag
 {
     private final String name;
     private final String kind;
     private final String path;
     private final String scope;
     private final String scopeKind;
-    private final String rev;
-    private final int churn;
 
-    public FlatChange(String name, String kind, String path, String scope, String scopeKind, String rev, int churn)
+    public TagImpl(String name, String kind, String path, String scope, String scopeKind)
     {
         this.name = name;
         this.kind = kind;
         this.path = path;
         this.scope = scope;
         this.scopeKind = scopeKind;
-        this.rev = rev;
-        this.churn = churn;
     }
 
     public String getName()
     {
+        if (this.kind.equals("file"))
+        {
+            return this.getPath();
+        }
+        
         return this.name;
     }
 
@@ -47,6 +50,11 @@ public class FlatChange implements Change
         return this.path;
     }
 
+    public boolean hasScope()
+    {
+        return this.getScope() != null;
+    }
+
     public String getScope()
     {
         if (this.scope == null && !this.getKind().equals("file"))
@@ -57,21 +65,16 @@ public class FlatChange implements Change
         return this.scope;
     }
 
-    public String getRev()
-    {
-        return this.rev;
-    }
-
-    public int getChurn()
-    {
-        return this.churn;
-    }
-
     public String getScopeKind()
     {
         if (this.scope == null && !this.getKind().equals("file"))
         {
             return "file";
+        }
+
+        if (this.scopeKind == null)
+        {
+            return null;
         }
 
         // Java-specific hack. Other languages may have similiar special-cases.
@@ -83,8 +86,15 @@ public class FlatChange implements Change
         return this.scopeKind;
     }
 
-    public boolean hasScope()
+    @Override
+    public boolean equals(Object obj)
     {
-        return this.getScope() != null;
+        return Objects.hashCode(this) == Objects.hashCode(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getName(), getKind(), getPath(), getScope(), getScopeKind());
     }
 }

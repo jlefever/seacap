@@ -65,6 +65,16 @@ SELECT CARDINALITY(files_of(dep_ids))
 $$
 LANGUAGE SQL IMMUTABLE;
 
+CREATE VIEW entity_digests AS
+WITH RECURSIVE ancestory AS (
+    SELECT id, parent_id, digest(name || ',' || kind, 'sha256')
+    FROM entities WHERE parent_id IS NULL
+    UNION ALL
+    SELECT C.id, C.parent_id, digest(P.digest || decode(C.name || ',' || C.kind, 'escape'), 'sha256')
+    FROM ancestory P, entities C WHERE C.parent_id = P.id
+)
+SELECT id AS entity_id, digest FROM ancestory;
+
 CREATE MATERIALIZED VIEW cochanges AS
 SELECT
     XE.repo_id,

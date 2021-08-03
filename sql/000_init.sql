@@ -11,3 +11,5 @@ CREATE AGGREGATE int_union_agg(INT[]) (
 	STYPE = INT[],
 	INITCOND = '{}'
 );
+
+CREATE EXTENSION pgcrypto;

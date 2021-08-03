@@ -1,14 +1,15 @@
-package net.jlefever.dsmutils.gitchurn;
+package net.jlefever.dsmutils.churn;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.stream.Stream;
+import java.util.List;
 
 import com.google.gson.Gson;
 
 import net.jlefever.dsmutils.PathFilter;
+import net.jlefever.dsmutils.ctags.TagImpl;
 
 public class GetChanges
 {
@@ -27,7 +28,7 @@ public class GetChanges
         this.maxCommitSize = maxCommitSize;
     }
 
-    public Stream<FlatChange> execute() throws IOException, InterruptedException
+    public List<Change<TagImpl>> execute() throws IOException, InterruptedException
     {
         var args = new ArrayList<String>();
         args.add("gitchurn");
@@ -45,25 +46,24 @@ public class GetChanges
 
         var gson = new Gson();
 
-        var changes = new ArrayList<FlatChange>();
+        var changes = new ArrayList<Change<TagImpl>>();
 
         reader.lines().forEach(line ->
         {
             var arr = line.split("\t");
             var rev = arr[0];
             var churn = Integer.parseInt(arr[1]);
-            var tag = gson.fromJson(arr[2], Tag.class);
+            var tag = gson.fromJson(arr[2], TagImpl.class);
 
-            if (tag.getKind().equals("enumConstant") || tag.getKind().equals("package"))
+            if (tag.getRealKind().equals("enumConstant") || tag.getRealKind().equals("package"))
             {
                 return;
             }
 
-            var name = tag.getKind().equals("file") ? tag.getPath() : tag.getName();
-            changes.add(new FlatChange(name, tag.getKind(), tag.getPath(), tag.getScope(), tag.getScopeKind(), rev, churn));
+            changes.add(new ChangeImpl<>(tag, rev, churn));
         });
 
-        return changes.stream();
+        return changes;
     }
 
     public String getDir()
