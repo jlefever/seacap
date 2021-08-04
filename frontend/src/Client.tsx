@@ -10,6 +10,10 @@ export default class Client {
         return (await fetch(url).then(res => res.json())) as RepoDto[];
     };
 
+    public getRepo = async (name: string): Promise<RepoDto> => {
+        return (await this.getRepos()).filter(r => r.name == name)[0];
+    };
+
     public getCrsSummaries = async (repoName: string): Promise<CrsSummaryDto[]> => {
         const url = `/dump/${repoName}/crs/index.json`;
         return (await fetch(url).then(res => res.json())) as CrsSummaryDto[];
