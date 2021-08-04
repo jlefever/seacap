@@ -1,25 +1,40 @@
-import React from "react";
-
+import "@fortawesome/fontawesome-free/css/all.css";
 import "bulma/css/bulma.css";
+import React from "react";
+import { Link } from "react-router-dom";
+import Client from "../Client";
 import RepoDto from "../dtos/RepoDto";
 
-export interface RepoTableProps {
+interface RepoTableState {
     repos: RepoDto[];
-};
+}
 
-export default (props: RepoTableProps) => <table className="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Version</th>
-        </tr>
-    </thead>
-    <tbody>
-        {props.repos.map(r => <tr>
-            <td>{r.id}</td>
-            <td>{r.name}</td>
-            <td>{r.leadRef}</td>
-        </tr>)}
-    </tbody>
-</table>
+export default class RepoTable extends React.Component<{}, RepoTableState> {
+    constructor(props: {}) {
+        super(props);
+        this.state = { repos: [] }
+    }
+
+    override componentDidMount() {
+        new Client().getRepos().then(res => this.setState({ repos: res }));
+    }
+
+    override render() {
+        return <table className="table" style={{ marginLeft: "auto", marginRight: "auto"}}>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                </tr>
+            </thead>
+            <tbody>
+                {this.state.repos.map(r => <tr key={r.id}>
+                    <td>{r.id}</td>
+                    <td><Link to={`/${r.name}`}>{r.name}</Link></td>
+                    <td>{r.leadRef}</td>
+                </tr>)}
+            </tbody>
+        </table>;
+    }
+}
