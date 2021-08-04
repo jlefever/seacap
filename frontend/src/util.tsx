@@ -1,14 +1,17 @@
+import ChangeDto from "./dtos/ChangeDto";
 import DepDto from "./dtos/DepDto";
 import EntityDto from "./dtos/EntityDto";
 
 export class Entity {
     private readonly _dto: EntityDto;
     private readonly _children: Entity[];
+    private readonly _changes: Change[];
     private _parent: Entity | null;
 
     constructor(dto: EntityDto) {
         this._dto = dto;
         this._children = [];
+        this._changes = [];
         this._parent = null;
     }
 
@@ -36,6 +39,10 @@ export class Entity {
         return this._children;
     }
 
+    get changes(): readonly Change[] {
+        return this._changes;
+    }
+
     get file(): Entity {
         if (this.parent === null) {
             return this;
@@ -54,6 +61,12 @@ export class Entity {
         return arr;
     }
 
+    cocommits = (other: Entity) => {
+        const myCommits = this.changes.map(c => c.commitHash);
+        const otherCommits = other.changes.map(c => c.commitHash);
+        return new Array(new Set(myCommits.concat(otherCommits)));
+    };
+
     setParent = (value: Entity) => {
         if (this.parent != null) {
             const idx = this.parent._children.findIndex(c => c == this);
@@ -64,6 +77,34 @@ export class Entity {
         this._parent = value;
         this._parent._children.push(this);
     };
+
+    addChange = (value: Change) => {
+        this._changes.push(value);
+    };
+}
+
+export class Change {
+    private readonly _id: number;
+    private readonly _commitHash: string;
+    private readonly _entity: Entity;
+
+    constructor(id: number, commitHash: string, entity: Entity) {
+        this._id = id;
+        this._commitHash = commitHash;
+        this._entity = entity;
+    }
+
+    public get id() {
+        return this._id;
+    }
+
+    public get commitHash() {
+        return this._commitHash;
+    }
+
+    public get entity() {
+        return this._entity;
+    }
 }
 
 export class Dep {
@@ -90,9 +131,9 @@ export class Dep {
     }
 }
 
-export function createEntities(dtos: readonly EntityDto[]) {
+export function createEntities(entityDtos: readonly EntityDto[]) {
     const entities = new Map<number, Entity>();
-    dtos.map(dto => entities.set(dto.id, new Entity(dto)));
+    entityDtos.map(dto => entities.set(dto.id, new Entity(dto)));
 
     entities.forEach((entity, _) => {
         if (entity.dto.parentId !== undefined) {
@@ -101,6 +142,14 @@ export function createEntities(dtos: readonly EntityDto[]) {
     });
 
     return entities;
+}
+
+export function createChanges(entities: Map<number, Entity>, dtos: readonly ChangeDto[]) {
+    dtos = dtos.filter(dto => entities.has(dto.entityId));
+    const changes = new Map<number, Change>();
+    dtos.map(dto => changes.set(dto.id, new Change(dto.id, dto.commitHash, entities.get(dto.entityId)!)));
+    changes.forEach(change => change.entity.addChange(change));
+    return changes;
 }
 
 export function createDeps(entities: Map<number, Entity>, dtos: readonly DepDto[]) {
@@ -136,8 +185,10 @@ export function isM2m(dep: Dep) {
 //     changes: readonly Change[];
 // };
 
+
+
 // interface Change {
 //     id: number;
-//     commit: Commit;
+//     commitHash: string;
 //     entity: Entity;
 // };
