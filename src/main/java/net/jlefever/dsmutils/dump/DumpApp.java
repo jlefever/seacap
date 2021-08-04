@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,17 +34,29 @@ public class DumpApp
         {
             Files.createDirectory(Paths.get(dumpDir, repo.getName()));
 
+            // Unstable Interfaces
             Files.createDirectory(Paths.get(dumpDir, repo.getName(), "uif"));
-            for (var uif : new GetUifs(db).call(repo.getId()))
+            var uifs = new GetUifs(db).call(repo.getId());
+
+            for (var uif : uifs)
             {
                 write(uif, Paths.get(dumpDir, repo.getName(), "uif", uif.getNum() + ".json"));
             }
 
+            var uifSums = uifs.stream().map(u -> u.getSummary()).collect(Collectors.toList());
+            write(uifSums, Paths.get(dumpDir, repo.getName(), "uif", "index.json"));
+
+            // Crossings
             Files.createDirectory(Paths.get(dumpDir, repo.getName(), "crs"));
-            for (var uif : new GetCrss(db).call(repo.getId()))
+            var crss = new GetCrss(db).call(repo.getId());
+            
+            for (var crs : crss)
             {
-                write(uif, Paths.get(dumpDir, repo.getName(), "crs", uif.getNum() + ".json"));
+                write(crs, Paths.get(dumpDir, repo.getName(), "crs", crs.getNum() + ".json"));
             }
+
+            var crsSums = crss.stream().map(c -> c.getSummary()).collect(Collectors.toList());
+            write(crsSums, Paths.get(dumpDir, repo.getName(), "crs", "index.json"));
         }
     }
 

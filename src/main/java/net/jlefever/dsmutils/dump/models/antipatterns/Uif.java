@@ -8,48 +8,45 @@ import net.jlefever.dsmutils.dump.models.Entity;
 
 public class Uif implements AntiPattern
 {
-    private final int num;
-    private final String src;
-    private final int fanout;
-    private final int evoFanout;
-    private final int size;
+    private final UifSummary summary;
     private List<Change> changes;
     private List<Entity> entities;
     private List<Dep> outDeps;
     private List<Dep> evoOutDeps;
 
-    public Uif(int num, String src, int fanout, int evoFanout, int size)
+    public Uif(UifSummary summary)
     {
-        this.num = num;
-        this.src = src;
-        this.fanout = fanout;
-        this.evoFanout = evoFanout;
-        this.size = size;
+        this.summary = summary;
+    }
+
+    public UifSummary getSummary()
+    {
+        return this.summary;
     }
 
     public int getNum()
     {
-        return num;
+        return summary.getNum();
     }
 
     public String getSrc()
     {
-        return src;
+        return summary.getSrc();
     }
 
     public int getFanout()
     {
-        return fanout;
+        return summary.getFanout();
     }
 
     public int getEvoFanout()
     {
-        return evoFanout;
+        return summary.getEvoFanout();
     }
 
     public int getSize()
     {
-        return size;
+        return summary.getSize();
     }
 
     public List<Change> getChanges()
@@ -91,5 +88,4 @@ public class Uif implements AntiPattern
     {
         this.evoOutDeps = evoOutDeps;
     }
-
 }

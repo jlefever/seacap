@@ -6,6 +6,8 @@ import RepoTable from "./RepoTable";
 import Client from "../Client";
 import { Link, Route, BrowserRouter, Switch } from "react-router-dom";
 import Repo from "./Repo";
+import CrsDash from "./CrsDash";
+import UifDash from "./UifDash";
 
 export default () => <section className="section mt-1 pt-1">
     <BrowserRouter>
@@ -20,19 +22,25 @@ export default () => <section className="section mt-1 pt-1">
             </nav>
 
             <Switch>
-                <Route path="/:name" render={props => (
-                    <Repo name={props.match.params.name} />
-                )} />
+                <Route path="/:name/crossing-:num" render={props => {
+                    return <CrsDash repoName={props.match.params.name} num={parseInt(props.match.params.num)} />
+                }} />
+                <Route path="/:name/unstable-interface-:num" render={props => {
+                    return <UifDash repoName={props.match.params.name} num={parseInt(props.match.params.num)} />
+                }} />
+                <Route path="/:name" render={props => {
+                    return <Repo name={props.match.params.name} url={props.match.url} />;
+                }} />
                 <Route path="/" render={_ => <RepoTable />} />
             </Switch>
 
-            <footer className="footer has-background-white">
+            {/* <footer className="footer has-background-white">
                 <nav className="level">
                     <div className="level-left">
                         <small className="level-item">Jason Lefever 2021</small>
                     </div>
                 </nav>
-            </footer>
+            </footer> */}
         </div>
     </BrowserRouter>
 </section>;

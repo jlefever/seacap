@@ -7,6 +7,7 @@ import org.sql2o.Sql2o;
 
 import net.jlefever.dsmutils.dump.db.dtos.UifDto;
 import net.jlefever.dsmutils.dump.models.antipatterns.Uif;
+import net.jlefever.dsmutils.dump.models.antipatterns.UifSummary;
 
 public class GetUifs
 {
@@ -35,7 +36,8 @@ public class GetUifs
 
         for (var dto : dtos)
         {
-            var uif = new Uif(dto.getNum(), dto.getSrc(), dto.getFanout(), dto.getEvoFanout(), dto.getSize());
+            var uif = new Uif(new UifSummary(dto.getNum(), dto.getSrc(), dto.getFanout(), dto.getEvoFanout(), dto.getSize()));
+
             uif.setChanges(new GetChanges(this.db).call(dto.getChangeIds()));
 
             uif.setEvoOutDeps(new GetDeps(db).call(dto.getEvoOutdepIds()));
