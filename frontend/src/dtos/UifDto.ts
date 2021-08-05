@@ -7,6 +7,6 @@ export default interface UifDto {
     summary: UifSummaryDto;
     changes: readonly ChangeDto[];
     entities: readonly EntityDto[];
-    outDeps: readonly DepDto[];
-    evoOutDeps: readonly DepDto[];
+    inDeps: readonly DepDto[];
+    evoInDeps: readonly DepDto[];
 };

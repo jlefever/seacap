@@ -8,25 +8,25 @@ import net.jlefever.dsmutils.SqlArrayUtils;
 public class UifDto
 {
     private final int num;
-    private final String src;
-    private final int fanout;
-    private final int evoFanout;
+    private final String tgt;
+    private final int fanin;
+    private final int evoFanin;
     private final int size;
-    private final Array outdepIds;
-    private final Array evoOutdepIds;
+    private final Array indepIds;
+    private final Array evoIndepIds;
     private final Array commitIds;
     private final Array changeIds;
 
-    public UifDto(int num, String src, int fanout, int evoFanout, int size, Array outdepIds, Array evoOutdepIds,
+    public UifDto(int num, String tgt, int fanin, int evoFanin, int size, Array indepIds, Array evoIndepIds,
             Array commitIds, Array changeIds)
     {
         this.num = num;
-        this.src = src;
-        this.fanout = fanout;
-        this.evoFanout = evoFanout;
+        this.tgt = tgt;
+        this.fanin = fanin;
+        this.evoFanin = evoFanin;
         this.size = size;
-        this.outdepIds = outdepIds;
-        this.evoOutdepIds = evoOutdepIds;
+        this.indepIds = indepIds;
+        this.evoIndepIds = evoIndepIds;
         this.commitIds = commitIds;
         this.changeIds = changeIds;
     }
@@ -36,19 +36,19 @@ public class UifDto
         return num;
     }
 
-    public String getSrc()
+    public String getTgt()
     {
-        return src;
+        return tgt;
     }
 
-    public int getFanout()
+    public int getFanin()
     {
-        return fanout;
+        return fanin;
     }
 
-    public int getEvoFanout()
+    public int getEvoFanin()
     {
-        return evoFanout;
+        return evoFanin;
     }
 
     public int getSize()
@@ -56,14 +56,14 @@ public class UifDto
         return size;
     }
 
-    public List<Integer> getOutdepIds()
+    public List<Integer> getIndepIds()
     {
-        return SqlArrayUtils.toList(outdepIds);
+        return SqlArrayUtils.toList(indepIds);
     }
 
-    public List<Integer> getEvoOutdepIds()
+    public List<Integer> getEvoIndepIds()
     {
-        return SqlArrayUtils.toList(evoOutdepIds);
+        return SqlArrayUtils.toList(evoIndepIds);
     }
 
     public List<Integer> getCommitIds()

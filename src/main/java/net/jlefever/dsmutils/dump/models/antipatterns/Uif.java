@@ -11,8 +11,8 @@ public class Uif implements AntiPattern
     private final UifSummary summary;
     private List<Change> changes;
     private List<Entity> entities;
-    private List<Dep> outDeps;
-    private List<Dep> evoOutDeps;
+    private List<Dep> inDeps;
+    private List<Dep> evoInDeps;
 
     public Uif(UifSummary summary)
     {
@@ -29,19 +29,19 @@ public class Uif implements AntiPattern
         return summary.getNum();
     }
 
-    public String getSrc()
+    public String getTgt()
     {
-        return summary.getSrc();
+        return summary.getTgt();
     }
 
-    public int getFanout()
+    public int getFanin()
     {
-        return summary.getFanout();
+        return summary.getFanin();
     }
 
-    public int getEvoFanout()
+    public int getEvoFanin()
     {
-        return summary.getEvoFanout();
+        return summary.getEvoFanin();
     }
 
     public int getSize()
@@ -69,23 +69,23 @@ public class Uif implements AntiPattern
         this.entities = entities;
     }
 
-    public List<Dep> getOutDeps()
+    public List<Dep> getInDeps()
     {
-        return outDeps;
+        return inDeps;
     }
 
-    public void setOutDeps(List<Dep> outDeps)
+    public void setInDeps(List<Dep> inDeps)
     {
-        this.outDeps = outDeps;
+        this.inDeps = inDeps;
     }
 
-    public List<Dep> getEvoOutDeps()
+    public List<Dep> getEvoInDeps()
     {
-        return evoOutDeps;
+        return evoInDeps;
     }
 
-    public void setEvoOutDeps(List<Dep> evoOutDeps)
+    public void setEvoInDeps(List<Dep> evoInDeps)
     {
-        this.evoOutDeps = evoOutDeps;
+        this.evoInDeps = evoInDeps;
     }
 }

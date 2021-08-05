@@ -20,8 +20,8 @@ public class GetUifs
 
     public List<Uif> call(int repoId)
     {
-        var sql = "SELECT num, src, fanout, evo_fanout AS evoFanout, size, "
-                + "outdep_ids AS outdepIds, evo_outdep_ids AS evoOutdepIds, "
+        var sql = "SELECT num, tgt, fanin, evo_fanin AS evoFanin, size, "
+                + "indep_ids AS indepIds, evo_indep_ids AS evoIndepIds, "
                 + "commit_ids AS commitIds, change_ids AS changeIds "
                 + "FROM uifs WHERE repo_id = :repo_id";
 
@@ -36,16 +36,16 @@ public class GetUifs
 
         for (var dto : dtos)
         {
-            var uif = new Uif(new UifSummary(dto.getNum(), dto.getSrc(), dto.getFanout(), dto.getEvoFanout(), dto.getSize()));
+            var uif = new Uif(new UifSummary(dto.getNum(), dto.getTgt(), dto.getFanin(), dto.getEvoFanin(), dto.getSize()));
 
             uif.setChanges(new GetChanges(this.db).call(dto.getChangeIds()));
 
-            uif.setEvoOutDeps(new GetDeps(db).call(dto.getEvoOutdepIds()));
-            uif.setOutDeps(new GetDeps(db).call(dto.getOutdepIds()));
+            uif.setEvoInDeps(new GetDeps(db).call(dto.getEvoIndepIds()));
+            uif.setInDeps(new GetDeps(db).call(dto.getIndepIds()));
 
             var depIds = new ArrayList<Integer>();
-            depIds.addAll(dto.getOutdepIds());
-            depIds.addAll(dto.getEvoOutdepIds());
+            depIds.addAll(dto.getIndepIds());
+            depIds.addAll(dto.getEvoIndepIds());
             uif.setEntities(new GetEntitiesOfDeps(db).call(depIds));
 
             uifs.add(uif);

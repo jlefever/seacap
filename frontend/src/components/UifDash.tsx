@@ -48,44 +48,39 @@ export default class UifDash extends React.Component<UifDashProps, UifDashState>
 
         const entities = createEntities(uif.entities);
         const changes = createChanges(entities, uif.changes);
-        const outDeps = createDeps(entities, uif.outDeps);
-        const evoOutDeps = createDeps(entities, uif.evoOutDeps);
+        const inDeps = createDeps(entities, uif.inDeps);
+        const evoInDeps = createDeps(entities, uif.evoInDeps);
 
         // console.log(entities);
         // console.log(inDeps);
         // console.log(outDeps);
 
-        console.log(evoOutDeps.filter(isM2m));
+        const evoInFiles = [...new Set(evoInDeps.map(d => d.source.file))];
 
-        const grouped = _.groupBy(evoOutDeps.filter(isM2m), d => d.source.id);
-        console.log(grouped);
-
-        const evoOutFiles = [...new Set(evoOutDeps.map(d => d.target.file))];
-
-        const callMethods = _.groupBy(evoOutDeps.filter(isM2m), d => d.source.id);
+        const calledByMethods = _.groupBy(evoInDeps.filter(isM2m), d => d.target.id);
 
         return <>
             {header}
             <h2 className="title is-4">Description</h2>
             <div className="content">
-                The file <strong><GithubLink path={sum.src} repo={repo} /></strong> depends on <strong>{sum.fanout}</strong> files and has co-changed at least twice with <strong>{sum.evoFanout}</strong> of them. So this is an unstable interface with a total of <strong>{sum.size}</strong> files. (Note this is a mistake. This is not an unstable interface but rather an "unstable client".)
+                The file <strong><GithubLink path={sum.tgt} repo={repo} /></strong> is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is an unstable interface with a total of <strong>{sum.size}</strong> files.
             </div>
 
             <div className="columns">
                 <div className="column">
-                    <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Outgoing Files</h2>
-                    <ul>{evoOutFiles.map(f => <li key={f.id}><GithubLink path={f.name} repo={repo} /></li>)}</ul>
+                    <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Incoming Files</h2>
+                    <ul>{evoInFiles.map(f => <li key={f.id}><GithubLink path={f.name} repo={repo} /></li>)}</ul>
                 </div>
             </div>
 
             <h2 className="title is-4">Concentration</h2>
             <div className="content">
-                This file has <strong>X</strong> methods, <strong>Y</strong> of which <em>call</em> or are <em>called by</em> a method in a file which is evolutionarily coupled with the unstable interface.
+                This file has <strong>X</strong> methods, <strong>Y</strong> of which are called by a method in a file which is evolutionarily coupled with this unstable interface.
             </div>
             <div className="columns">
                 <div className="column">
-                    <h2 className="title is-6">Outgoing Calls</h2>
-                    <ul>{Object.entries(callMethods).map(e => <li key={e[0]}>{entities.get(parseInt(e[0]))?.name} <span>(calls <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
+                    <h2 className="title is-6">Incoming Calls</h2>
+                    <ul>{Object.entries(calledByMethods).map(e => <li key={e[0]}>{entities.get(parseInt(e[0]))?.name} <span>(called by <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
                 </div>
             </div>
 
@@ -95,9 +90,9 @@ export default class UifDash extends React.Component<UifDashProps, UifDashState>
             </div>
             <div className="columns">
                 <div className="column">
-                    <h2 className="title is-6">Outgoing Calls</h2>
+                    <h2 className="title is-6">Incoming Calls</h2>
                     <ul>
-                        {evoOutDeps.filter(isM2m).map(d => (
+                        {evoInDeps.filter(isM2m).map(d => (
                             <li>
                                 {d.source.name}
                                 <span className="icon"><i className="fas fa-arrow-right"></i></span>

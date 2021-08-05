@@ -298,39 +298,39 @@ LANGUAGE SQL IMMUTABLE;
 
 CREATE TYPE uif AS (
     repo_id INT,
-    src TEXT,
-    fanout INT,
-    evo_fanout INT,
+    tgt TEXT,
+    fanin INT,
+    evo_fanin INT,
     size INT,
-    outdep_ids INT[],
-    evo_outdep_ids INT[],
+    indep_ids INT[],
+    evo_indep_ids INT[],
     commit_ids INT[],
     change_ids INT[]
 );
 
-CREATE FUNCTION find_uifs(min_fanout INT, min_evo_fanout INT, min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF uif AS
+CREATE FUNCTION find_uifs(min_fanin INT, min_evo_fanin INT, min_cochange INT, dep_kinds TEXT[]) RETURNS SETOF uif AS
 $$
 WITH
-    fanout AS (SELECT * FROM count_fl_fanout(dep_kinds) WHERE fanout >= min_fanout),
-    evo_fanout AS (SELECT * FROM count_fl_evo_fanout(dep_kinds, min_cochange) WHERE evo_fanout >= min_evo_fanout)
+    fanin AS (SELECT * FROM count_fl_fanin(dep_kinds) WHERE fanin >= min_fanin),
+    evo_fanin AS (SELECT * FROM count_fl_evo_fanin(dep_kinds, min_cochange) WHERE evo_fanin >= min_evo_fanin)
 SELECT
     C.repo_id,
-    C.src,
-    FO.fanout,
-    EFO.evo_fanout,
-    n_files_of(EFO.evo_outdep_ids) AS size,
-    FO.outdep_ids,
-    EFO.evo_outdep_ids,
-    EFO.commit_ids,
-    EFO.change_ids
-FROM (SELECT repo_id, src FROM fanout INTERSECT SELECT repo_id, src FROM evo_fanout) C
-JOIN fanout FO ON C.repo_id = FO.repo_id AND C.src = FO.src
-JOIN evo_fanout EFO ON C.repo_id = EFO.repo_id AND C.src = EFO.src
+    C.tgt,
+    FI.fanin,
+    EFI.evo_fanin,
+    n_files_of(EFI.evo_indep_ids) AS size,
+    FI.indep_ids,
+    EFI.evo_indep_ids,
+    EFI.commit_ids,
+    EFI.change_ids
+FROM (SELECT repo_id, tgt FROM fanin INTERSECT SELECT repo_id, tgt FROM evo_fanin) C
+JOIN fanin FI ON C.repo_id = FI.repo_id AND C.tgt = FI.tgt
+JOIN evo_fanin EFI ON C.repo_id = EFI.repo_id AND C.tgt = EFI.tgt
 $$
 LANGUAGE SQL IMMUTABLE;
 
 CREATE MATERIALIZED VIEW uifs AS
-SELECT ROW_NUMBER() OVER (PARTITION BY UIF.repo_id ORDER BY UIF.size DESC, UIF.src) AS num, *
+SELECT ROW_NUMBER() OVER (PARTITION BY UIF.repo_id ORDER BY UIF.size DESC, UIF.tgt) AS num, *
 FROM find_uifs(4, 4, 2, all_dep_kinds()) UIF
 ORDER BY UIF.repo_id, num;
 
