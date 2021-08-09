@@ -30,8 +30,15 @@ public class App
         var pathFilter = new PathFilter(Arrays.asList("**/*.java"), Arrays.asList("**/src/test/**"));
 
         run(db, "deltaspike", "https://github.com/apache/deltaspike", "tags/deltaspike-1.9.5", pathFilter);
-        // run(db, "flume", "https://github.com/apache/flume", "tags/release-1.9.0-rc3", pathFilter);
-        // run(db, "hbase", "https://github.com/apache/hbase", "tags/rel/1.4.12", pathFilter);
+        run(db, "flume", "https://github.com/apache/flume", "tags/release-1.9.0-rc3", pathFilter);
+        run(db, "hbase", "https://github.com/apache/hbase", "tags/rel/1.4.12", pathFilter);
+        run(db, "knox", "https://github.com/apache/knox", "tags/v1.3.0-release", pathFilter);
+        run(db, "nifi", "https://github.com/apache/nifi", "tags/rel/nifi-1.10.0", pathFilter);
+        run(db, "oozie", "https://github.com/apache/oozie", "tags/release-5.2.0", pathFilter);
+        run(db, "qpid-broker", "https://github.com/apache/qpid-broker-j", "tags/7.1.6", pathFilter);
+        run(db, "qpid-jms", "https://github.com/apache/qpid-jms-amqp-0-x", "tags/6.3.4", pathFilter);
+        run(db, "tajo", "https://github.com/apache/attic-tajo", "tags/release-0.12.0-rc0", pathFilter);
+        run(db, "tez", "https://github.com/apache/tez", "tags/rel/release-0.9.2", pathFilter);
 
         new RefreshMatViews(db).call();
     }

@@ -47,7 +47,7 @@ public class GetDepsFromDepends
 
         var dependencyGenerator = new StructureDependencyGenerator();
         dependencyGenerator.setLeadingStripper(new LeadingNameStripper(true, this.getDir(), new String[]{}));
-        dependencyGenerator.setGenerateDetail(true);
+        dependencyGenerator.setGenerateDetail(false);
         dependencyGenerator.setFilenameRewritter(new UnixPathFilenameWritter());
 
         var matrix = dependencyGenerator.build(entityRepo, DependencyType.allDependencies());
