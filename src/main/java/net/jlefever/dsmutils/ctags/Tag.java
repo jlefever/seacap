@@ -9,4 +9,6 @@ public interface Tag
     boolean hasScope();
     String getScope();
     String getScopeKind();
+    Integer getLine();
+    Integer getEnd();
 }

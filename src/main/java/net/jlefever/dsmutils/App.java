@@ -1,5 +1,8 @@
 package net.jlefever.dsmutils;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -9,8 +12,10 @@ import net.jlefever.dsmutils.churn.ChangeImpl;
 import net.jlefever.dsmutils.churn.GetChanges;
 import net.jlefever.dsmutils.churn.db.StoreChanges;
 import net.jlefever.dsmutils.churn.db.StoreCommits;
+import net.jlefever.dsmutils.ctags.GetTags;
 import net.jlefever.dsmutils.ctags.TreeTagBuilder;
 import net.jlefever.dsmutils.ctags.db.StoreRootTag;
+import net.jlefever.dsmutils.ctags.db.UpdateLinenos;
 import net.jlefever.dsmutils.db.RefreshMatViews;
 import net.jlefever.dsmutils.db.StoreRepo;
 import net.jlefever.dsmutils.depends.GetEntityIdMap;
@@ -18,9 +23,6 @@ import net.jlefever.dsmutils.depends.StoreAllDeps;
 import net.jlefever.dsmutils.depends.external.GetDepsFromDepends;
 import net.jlefever.dsmutils.git.GitDriver;
 import net.jlefever.dsmutils.ir.EntityHasherImpl;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 public class App
 {
@@ -56,17 +58,20 @@ public class App
         var flatChanges = new GetChanges(repo.getDir(), repoRev, pathFilter, 150, 30).execute();
         var builder = new TreeTagBuilder();
         var changes = flatChanges.stream().map(c -> new ChangeImpl<>(builder.add(c.getTag()), c.getRev(), c.getChurn())).collect(toList());
-        var roots = builder.build();
+        builder.build();
 
         var repoId = new StoreRepo(db).call(repoName, repoUrl, repoUrl, repoRev);
 
-        for (var root : roots)
+        for (var root : builder.getRoots())
         {
             new StoreRootTag(db).call(repoId, root);
         }
 
         new StoreCommits(db).call(repoId, changes.stream().map(c -> c.getRev()).collect(toSet()));
         new StoreChanges(db, new EntityHasherImpl()).call(changes);
+
+        var tags = new GetTags("ctags").call(repo.getDir(), allowedPaths);
+        new UpdateLinenos(db, new EntityHasherImpl()).call(tags);
 
         try (var con = db.open())
         {

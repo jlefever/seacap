@@ -9,14 +9,23 @@ public class TagImpl implements Tag
     private final String path;
     private final String scope;
     private final String scopeKind;
+    private final Integer line;
+    private final Integer end;
 
     public TagImpl(String name, String kind, String path, String scope, String scopeKind)
+    {
+        this(name, kind, path, scope, scopeKind, null, null);
+    }
+
+    public TagImpl(String name, String kind, String path, String scope, String scopeKind, Integer line, Integer end)
     {
         this.name = name;
         this.kind = kind;
         this.path = path;
         this.scope = scope;
         this.scopeKind = scopeKind;
+        this.line = line;
+        this.end = end;
     }
 
     public String getName()
@@ -84,6 +93,16 @@ public class TagImpl implements Tag
         }
 
         return this.scopeKind;
+    }
+
+    public Integer getLine()
+    {
+        return this.line;
+    }
+
+    public Integer getEnd()
+    {
+        return this.end;
     }
 
     @Override

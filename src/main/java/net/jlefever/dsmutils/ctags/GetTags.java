@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -18,7 +19,7 @@ public class GetTags
         this.ctagsBin = ctagsBin;
     }
 
-    public List<TreeTag> call(String dir, List<String> paths) throws IOException
+    public Collection<TreeTag> call(String dir, List<String> paths) throws IOException
     {
         var args = new ArrayList<String>();
         args.add(this.ctagsBin);
@@ -48,6 +49,7 @@ public class GetTags
             tags.add(tag);
         });
 
-        return tags.build();
+        tags.build();
+        return tags.getTrees();
     }
 }

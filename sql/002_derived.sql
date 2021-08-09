@@ -82,10 +82,10 @@ CREATE FUNCTION closed_entities_of(dep_ids INT[]) RETURNS SETOF entities AS
 $$
 WITH RECURSIVE ids AS (SELECT id FROM entities_of(dep_ids)),
 ancestory AS (
-    SELECT id, parent_id, repo_id, name, kind
+    SELECT id, parent_id, repo_id, name, kind, linenos
     FROM entities WHERE id IN (SELECT id FROM ids)
     UNION ALL
-    SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind
+    SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind, P.linenos
     FROM ancestory C, entities P WHERE C.parent_id = P.id
 )
 SELECT DISTINCT * FROM ancestory ORDER BY id

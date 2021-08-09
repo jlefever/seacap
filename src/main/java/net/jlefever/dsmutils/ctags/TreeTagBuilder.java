@@ -1,6 +1,7 @@
 package net.jlefever.dsmutils.ctags;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class TreeTagBuilder
         return tree;
     }
 
-    public List<TreeTag> build()
+    public void build()
     {
         refresh();
 
@@ -31,8 +32,16 @@ public class TreeTagBuilder
         {
             throw new RuntimeException("Found invalid tree");
         }
+    }
 
+    public Collection<TreeTag> getRoots()
+    {
         return findRoots();
+    }
+
+    public Collection<TreeTag> getTrees()
+    {
+        return this.trees.values();
     }
 
     private void refresh()

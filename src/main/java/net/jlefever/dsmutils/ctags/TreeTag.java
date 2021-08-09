@@ -53,15 +53,15 @@ public class TreeTag implements Tree<Tag>, Tag, Entity
         return this.getInner().getScopeKind();
     }
 
-    // public Integer getLine()
-    // {
-    //     return this.getInner().getLine();
-    // }
+    public Integer getLine()
+    {
+        return this.getInner().getLine();
+    }
 
-    // public Integer getEnd()
-    // {
-    //     return this.getInner().getEnd();
-    // }
+    public Integer getEnd()
+    {
+        return this.getInner().getEnd();
+    }
 
     public Tag getInner()
     {
