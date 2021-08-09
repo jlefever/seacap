@@ -2,13 +2,14 @@ package net.jlefever.dsmutils.ctags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TreeTagBuilder
 {
     private final Map<TagImpl, TreeTag> trees = new HashMap<TagImpl, TreeTag>();
-    private boolean isDirty = false;
 
     public TreeTag add(TagImpl tag)
     {
@@ -19,7 +20,6 @@ public class TreeTagBuilder
 
         var tree = new TreeTag(tag);
         this.trees.put(tag, tree);
-        this.isDirty = true;
         return tree;
     }
 
@@ -37,33 +37,39 @@ public class TreeTagBuilder
 
     private void refresh()
     {
-        if (!this.isDirty)
+        var cohorts = this.trees.values().stream().collect(Collectors.groupingBy(x -> x.getPath()));
+
+        for (var cohort : cohorts.values())
         {
-            return;
+            refreshCohort(cohort);
+        }
+    }
+
+    private void refreshCohort(List<TreeTag> cohort)
+    {
+        var queue = new LinkedList<TreeTag>();
+
+        for (var tag : cohort)
+        {
+            if (!tag.hasScope())
+            {
+                queue.add(tag);
+            }
         }
 
-        for (var orphan : this.trees.values())
+        while (!queue.isEmpty())
         {
-            if (orphan.hasParent())
-            {
-                continue;
-            }
+            var parent = queue.poll();
 
-            for (var tree : this.trees.values())
+            for (var tag : cohort)
             {
-                if (!tree.isScopeOf(orphan))
+                if (!tag.hasParent() && parent.isScopeOf(tag))
                 {
-                    continue;
+                    tag.setParent(parent);
+                    queue.push(tag);
                 }
-
-                // Could there be more than one parent?
-                orphan.setParent(tree);
-                this.refresh();
-                return;
             }
         }
-
-        this.isDirty = false;
     }
 
     private List<TreeTag> findRoots()
