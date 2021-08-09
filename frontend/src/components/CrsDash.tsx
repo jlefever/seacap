@@ -6,9 +6,11 @@ import CrsDto from "../dtos/CrsDto";
 import Breadcrumb from "./Breadcrumb";
 import RepoDto from "../dtos/RepoDto";
 import GithubLink from "./GithubLink";
-import { createChanges, createDeps, createEntities, isM2m } from "../util";
+import { createChanges, createDeps, createEntities, Dep, isM2m } from "../util";
 import EntityDiv from "./EntityDiv";
 import _ from "lodash";
+
+import KindFilter from "./KindFilter";
 
 export interface CrsDashProps {
     repoName: string;
@@ -18,12 +20,14 @@ export interface CrsDashProps {
 interface CrsDashState {
     repo?: RepoDto;
     crs?: CrsDto;
+    allowedEntityKinds: string[];
+    allowedDepKinds: string[];
 }
 
 export default class CrsDash extends React.Component<CrsDashProps, CrsDashState> {
     constructor(props: CrsDashProps) {
         super(props);
-        this.state = {};
+        this.state = { allowedEntityKinds: [], allowedDepKinds: [] };
     }
 
     override componentDidMount() {
@@ -34,7 +38,7 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
 
     override render() {
         const { repoName, num } = this.props;
-        const { crs, repo } = this.state;
+        const { crs, repo, allowedEntityKinds, allowedDepKinds } = this.state;
         const name = `crossing-${num}`;
 
         const header = <>
@@ -48,12 +52,33 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
 
         const { summary: sum } = crs;
 
+        function isAllowedDep(dep: Dep) {
+            return allowedEntityKinds.includes(dep.source.kind) && allowedEntityKinds.includes(dep.target.kind);
+        }
+
+        function isNonEmpty(dep: Dep) {
+            return dep.dtos.length !== 0;
+        }
+
+        function filterDtos(dep: Dep) {
+            return new Dep(dep.source, dep.target, dep.dtos.filter(d => allowedDepKinds.includes(d.kind)));
+        }
+
         const entities = createEntities(crs.entities);
         const changes = createChanges(entities, crs.changes);
-        const inDeps = createDeps(entities, crs.inDeps);
-        const evoInDeps = createDeps(entities, crs.evoInDeps);
-        const outDeps = createDeps(entities, crs.outDeps);
-        const evoOutDeps = createDeps(entities, crs.evoOutDeps);
+        let inDeps = createDeps(entities, crs.inDeps);
+        let evoInDeps = createDeps(entities, crs.evoInDeps);
+        let outDeps = createDeps(entities, crs.outDeps);
+        let evoOutDeps = createDeps(entities, crs.evoOutDeps);
+
+        const entityKinds = _.sortBy(_.uniq(_.map(Array.from(entities.values()), e => e.kind)));
+        const deps = _.concat(Array.from(inDeps.values()), Array.from(outDeps.values()));
+        const depKinds = _.sortBy(_.uniq(_.flatMap(deps, d => d.dtos.map(dto => dto.kind))));
+
+        inDeps = inDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
+        evoInDeps = evoInDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
+        outDeps = outDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
+        evoOutDeps = evoOutDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
 
         // console.log(entities);
         // console.log(inDeps);
@@ -72,6 +97,31 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
 
         return <>
             {header}
+            <div className="columns">
+                <div className="column">
+                    <article className="message">
+                        <div className="message-header">
+                            <p>Entity Types</p>
+                            <span className="icon"><i className="fas fa-sitemap"></i></span>
+                        </div>
+                        <div className="message-body">
+                            <KindFilter kinds={entityKinds} setSelected={s => this.setState({ allowedEntityKinds: s })} selected={this.state.allowedEntityKinds} />
+                        </div>
+                    </article>
+                </div>
+                <div className="column">
+                    <article className="message">
+                        <div className="message-header">
+                            <p>Dependency Types</p>
+                            <span className="icon"><i className="fas fa-sitemap"></i></span>
+                        </div>
+                        <div className="message-body">
+                            <KindFilter kinds={depKinds} setSelected={s => this.setState({ allowedDepKinds: s })} selected={this.state.allowedDepKinds} />
+                        </div>
+                    </article>
+                </div>
+            </div>
+
             <h2 className="title is-4">Description</h2>
             <div className="content">
                 The file <strong><GithubLink path={sum.center} repo={repo} /></strong> depends on <strong>{sum.fanout}</strong> files and has co-changed at least twice with <strong>{sum.evoFanout}</strong> of them. Additionally, this file is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is a crossing with a total of <strong>{sum.size}</strong> files.

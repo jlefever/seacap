@@ -1,0 +1,14 @@
+div.checkbox-list {
+    display: grid;
+    gap: 0.75rem;
+    grid-auto-flow: column;
+}
+
+div.checkbox-list-item {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* span.checkbox-list-entry + span.checkbox-list-entry {
+    margin-left: 1rem;
+} */
