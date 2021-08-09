@@ -30,6 +30,13 @@ module.exports = {
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
     },
+    devServer: {
+        contentBase: path.join(__dirname, "dist"),
+        compress: true,
+        port: 9000,
+        historyApiFallback: true,
+        proxy: { "/dump": "http://localhost:8000" }
+    },
     output: {
         filename: "bundle.js",
         path: path.resolve(__dirname, "dist"),
