@@ -22,7 +22,6 @@ public class EntityHasherImpl implements EntityHasher
         if (entity.hasParent())
         {
             hasher.putBytes(this.hash(entity.getParent()).asBytes());
-            
         }
 
         hasher.putString(entity.getName() + "," + entity.getKind(), Charsets.UTF_8);
