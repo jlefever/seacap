@@ -1,11 +1,15 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
 module.exports = {
     entry: "./src/index.ts",
     mode: "development",
     devtool: "inline-source-map",
-    plugins: [new HtmlWebpackPlugin({ title: "Demo" })],
+    plugins: [
+        new HtmlWebpackPlugin({ title: "Demo" }),
+        new CopyWebpackPlugin({ patterns: [{ from: "../.dump/", to: "dump/" }] })
+    ],
     module: {
         rules: [
             {
@@ -34,8 +38,8 @@ module.exports = {
         contentBase: path.join(__dirname, "dist"),
         compress: true,
         port: 9000,
-        historyApiFallback: true,
-        proxy: { "/dump": "http://localhost:8000" }
+        historyApiFallback: true
+        // proxy: { "/dump": "http://localhost:8000" }
     },
     output: {
         filename: "bundle.js",
