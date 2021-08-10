@@ -7,3 +7,4 @@ pgdata/
 target/
 .assets/
 .dump/
+depends.log
