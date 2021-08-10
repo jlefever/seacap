@@ -412,7 +412,13 @@ SELECT DISTINCT
     CD.commit_ids,
     CD.change_ids
 FROM find_fl_cdeps(dep_kinds) CD
-WHERE CD.dep_count = 0 AND CD.cochange >= min_cochange
+JOIN entities SE ON SE.name = CD.src
+JOIN entities TE ON TE.name = CD.tgt
+WHERE
+    CD.dep_count = 0 AND
+    CD.cochange >= min_cochange AND
+    SE.linenos IS NOT NULL AND
+    TE.linenos IS NOT NULL
 ORDER BY CD.repo_id, CD.cochange DESC, x, y
 $$
 LANGUAGE SQL IMMUTABLE;
