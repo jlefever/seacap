@@ -13,7 +13,12 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.io.FileUtils;
 import org.sql2o.Sql2o;
 
+import net.jlefever.dsmutils.dump.db.GetChanges;
 import net.jlefever.dsmutils.dump.db.GetCrss;
+import net.jlefever.dsmutils.dump.db.GetDepKinds;
+import net.jlefever.dsmutils.dump.db.GetDeps;
+import net.jlefever.dsmutils.dump.db.GetEntities;
+import net.jlefever.dsmutils.dump.db.GetEntityKinds;
 import net.jlefever.dsmutils.dump.db.GetRepos;
 import net.jlefever.dsmutils.dump.db.GetUifs;
 
@@ -24,39 +29,49 @@ public class DumpApp
     public static void main(String[] args) throws IOException
     {
         final Sql2o db = new Sql2o("jdbc:postgresql://localhost:5433/postgres", "postgres", "password");
-        final String dumpDir = "dump";
+        final String dumpDir = ".dump";
         clean(dumpDir);
 
         var repos = new GetRepos(db).call();
         write(repos, Paths.get(dumpDir, "repos.json"));
 
+        write(new GetEntityKinds(db).call(), Paths.get(dumpDir, "entity_kinds.json"));
+        write(new GetDepKinds(db).call(), Paths.get(dumpDir, "dep_kinds.json"));
+
         for (var repo : repos)
         {
-            Files.createDirectory(Paths.get(dumpDir, repo.getName()));
+            // Create dir
+            var repoPath = Paths.get(dumpDir, repo.getName());
+            Files.createDirectory(repoPath);
+
+            // Export models
+            write(new GetEntities(db).call(repo.getId()), repoPath.resolve("entities.json"));
+            write(new GetDeps(db).call(repo.getId()), repoPath.resolve("deps.json"));
+            write(new GetChanges(db).call(repo.getId()), repoPath.resolve("changes.json"));
 
             // Unstable Interfaces
-            Files.createDirectory(Paths.get(dumpDir, repo.getName(), "uif"));
+            Files.createDirectory(repoPath.resolve("uif"));
             var uifs = new GetUifs(db).call(repo.getId());
 
             for (var uif : uifs)
             {
-                write(uif, Paths.get(dumpDir, repo.getName(), "uif", uif.getNum() + ".json"));
+                write(uif, repoPath.resolve(Paths.get("uif", uif.getNum() + ".json")));
             }
 
             var uifSums = uifs.stream().map(u -> u.getSummary()).collect(Collectors.toList());
-            write(uifSums, Paths.get(dumpDir, repo.getName(), "uif", "index.json"));
+            write(uifSums, repoPath.resolve(Paths.get("uif", "index.json")));
 
             // Crossings
-            Files.createDirectory(Paths.get(dumpDir, repo.getName(), "crs"));
+            Files.createDirectory(repoPath.resolve("crs"));
             var crss = new GetCrss(db).call(repo.getId());
             
             for (var crs : crss)
             {
-                write(crs, Paths.get(dumpDir, repo.getName(), "crs", crs.getNum() + ".json"));
+                write(crs, repoPath.resolve(Paths.get("crs", crs.getNum() + ".json")));
             }
 
             var crsSums = crss.stream().map(c -> c.getSummary()).collect(Collectors.toList());
-            write(crsSums, Paths.get(dumpDir, repo.getName(), "crs", "index.json"));
+            write(crsSums, repoPath.resolve(Paths.get("crs", "index.json")));
         }
     }
 

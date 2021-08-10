@@ -38,10 +38,10 @@ public class GetUifs
         {
             var uif = new Uif(new UifSummary(dto.getNum(), dto.getTgt(), dto.getFanin(), dto.getEvoFanin(), dto.getSize()));
 
-            uif.setChanges(new GetChanges(this.db).call(dto.getChangeIds()));
+            uif.setChanges(new GetChangesByIds(this.db).call(dto.getChangeIds()));
 
-            uif.setEvoInDeps(new GetDeps(db).call(dto.getEvoIndepIds()));
-            uif.setInDeps(new GetDeps(db).call(dto.getIndepIds()));
+            uif.setEvoInDeps(new GetDepsByIds(db).call(dto.getEvoIndepIds()));
+            uif.setInDeps(new GetDepsByIds(db).call(dto.getIndepIds()));
 
             var depIds = new ArrayList<Integer>();
             depIds.addAll(dto.getIndepIds());
