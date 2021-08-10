@@ -63,13 +63,13 @@ export default class UifDash extends React.Component<UifDashProps, UifDashState>
             {header}
             <h2 className="title is-4">Description</h2>
             <div className="content">
-                The file <strong><GithubLink path={sum.tgt} repo={repo} /></strong> is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is an unstable interface with a total of <strong>{sum.size}</strong> files.
+                The file <strong><GithubLink item={sum.tgt} repo={repo} /></strong> is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is an unstable interface with a total of <strong>{sum.size}</strong> files.
             </div>
 
             <div className="columns">
                 <div className="column">
                     <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Incoming Files</h2>
-                    <ul>{evoInFiles.map(f => <li key={f.id}><GithubLink path={f.name} repo={repo} /></li>)}</ul>
+                    <ul>{evoInFiles.map(f => <li key={f.id}><GithubLink item={f.name} repo={repo} /></li>)}</ul>
                 </div>
             </div>
 

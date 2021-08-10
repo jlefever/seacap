@@ -23,7 +23,7 @@ export default class RepoTable extends React.Component<{}, RepoTableState> {
     override render() {
         return <>
             <h1 className="title is-3">home</h1>
-            <table className="table" style={{ marginLeft: "auto", marginRight: "auto" }}>
+            <table className="table">
                 <thead>
                     <tr>
                         <th>ID</th>

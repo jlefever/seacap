@@ -124,17 +124,17 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
 
             <h2 className="title is-4">Description</h2>
             <div className="content">
-                The file <strong><GithubLink path={sum.center} repo={repo} /></strong> depends on <strong>{sum.fanout}</strong> files and has co-changed at least twice with <strong>{sum.evoFanout}</strong> of them. Additionally, this file is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is a crossing with a total of <strong>{sum.size}</strong> files.
+                The file <strong><GithubLink item={sum.center} repo={repo} /></strong> depends on <strong>{sum.fanout}</strong> files and has co-changed at least twice with <strong>{sum.evoFanout}</strong> of them. Additionally, this file is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is a crossing with a total of <strong>{sum.size}</strong> files.
             </div>
 
             <div className="columns">
                 <div className="column">
                     <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Outgoing Files</h2>
-                    <ul>{evoOutFiles.map(f => <li key={f.id}><GithubLink path={f.name} repo={repo} /></li>)}</ul>
+                    <ul>{evoOutFiles.map(f => <li key={f.id}><GithubLink item={f.name} repo={repo} /></li>)}</ul>
                 </div>
                 <div className="column">
                     <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Incoming Files</h2>
-                    <ul>{evoInFiles.map(f => <li key={f.id}><GithubLink path={f.name} repo={repo} /></li>)}</ul>
+                    <ul>{evoInFiles.map(f => <li key={f.id}><GithubLink item={f.name} repo={repo} /></li>)}</ul>
                 </div>
             </div>
 
@@ -145,11 +145,11 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
             <div className="columns">
                 <div className="column">
                     <h2 className="title is-6">Outgoing Calls</h2>
-                    <ul>{Object.entries(callMethods).map(e => <li key={e[0]}>{entities.get(parseInt(e[0]))?.name} <span>(calls <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
+                    <ul>{Object.entries(callMethods).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(calls <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
                 </div>
                 <div className="column">
                     <h2 className="title is-6">Incoming Calls</h2>
-                    <ul>{Object.entries(calledByMethods).map(e => <li key={e[0]}>{entities.get(parseInt(e[0]))?.name} <span>(called by <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
+                    <ul>{Object.entries(calledByMethods).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(called by <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
                 </div>
             </div>
 
@@ -163,9 +163,9 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
                     <ul>
                         {evoOutDeps.filter(isM2m).map(d => (
                             <li>
-                                {d.source.name}
+                                <GithubLink item={d.source} repo={repo} />
                                 <span className="icon"><i className="fas fa-arrow-right"></i></span>
-                                {d.target.name} (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
+                                <GithubLink item={d.target} repo={repo} /> (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
                             </li>
                         ))}
                     </ul>
@@ -175,9 +175,9 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
                     <ul>
                         {evoInDeps.filter(isM2m).map(d => (
                             <li>
-                                {d.source.name}
+                                <GithubLink item={d.source} repo={repo} />
                                 <span className="icon"><i className="fas fa-arrow-right"></i></span>
-                                {d.target.name} (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
+                                <GithubLink item={d.target} repo={repo} /> (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
                             </li>
                         ))}
                     </ul>

@@ -22,7 +22,7 @@ export default (props: EntityDivProps) => {
         return <nav className="breadcrumb has-arrow-separator is-small">
             <ul>
                 <li>
-                    <GithubLink path={ancestory[0].name} repo={props.repo} />
+                    <GithubLink item={ancestory[0].name} repo={props.repo} />
                 </li>
             </ul>
         </nav>
@@ -34,7 +34,7 @@ export default (props: EntityDivProps) => {
 
     return <nav className="breadcrumb has-arrow-separator is-small">
         <ul>
-            <li><GithubLink path={file.name} repo={props.repo} /></li>
+            <li><GithubLink item={file.name} repo={props.repo} /></li>
             {middle.map(m => <li key={m.id} className="is-active"><a>{m.name}</a></li>)}
             <li className="is-active"><a>{current.name}</a></li>
         </ul>

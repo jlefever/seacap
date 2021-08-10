@@ -2,6 +2,11 @@ import ChangeDto from "./dtos/ChangeDto";
 import DepDto from "./dtos/DepDto";
 import EntityDto from "./dtos/EntityDto";
 
+export function getShortFilename(path: string) {
+    const arr = path.split("/");
+    return arr[arr.length - 1];
+}
+
 export class Entity {
     private readonly _dto: EntityDto;
     private readonly _children: Entity[];
@@ -35,6 +40,18 @@ export class Entity {
         return this._parent;
     }
 
+    get exists() {
+        return !(this._dto.fromLineno === undefined || this._dto.fromLineno === null);
+    }
+
+    get linenos(): [number, number] | null {
+        if (!this.exists) {
+            return null;
+        }
+        
+        return [this._dto.fromLineno!, this._dto.toLineno!];
+    }
+
     get children(): readonly Entity[] {
         return this._children;
     }
@@ -59,6 +76,20 @@ export class Entity {
         const arr = this.parent.ancestory;
         arr.push(this);
         return arr;
+    }
+
+    get displayName(): string {
+        if (this.kind === "file") {
+            return this.name;
+        }
+
+        return this.ancestory.map(e => {
+            if (e.kind === "file") {
+                return getShortFilename(e.name);
+            }
+
+            return `${this.name} [${this.kind[0]}]`;
+        }).join(" > ");
     }
 
     cocommits = (other: Entity) => {

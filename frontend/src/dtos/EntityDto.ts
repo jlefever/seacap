@@ -12,4 +12,6 @@ export default interface EntityDto {
     parentId?: number;
     name: string;
     kind: EntityKind;
+    fromLineno?: number;
+    toLineno?: number;
 };

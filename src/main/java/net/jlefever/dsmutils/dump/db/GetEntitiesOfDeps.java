@@ -19,7 +19,7 @@ public class GetEntitiesOfDeps
 
     public List<Entity> call(List<Integer> depIds)
     {
-        var sql = "SELECT id, parent_id AS parentId, name, kind "
+        var sql = "SELECT id, parent_id AS parentId, name, kind, (linenos).a AS fromLineno, (linenos).b AS toLineno "
                 + "FROM closed_entities_of('{" + StringUtils.join(",", depIds) + "}')";
 
         try (var con = this.db.open())
