@@ -39,7 +39,6 @@ module.exports = {
         compress: true,
         port: 9000,
         historyApiFallback: true
-        // proxy: { "/dump": "http://localhost:8000" }
     },
     output: {
         filename: "bundle.js",
