@@ -55,7 +55,7 @@ public class GetChanges
             var churn = Integer.parseInt(arr[1]);
             var tag = gson.fromJson(arr[2], TagImpl.class);
 
-            if (tag.getRealKind().equals("enumConstant") || tag.getRealKind().equals("package"))
+            if (tag.getRealKind().equals("package"))
             {
                 return;
             }

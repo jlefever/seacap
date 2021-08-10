@@ -2,24 +2,25 @@ package net.jlefever.dsmutils.depends;
 
 import java.util.Objects;
 
-public class Dep {
-    private final Entity source;
-    private final Entity target;
+public class Dep
+{
+    private final ExternalEntity source;
+    private final ExternalEntity target;
     private final String kind;
 
-    public Dep(Entity source, Entity target, String kind)
+    public Dep(ExternalEntity source, ExternalEntity target, String kind)
     {
         this.source = source;
         this.target = target;
         this.kind = kind;
     }
 
-    public Entity getSource()
+    public ExternalEntity getSource()
     {
         return source;
     }
 
-    public Entity getTarget()
+    public ExternalEntity getTarget()
     {
         return target;
     }

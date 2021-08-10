@@ -21,29 +21,44 @@ public class StoreRootTag
             throw new RuntimeException("`tag` must be a root");
         }
 
+        if (!tag.getKind().equals("file"))
+        {
+            throw new RuntimeException("`tag` must be a file");
+        }
+
         try (var con = this.db.open())
         {
-            insert(con, repoId, null, tag);
+            insertFile(con, repoId, tag);
         }
     }
 
-    private void insert(Connection con, int repoId, Integer parentId, TreeTag tag)
+    private void insertFile(Connection con, int repoId, TreeTag tag)
     {
-        var sql = "INSERT INTO entities (repo_id, parent_id, name, kind) "
-                + "VALUES (:repo_id, :parent_id, :name, :kind) "
-                + "RETURNING id";
-
-        var id = con.createQuery(sql)
-            .addParameter("repo_id", repoId)
-            .addParameter("parent_id", parentId)
-            .addParameter("name", tag.getInner().getName())
-            .addParameter("kind", tag.getInner().getKind())
-            .executeAndFetch(Integer.class)
-            .get(0);
+        var id = con.createQuery("SELECT insert_file(:name, :repo_id)")
+                    .addParameter("repo_id", repoId)
+                    .addParameter("name", tag.getInner().getName())
+                    .executeAndFetch(Integer.class).get(0);
 
         for (var child : tag.getChildren())
         {
-            insert(con, repoId, id, child);
+            insertChild(con, repoId, id, child);
+        }
+    }
+
+    private void insertChild(Connection con, int repoId, int parentId, TreeTag tag)
+    {
+        var sql = "SELECT insert_child_entity(:parent_id, :kind, :name, :repo_id)";
+
+        var id = con.createQuery(sql)
+                    .addParameter("repo_id", repoId)
+                    .addParameter("name", tag.getInner().getName())
+                    .addParameter("parent_id", parentId)
+                    .addParameter("kind", tag.getInner().getKind())
+                    .executeAndFetch(Integer.class).get(0);
+
+        for (var child : tag.getChildren())
+        {
+            insertChild(con, repoId, id, child);
         }
     }
 }

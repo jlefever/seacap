@@ -98,12 +98,38 @@ SELECT CARDINALITY(files_of(dep_ids))
 $$
 LANGUAGE SQL IMMUTABLE;
 
-CREATE VIEW entity_digests AS
+CREATE MATERIALIZED VIEW entity_digests AS
 WITH RECURSIVE ancestory AS (
     SELECT id, parent_id, digest(name || ',' || kind, 'sha256')
     FROM entities WHERE parent_id IS NULL
     UNION ALL
     SELECT C.id, C.parent_id, digest(P.digest || decode(C.name || ',' || C.kind, 'escape'), 'sha256')
+    FROM ancestory P, entities C WHERE C.parent_id = P.id
+)
+SELECT id AS entity_id, digest FROM ancestory;
+
+CREATE FUNCTION alt_entity_kind(kind TEXT) RETURNS TEXT AS
+$$
+SELECT CASE
+    WHEN kind = 'annotation' THEN 'type'
+    WHEN kind = 'class' THEN 'type'
+    WHEN kind = 'enum' THEN 'type'
+    WHEN kind = 'enumConstant' THEN 'var'
+    WHEN kind = 'field' THEN 'var'
+    WHEN kind = 'file' THEN 'file'
+    WHEN kind = 'interface' THEN 'type'
+    WHEN kind = 'method' THEN 'function'
+    WHEN kind = 'package' THEN 'package'
+END
+$$
+LANGUAGE SQL IMMUTABLE;
+
+CREATE MATERIALIZED VIEW entity_alt_digests AS
+WITH RECURSIVE ancestory AS (
+    SELECT id, parent_id, digest(name || ',' || alt_entity_kind(kind), 'sha256')
+    FROM entities WHERE parent_id IS NULL
+    UNION ALL
+    SELECT C.id, C.parent_id, digest(P.digest || decode(C.name || ',' || alt_entity_kind(C.kind), 'escape'), 'sha256')
     FROM ancestory P, entities C WHERE C.parent_id = P.id
 )
 SELECT id AS entity_id, digest FROM ancestory;
@@ -432,6 +458,8 @@ CREATE PROCEDURE refresh_mat_views() AS
 $$
 REFRESH MATERIALIZED VIEW filenames;
 REFRESH MATERIALIZED VIEW cochanges;
+REFRESH MATERIALIZED VIEW entity_digests;
+REFRESH MATERIALIZED VIEW entity_alt_digests;
 REFRESH MATERIALIZED VIEW uifs;
 REFRESH MATERIALIZED VIEW crss;
 REFRESH MATERIALIZED VIEW mvps;

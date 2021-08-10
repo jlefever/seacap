@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -19,7 +18,7 @@ public class GetTags
         this.ctagsBin = ctagsBin;
     }
 
-    public Collection<TreeTag> call(String dir, List<String> paths) throws IOException
+    public TreeTagBuilder call(String dir, List<String> paths) throws IOException
     {
         var args = new ArrayList<String>();
         args.add(this.ctagsBin);
@@ -41,7 +40,7 @@ public class GetTags
         {
             var tag = gson.fromJson(line, TagImpl.class);
 
-            if (tag.getRealKind().equals("enumConstant") || tag.getRealKind().equals("package"))
+            if (tag.getRealKind().equals("package"))
             {
                 return;
             }
@@ -50,6 +49,6 @@ public class GetTags
         });
 
         tags.build();
-        return tags.getTrees();
+        return tags;
     }
 }

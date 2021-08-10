@@ -18,9 +18,8 @@ import net.jlefever.dsmutils.ctags.db.StoreRootTag;
 import net.jlefever.dsmutils.ctags.db.UpdateLinenos;
 import net.jlefever.dsmutils.db.RefreshMatViews;
 import net.jlefever.dsmutils.db.StoreRepo;
-import net.jlefever.dsmutils.depends.GetEntityIdMap;
-import net.jlefever.dsmutils.depends.StoreAllDeps;
-import net.jlefever.dsmutils.depends.external.GetDepsFromDepends;
+import net.jlefever.dsmutils.depends.GetDepsFromDepends;
+import net.jlefever.dsmutils.depends.StoreDeps;
 import net.jlefever.dsmutils.git.GitDriver;
 import net.jlefever.dsmutils.ir.EntityHasherImpl;
 
@@ -50,16 +49,19 @@ public class App
     {
         System.out.println("Extracting from " + repoName + "...");
 
+        System.out.println("Cloning...");
         var git = new GitDriver("git", ".assets");
         var repo = git.clone(repoUrl);
         git.checkout(repo, repoRev);
         var allowedPaths = git.lsFiles(repo, pathFilter);
 
+        System.out.println("Using gitchurn to calculate changes...");
         var flatChanges = new GetChanges(repo.getDir(), repoRev, pathFilter, 150, 30).execute();
         var builder = new TreeTagBuilder();
         var changes = flatChanges.stream().map(c -> new ChangeImpl<>(builder.add(c.getTag()), c.getRev(), c.getChurn())).collect(toList());
         builder.build();
 
+        System.out.println("Storing changes...");
         var repoId = new StoreRepo(db).call(repoName, repoUrl, repoUrl, repoRev);
 
         for (var root : builder.getRoots())
@@ -68,16 +70,23 @@ public class App
         }
 
         new StoreCommits(db).call(repoId, changes.stream().map(c -> c.getRev()).collect(toSet()));
+        new RefreshMatViews(db).call();
         new StoreChanges(db, new EntityHasherImpl()).call(changes);
 
+        System.out.println("Storing existing ctags...");
         var tags = new GetTags("ctags").call(repo.getDir(), allowedPaths);
-        new UpdateLinenos(db, new EntityHasherImpl()).call(tags);
-
-        try (var con = db.open())
+        
+        for (var root : tags.getRoots())
         {
-            var ids = new GetEntityIdMap(repoId).execute(con);
-            var deps = new GetDepsFromDepends(repo.getDir(), "java").execute();
-            new StoreAllDeps(deps, ids, allowedPaths).execute(con);
+            new StoreRootTag(db).call(repoId, root);
         }
+
+        System.out.println("Updating line numbers...");
+        new RefreshMatViews(db).call();
+        new UpdateLinenos(db, new EntityHasherImpl()).call(tags.getTrees());
+
+        System.out.println("Running depends...");
+        var deps = new GetDepsFromDepends().call(repo.getDir(), "java", allowedPaths);
+        new StoreDeps(db, new EntityHasherImpl()).call(deps);
     }
 }

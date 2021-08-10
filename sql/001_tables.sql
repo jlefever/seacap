@@ -52,6 +52,47 @@ CREATE TABLE deps (
     CHECK (weight > 0)
 );
 
+CREATE FUNCTION insert_file(in_filename TEXT, in_repo_id INT) RETURNS INT AS
+$$
+DECLARE
+	entity_id INT;
+BEGIN
+	SELECT id INTO entity_id FROM entities E
+	WHERE
+		E.parent_id IS NULL AND
+		E.name = in_filename AND
+		E.kind = 'file' AND
+		E.repo_id = in_repo_id;
+	IF NOT FOUND THEN
+		INSERT INTO entities (repo_id, name, kind)
+		VALUES (in_repo_id, in_filename, 'file')
+		RETURNING id INTO entity_id;
+	END IF;
+	RETURN entity_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE FUNCTION insert_child_entity(in_parent_id INT, in_kind TEXT, in_name TEXT, in_repo_id INT) RETURNS INT AS
+$$
+DECLARE
+	entity_id INT;
+BEGIN
+	SELECT id INTO entity_id FROM entities E
+	WHERE
+		E.parent_id = in_parent_id AND
+		E.name = in_name AND
+		E.kind = in_kind AND
+		E.repo_id = in_repo_id;
+	IF NOT FOUND THEN
+		INSERT INTO entities (repo_id, parent_id, name, kind)
+		VALUES (in_repo_id, in_parent_id, in_name, in_kind)
+		RETURNING id INTO entity_id;
+	END IF;
+	RETURN entity_id;
+END;
+$$
+LANGUAGE plpgsql;
 
 
 -- CREATE MATERIALIZED VIEW uifs

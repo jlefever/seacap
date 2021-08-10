@@ -22,19 +22,28 @@ public class UpdateLinenos
     {
         var sql = "UPDATE entities E SET linenos = (:start, :end) "
                 + "FROM entity_digests ED "
-                + "WHERE ED.entity_id = E.id AND ED.digest = :hash";
+                + "WHERE ED.entity_id = E.id AND ED.digest = :hash "
+                + "RETURNING id";
 
         try (var con = this.db.open())
         {
             for (var tag : tags)
             {
-                var hash = this.hasher.hash(tag);
-
-                con.createQuery(sql)
-                    .addParameter("hash", hash.asBytes())
+                var res = con.createQuery(sql)
+                    .addParameter("hash", this.hasher.hash(tag))
                     .addParameter("start", tag.getLine())
                     .addParameter("end", tag.getEnd())
-                    .executeUpdate();
+                    .executeAndFetch(Integer.class);
+                
+                if (res.isEmpty())
+                {
+                    System.out.println("Warning: Failed to update entity with linenos");
+                }
+
+                if (res.size() > 1)
+                {
+                    throw new RuntimeException();
+                }
             }
         }
     }
