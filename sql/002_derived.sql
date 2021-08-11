@@ -135,18 +135,29 @@ WITH RECURSIVE ancestory AS (
 SELECT id AS entity_id, digest FROM ancestory;
 
 CREATE MATERIALIZED VIEW cochanges AS
+WITH cocommits AS (
+	SELECT
+		XE.repo_id,
+		X.entity_id AS x_id,
+		Y.entity_id AS y_id,
+		sort(ARRAY_AGG(X.commit_id) & ARRAY_AGG(Y.commit_id)) AS commit_ids
+	FROM changes X
+	JOIN changes Y ON X.commit_id = Y.commit_id
+	JOIN entities XE ON X.entity_id = XE.id
+	WHERE X.entity_id <> Y.entity_id
+	GROUP BY XE.repo_id, X.entity_id, Y.entity_id
+)
 SELECT
-    XE.repo_id,
-    X.entity_id AS x_id,
-    Y.entity_id AS y_id,
-    CAST(COUNT(*) AS INT) AS cochange,
-    sort(ARRAY_AGG(X.id)) AS commit_ids,
-    sort(array_cat(ARRAY_AGG(X.id), ARRAY_AGG(Y.id))) AS change_ids
-FROM changes X
-JOIN changes Y ON X.commit_id = Y.commit_id
-JOIN entities XE ON X.entity_id = XE.id
-WHERE X.entity_id <> Y.entity_id
-GROUP BY XE.repo_id, X.entity_id, Y.entity_id
+	CC.repo_id,
+	CC.x_id,
+	CC.y_id,
+	CARDINALITY(CC.commit_ids) AS cochange,
+	CC.commit_ids,
+	(
+        SELECT ARRAY_AGG(C.id) FROM changes C
+        WHERE C.commit_id = ANY(CC.commit_ids) AND (C.entity_id = CC.x_id OR C.entity_id = CC.y_id)
+    ) AS change_ids
+FROM cocommits CC
 ORDER BY cochange DESC;
 
 CREATE TYPE pdep AS (
@@ -438,8 +449,8 @@ SELECT DISTINCT
     CD.commit_ids,
     CD.change_ids
 FROM find_fl_cdeps(dep_kinds) CD
-JOIN entities SE ON SE.name = CD.src
-JOIN entities TE ON TE.name = CD.tgt
+JOIN entities SE ON SE.name = CD.src AND SE.repo_id = CD.repo_id AND SE.parent_id IS NULL
+JOIN entities TE ON TE.name = CD.tgt AND TE.repo_id = CD.repo_id AND TE.parent_id IS NULL
 WHERE
     CD.dep_count = 0 AND
     CD.cochange >= min_cochange AND
