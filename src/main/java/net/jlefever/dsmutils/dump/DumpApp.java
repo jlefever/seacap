@@ -13,14 +13,15 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.io.FileUtils;
 import org.sql2o.Sql2o;
 
+import net.jlefever.dsmutils.dump.db.GetUifs;
 import net.jlefever.dsmutils.dump.db.GetChanges;
+import net.jlefever.dsmutils.dump.db.GetClqs;
 import net.jlefever.dsmutils.dump.db.GetCrss;
 import net.jlefever.dsmutils.dump.db.GetDepKinds;
 import net.jlefever.dsmutils.dump.db.GetDeps;
 import net.jlefever.dsmutils.dump.db.GetEntities;
 import net.jlefever.dsmutils.dump.db.GetEntityKinds;
 import net.jlefever.dsmutils.dump.db.GetRepos;
-import net.jlefever.dsmutils.dump.db.GetUifs;
 
 public class DumpApp
 {
@@ -72,6 +73,18 @@ public class DumpApp
 
             var crsSums = crss.stream().map(c -> c.getSummary()).collect(Collectors.toList());
             write(crsSums, repoPath.resolve(Paths.get("crs", "index.json")));
+
+            // Cliques
+            Files.createDirectory(repoPath.resolve("clq"));
+            var clqs = new GetClqs(db).call(repo.getId());
+            
+            for (var clq : clqs)
+            {
+                write(clq, repoPath.resolve(Paths.get("clq", clq.getNum() + ".json")));
+            }
+
+            var clqSums = clqs.stream().map(c -> c.getSummary()).collect(Collectors.toList());
+            write(clqSums, repoPath.resolve(Paths.get("clq", "index.json")));
         }
     }
 

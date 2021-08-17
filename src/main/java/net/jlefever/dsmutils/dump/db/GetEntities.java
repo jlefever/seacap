@@ -18,7 +18,8 @@ public class GetEntities
 
     public List<Entity> call(int repoId)
     {
-        var sql = "SELECT id, parent_id AS parentId, name, kind FROM entities WHERE repo_id = :repo_id";
+        var sql = "SELECT id, parent_id AS parentId, name, kind, (linenos).a AS fromLineno, (linenos).b AS toLineno "
+                + "FROM entities WHERE repo_id = :repo_id";
 
         try (var con = this.db.open())
         {
