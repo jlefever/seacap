@@ -8,10 +8,11 @@ import { Link, Route, BrowserRouter, Switch } from "react-router-dom";
 import Repo from "./Repo";
 import CrsDash from "./CrsDash";
 import UifDash from "./UifDash";
+import MaintPage from "./MaintPage";
 
 export default () => <section className="section mt-1 pt-1">
     <BrowserRouter>
-        <div className="container is-max-widescreen">
+        <div className="container is-fullhd">
             <nav aria-label="main navigation" className="navbar is-white mt-5 mb-5" role="navigation">
                 <div className="navbar-brand">
                     <Link to="/" className="navbar-item has-text-weight-bold"></Link>
@@ -22,6 +23,9 @@ export default () => <section className="section mt-1 pt-1">
             </nav>
 
             <Switch>
+                <Route path="/:name/maintenance" render={props => {
+                    return <MaintPage repoName={props.match.params.name} />;
+                }} />
                 <Route path="/:name/crossing-:num" render={props => {
                     return <CrsDash repoName={props.match.params.name} num={parseInt(props.match.params.num)} />
                 }} />

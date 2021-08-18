@@ -23,19 +23,23 @@ export default class RepoTable extends React.Component<{}, RepoTableState> {
     override render() {
         return <>
             <h1 className="title is-3">home</h1>
-            <table className="table">
+            <table className="table is-striped is-fullwidth">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
                         <th>Version</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {this.state.repos.map(r => <tr key={r.id}>
                         <td>{r.id}</td>
-                        <td><Link to={`/${r.name}`}>{r.name}</Link></td>
+                        <td>{r.name}</td>
                         <td>{r.leadRef}</td>
+                        <td><Link to={`/${r.name}`}>anti-patterns</Link></td>
+                        <td><Link to={`/${r.name}/maintenance`}>maintenance</Link></td>
                     </tr>)}
                 </tbody>
             </table>

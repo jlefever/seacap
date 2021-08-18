@@ -1,12 +1,17 @@
-import "bulma/css/bulma.css";
-import _ from "lodash";
 import React from "react";
+
+import "bulma/css/bulma.css";
 import Client from "../Client";
-import RepoDto from "../dtos/RepoDto";
 import UifDto from "../dtos/UifDto";
-import { createChanges, createDeps, createEntities, isM2m } from "../util";
 import Breadcrumb from "./Breadcrumb";
+import RepoDto from "../dtos/RepoDto";
 import GithubLink from "./GithubLink";
+import _ from "lodash";
+
+import KindFilter from "./KindFilter";
+import Dep from "../models/Dep";
+import { createChanges, createDeps, createEntities } from "../models/builders";
+import EntityModalLink from "./EntityModalLink";
 
 export interface UifDashProps {
     repoName: string;
@@ -16,23 +21,29 @@ export interface UifDashProps {
 interface UifDashState {
     repo?: RepoDto;
     uif?: UifDto;
+    entityKinds: string[];
+    depKinds: string[];
+    allowedEntityKinds: string[];
+    allowedDepKinds: string[];
 }
 
 export default class UifDash extends React.Component<UifDashProps, UifDashState> {
     constructor(props: UifDashProps) {
         super(props);
-        this.state = {};
+        this.state = { allowedEntityKinds: [], allowedDepKinds: [], entityKinds: [], depKinds: [] };
     }
 
     override componentDidMount() {
         const client = new Client();
+        client.getEntityKinds().then(entityKinds => this.setState({ entityKinds, allowedEntityKinds: entityKinds }));
+        client.getDepKinds().then(depKinds => this.setState({ depKinds, allowedDepKinds: depKinds }));
         client.getRepo(this.props.repoName).then(repo => this.setState({ repo }));
         client.getUif(this.props.repoName, this.props.num).then(uif => this.setState({ uif }));
     }
 
     override render() {
         const { repoName, num } = this.props;
-        const { uif, repo } = this.state;
+        const { uif, repo, allowedEntityKinds, allowedDepKinds } = this.state;
         const name = `unstable-interface-${num}`;
 
         const header = <>
@@ -46,24 +57,59 @@ export default class UifDash extends React.Component<UifDashProps, UifDashState>
 
         const { summary: sum } = uif;
 
+        function isAllowedDep(dep: Dep) {
+            return allowedEntityKinds.includes(dep.source.kind) && allowedEntityKinds.includes(dep.target.kind);
+        }
+
+        function isNonEmpty(dep: Dep) {
+            return dep.dtos.length !== 0;
+        }
+
+        function filterDtos(dep: Dep) {
+            return new Dep(dep.source, dep.target, dep.dtos.filter(d => allowedDepKinds.includes(d.kind)));
+        }
+
         const entities = createEntities(uif.entities);
         const changes = createChanges(entities, uif.changes);
-        const inDeps = createDeps(entities, uif.inDeps);
-        const evoInDeps = createDeps(entities, uif.evoInDeps);
+        let inDeps = createDeps(entities, uif.inDeps);
+        let evoInDeps = createDeps(entities, uif.evoInDeps);
 
-        // console.log(entities);
-        // console.log(inDeps);
-        // console.log(outDeps);
+        inDeps = inDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
+        evoInDeps = evoInDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
 
         const evoInFiles = [...new Set(evoInDeps.map(d => d.source.file))];
 
-        const calledByMethods = _.groupBy(evoInDeps.filter(isM2m), d => d.target.id);
+        const evoInEntities = _.groupBy(evoInDeps.filter(isAllowedDep), d => d.target.id);
 
         return <>
             {header}
+            <div className="columns">
+                <div className="column">
+                    <article className="message">
+                        <div className="message-header">
+                            <p>Entity Types</p>
+                            <span className="icon"><i className="fas fa-sitemap"></i></span>
+                        </div>
+                        <div className="message-body">
+                            <KindFilter kinds={this.state.entityKinds} setSelected={s => this.setState({ allowedEntityKinds: s })} selected={this.state.allowedEntityKinds} />
+                        </div>
+                    </article>
+                    <article className="message">
+                        <div className="message-header">
+                            <p>Dependency Types</p>
+                            <span className="icon"><i className="fas fa-sitemap"></i></span>
+                        </div>
+                        <div className="message-body">
+                            <KindFilter kinds={this.state.depKinds} setSelected={s => this.setState({ allowedDepKinds: s })} selected={this.state.allowedDepKinds} />
+                        </div>
+                    </article>
+                </div>
+
+            </div>
+
             <h2 className="title is-4">Description</h2>
             <div className="content">
-                The file <strong><GithubLink item={sum.tgt} repo={repo} /></strong> is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is an unstable interface with a total of <strong>{sum.size}</strong> files.
+                The file <strong><GithubLink item={sum.tgt} repo={repo} /></strong> is depended on by <strong>{sum.fanin}</strong> files and has co-changed at least twice with <strong>{sum.evoFanin}</strong> of them. So this is a unstable interface with a total of <strong>{sum.size}</strong> files.
             </div>
 
             <div className="columns">
@@ -75,12 +121,12 @@ export default class UifDash extends React.Component<UifDashProps, UifDashState>
 
             <h2 className="title is-4">Concentration</h2>
             <div className="content">
-                This file has <strong>X</strong> methods, <strong>Y</strong> of which are called by a method in a file which is evolutionarily coupled with this unstable interface.
+                This center file has <strong>X</strong> entities, <strong>Y</strong> of which <em>depend</em> or are <em>depended</em> on by a method in a file which is evolutionarily coupled with the center file.
             </div>
             <div className="columns">
                 <div className="column">
-                    <h2 className="title is-6">Incoming Calls</h2>
-                    <ul>{Object.entries(calledByMethods).map(e => <li key={e[0]}>{entities.get(parseInt(e[0]))?.name} <span>(called by <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
+                    <h2 className="title is-6">Incoming Dependencies</h2>
+                    <ul>{Object.entries(evoInEntities).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(depended on by <strong><EntityModalLink entities={e[1].map(d => d.source)} repo={repo} /></strong> entities)</span></li>)}</ul>
                 </div>
             </div>
 
@@ -92,11 +138,11 @@ export default class UifDash extends React.Component<UifDashProps, UifDashState>
                 <div className="column">
                     <h2 className="title is-6">Incoming Calls</h2>
                     <ul>
-                        {evoInDeps.filter(isM2m).map(d => (
+                        {evoInDeps.filter(isAllowedDep).map(d => (
                             <li>
-                                {d.source.name}
+                                <GithubLink item={d.source} repo={repo} />
                                 <span className="icon"><i className="fas fa-arrow-right"></i></span>
-                                {d.target.name} (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
+                                <GithubLink item={d.target} repo={repo} /> (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
                             </li>
                         ))}
                     </ul>

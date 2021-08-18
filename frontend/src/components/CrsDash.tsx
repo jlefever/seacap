@@ -6,11 +6,12 @@ import CrsDto from "../dtos/CrsDto";
 import Breadcrumb from "./Breadcrumb";
 import RepoDto from "../dtos/RepoDto";
 import GithubLink from "./GithubLink";
-import { createChanges, createDeps, createEntities, Dep, isM2m } from "../util";
-import EntityDiv from "./EntityDiv";
 import _ from "lodash";
 
 import KindFilter from "./KindFilter";
+import Dep from "../models/Dep";
+import { createChanges, createDeps, createEntities } from "../models/builders";
+import EntityModalLink from "./EntityModalLink";
 
 export interface CrsDashProps {
     repoName: string;
@@ -20,6 +21,8 @@ export interface CrsDashProps {
 interface CrsDashState {
     repo?: RepoDto;
     crs?: CrsDto;
+    entityKinds: string[];
+    depKinds: string[];
     allowedEntityKinds: string[];
     allowedDepKinds: string[];
 }
@@ -27,11 +30,13 @@ interface CrsDashState {
 export default class CrsDash extends React.Component<CrsDashProps, CrsDashState> {
     constructor(props: CrsDashProps) {
         super(props);
-        this.state = { allowedEntityKinds: [], allowedDepKinds: [] };
+        this.state = { allowedEntityKinds: [], allowedDepKinds: [], entityKinds: [], depKinds: [] };
     }
 
     override componentDidMount() {
         const client = new Client();
+        client.getEntityKinds().then(entityKinds => this.setState({ entityKinds, allowedEntityKinds: entityKinds }));
+        client.getDepKinds().then(depKinds => this.setState({ depKinds, allowedDepKinds: depKinds }));
         client.getRepo(this.props.repoName).then(repo => this.setState({ repo }));
         client.getCrs(this.props.repoName, this.props.num).then(crs => this.setState({ crs }));
     }
@@ -71,29 +76,16 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
         let outDeps = createDeps(entities, crs.outDeps);
         let evoOutDeps = createDeps(entities, crs.evoOutDeps);
 
-        const entityKinds = _.sortBy(_.uniq(_.map(Array.from(entities.values()), e => e.kind)));
-        const deps = _.concat(Array.from(inDeps.values()), Array.from(outDeps.values()));
-        const depKinds = _.sortBy(_.uniq(_.flatMap(deps, d => d.dtos.map(dto => dto.kind))));
-
         inDeps = inDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
         evoInDeps = evoInDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
         outDeps = outDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
         evoOutDeps = evoOutDeps.filter(isAllowedDep).map(filterDtos).filter(isNonEmpty);
 
-        // console.log(entities);
-        // console.log(inDeps);
-        // console.log(outDeps);
-
-        console.log(evoOutDeps.filter(isM2m));
-
-        const grouped = _.groupBy(evoOutDeps.filter(isM2m), d => d.source.id);
-        console.log(grouped);
-
         const evoInFiles = [...new Set(evoInDeps.map(d => d.source.file))];
         const evoOutFiles = [...new Set(evoOutDeps.map(d => d.target.file))];
 
-        const callMethods = _.groupBy(evoOutDeps.filter(isM2m), d => d.source.id);
-        const calledByMethods = _.groupBy(evoInDeps.filter(isM2m), d => d.target.id);
+        const evoInEntities = _.groupBy(evoInDeps.filter(isAllowedDep), d => d.target.id);
+        const evoOutEntities = _.groupBy(evoOutDeps.filter(isAllowedDep), d => d.source.id);
 
         return <>
             {header}
@@ -105,21 +97,20 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
                             <span className="icon"><i className="fas fa-sitemap"></i></span>
                         </div>
                         <div className="message-body">
-                            <KindFilter kinds={entityKinds} setSelected={s => this.setState({ allowedEntityKinds: s })} selected={this.state.allowedEntityKinds} />
+                            <KindFilter kinds={this.state.entityKinds} setSelected={s => this.setState({ allowedEntityKinds: s })} selected={this.state.allowedEntityKinds} />
                         </div>
                     </article>
-                </div>
-                <div className="column">
                     <article className="message">
                         <div className="message-header">
                             <p>Dependency Types</p>
                             <span className="icon"><i className="fas fa-sitemap"></i></span>
                         </div>
                         <div className="message-body">
-                            <KindFilter kinds={depKinds} setSelected={s => this.setState({ allowedDepKinds: s })} selected={this.state.allowedDepKinds} />
+                            <KindFilter kinds={this.state.depKinds} setSelected={s => this.setState({ allowedDepKinds: s })} selected={this.state.allowedDepKinds} />
                         </div>
                     </article>
                 </div>
+
             </div>
 
             <h2 className="title is-4">Description</h2>
@@ -129,27 +120,27 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
 
             <div className="columns">
                 <div className="column">
-                    <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Outgoing Files</h2>
-                    <ul>{evoOutFiles.map(f => <li key={f.id}><GithubLink item={f.name} repo={repo} /></li>)}</ul>
-                </div>
-                <div className="column">
                     <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Incoming Files</h2>
                     <ul>{evoInFiles.map(f => <li key={f.id}><GithubLink item={f.name} repo={repo} /></li>)}</ul>
+                </div>
+                <div className="column">
+                    <h2 className="title is-6"><abbr title="evolutionarily coupled (co-changed at least twice)">Evo.</abbr> Outgoing Files</h2>
+                    <ul>{evoOutFiles.map(f => <li key={f.id}><GithubLink item={f.name} repo={repo} /></li>)}</ul>
                 </div>
             </div>
 
             <h2 className="title is-4">Concentration</h2>
             <div className="content">
-                This center file has <strong>X</strong> methods, <strong>Y</strong> of which <em>call</em> or are <em>called by</em> a method in a file which is evolutionarily coupled with the center file.
+                This center file has <strong>X</strong> entities, <strong>Y</strong> of which <em>depend</em> or are <em>depended</em> on by a method in a file which is evolutionarily coupled with the center file.
             </div>
             <div className="columns">
                 <div className="column">
-                    <h2 className="title is-6">Outgoing Calls</h2>
-                    <ul>{Object.entries(callMethods).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(calls <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
+                    <h2 className="title is-6">Incoming Dependencies</h2>
+                    <ul>{Object.entries(evoInEntities).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(depended on by <strong><EntityModalLink entities={e[1].map(d => d.source)} repo={repo} /></strong> entities)</span></li>)}</ul>
                 </div>
                 <div className="column">
-                    <h2 className="title is-6">Incoming Calls</h2>
-                    <ul>{Object.entries(calledByMethods).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(called by <strong>{e[1].length}</strong> methods)</span></li>)}</ul>
+                    <h2 className="title is-6">Outgoing Dependencies</h2>
+                    <ul>{Object.entries(evoOutEntities).map(e => <li key={e[0]}><GithubLink item={entities.get(parseInt(e[0]))!} repo={repo} /> <span>(depends on <strong><EntityModalLink entities={e[1].map(d => d.target)} repo={repo} /></strong> entities)</span></li>)}</ul>
                 </div>
             </div>
 
@@ -157,23 +148,23 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
             <div className="content">
                 The following method-to-method dependencies have co-changed at least once. Or in other words, these dependencies are structurally and historically aligned with the file-level crossing.
             </div>
+            <div className="column">
+                <h2 className="title is-6">Incoming Calls</h2>
+                <ul>
+                    {evoInDeps.filter(isAllowedDep).map(d => (
+                        <li>
+                            <GithubLink item={d.source} repo={repo} />
+                            <span className="icon"><i className="fas fa-arrow-right"></i></span>
+                            <GithubLink item={d.target} repo={repo} /> (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
+                        </li>
+                    ))}
+                </ul>
+            </div>
             <div className="columns">
                 <div className="column">
                     <h2 className="title is-6">Outgoing Calls</h2>
                     <ul>
-                        {evoOutDeps.filter(isM2m).map(d => (
-                            <li>
-                                <GithubLink item={d.source} repo={repo} />
-                                <span className="icon"><i className="fas fa-arrow-right"></i></span>
-                                <GithubLink item={d.target} repo={repo} /> (co-changed <strong>{d.source.cocommits(d.target).length}</strong> times)
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="column">
-                    <h2 className="title is-6">Incoming Calls</h2>
-                    <ul>
-                        {evoInDeps.filter(isM2m).map(d => (
+                        {evoOutDeps.filter(isAllowedDep).map(d => (
                             <li>
                                 <GithubLink item={d.source} repo={repo} />
                                 <span className="icon"><i className="fas fa-arrow-right"></i></span>

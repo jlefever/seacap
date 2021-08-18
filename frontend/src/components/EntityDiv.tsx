@@ -2,9 +2,9 @@ import React from "react";
 
 import "bulma/css/bulma.css";
 
-import { Entity } from "../util";
 import GithubLink from "./GithubLink";
 import RepoDto from "../dtos/RepoDto";
+import { Entity } from "../models/Entity";
 
 export interface EntityDivProps {
     entity: Entity;

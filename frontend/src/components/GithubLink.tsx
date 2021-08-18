@@ -2,11 +2,13 @@ import "bulma/css/bulma.css";
 import { times } from "lodash";
 import React from "react";
 import RepoDto from "../dtos/RepoDto";
-import { Entity, getShortFilename } from "../util";
+import { Entity } from "../models/Entity";
+import { getShortFilename } from "../util";
 
 export interface GithubLinkProps {
     item: string | Entity;
     repo: RepoDto;
+    full?: boolean;
 };
 
 function getUrl(item: string | Entity, repo: RepoDto) {
@@ -49,9 +51,21 @@ function getName(item: string | Entity) {
     return item.name;
 }
 
-export default (props: GithubLinkProps) => (
-    <a
-        href={getUrl(props.item, props.repo)} title={getTitle(props.item)} target="_blank"
-    // className="has-text-weight-semibold"
-    >{getName(props.item)}</a>
-);
+export default (props: GithubLinkProps) => {
+    if (!props.full || typeof (props.item) === "string") {
+        return <a href={getUrl(props.item, props.repo)} title={getTitle(props.item)} target="_blank">{getName(props.item)}</a>
+    }
+
+    // return <nav className="breadcrumb">
+    //     <ul>
+    //         {props.item.ancestory.map(e => (
+    //             <li key={e.id}>
+    //                 <a href={getUrl(e, props.repo)} title={getTitle(e)} target="_blank">{getName(e)}</a>
+    //             </li>
+    //         ))}
+    //     </ul>
+    // </nav>
+
+    return <a href={getUrl(props.item, props.repo)} title={getTitle(props.item)} target="_blank">{getTitle(props.item)}</a>
+
+}
