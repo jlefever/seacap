@@ -92,6 +92,20 @@ SELECT DISTINCT * FROM ancestory ORDER BY id
 $$
 LANGUAGE SQL IMMUTABLE;
 
+CREATE FUNCTION closed_entities_of_ids(entity_ids INT[]) RETURNS SETOF entities AS
+$$
+WITH RECURSIVE ids AS (SELECT id FROM UNNEST(entity_ids) AS id),
+ancestory AS (
+    SELECT id, parent_id, repo_id, name, kind, linenos
+    FROM entities WHERE id IN (SELECT id FROM ids)
+    UNION ALL
+    SELECT P.id, P.parent_id, P.repo_id, P.name, P.kind, P.linenos
+    FROM ancestory C, entities P WHERE C.parent_id = P.id
+)
+SELECT DISTINCT * FROM ancestory ORDER BY id
+$$
+LANGUAGE SQL IMMUTABLE;
+
 CREATE FUNCTION n_files_of(dep_ids INT[]) RETURNS INT AS
 $$
 SELECT CARDINALITY(files_of(dep_ids))
@@ -368,7 +382,7 @@ LANGUAGE SQL IMMUTABLE;
 
 CREATE MATERIALIZED VIEW uifs AS
 SELECT ROW_NUMBER() OVER (PARTITION BY UIF.repo_id ORDER BY UIF.size DESC, UIF.tgt) AS num, *
-FROM find_uifs(4, 4, 2, all_dep_kinds()) UIF
+FROM find_uifs(3, 3, 2, all_dep_kinds()) UIF
 ORDER BY UIF.repo_id, num;
 
 CREATE TYPE crs AS (
@@ -427,7 +441,7 @@ LANGUAGE SQL IMMUTABLE;
 
 CREATE MATERIALIZED VIEW crss AS
 SELECT ROW_NUMBER() OVER (PARTITION BY CRS.repo_id ORDER BY CRS.size DESC, CRS.center) AS num, *
-FROM find_crss(4, 4, 4, 4, 2, all_dep_kinds()) CRS
+FROM find_crss(3, 3, 3, 3, 2, all_dep_kinds()) CRS
 ORDER BY CRS.repo_id, num;
 
 CREATE TYPE mvp AS (
@@ -465,6 +479,13 @@ SELECT ROW_NUMBER() OVER (PARTITION BY MVP.repo_id ORDER BY MVP.cochange DESC, x
 FROM find_mvps(2, all_dep_kinds()) MVP
 ORDER BY MVP.repo_id, num;
 
+CREATE MATERIALIZED VIEW maintenance AS
+SELECT E.id AS entity_id, COUNT(C.id) AS n_changes, COALESCE(SUM(C.churn), 0) AS churn
+FROM entities E
+LEFT JOIN changes C ON C.entity_id = E.id
+GROUP BY E.id
+ORDER BY n_changes DESC;
+
 CREATE PROCEDURE refresh_mat_views() AS
 $$
 REFRESH MATERIALIZED VIEW filenames;
@@ -474,6 +495,7 @@ REFRESH MATERIALIZED VIEW entity_alt_digests;
 REFRESH MATERIALIZED VIEW uifs;
 REFRESH MATERIALIZED VIEW crss;
 REFRESH MATERIALIZED VIEW mvps;
+REFRESH MATERIALIZED VIEW maintenance;
 $$
 LANGUAGE SQL;
 

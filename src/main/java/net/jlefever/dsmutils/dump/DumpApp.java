@@ -21,6 +21,7 @@ import net.jlefever.dsmutils.dump.db.GetDepKinds;
 import net.jlefever.dsmutils.dump.db.GetDeps;
 import net.jlefever.dsmutils.dump.db.GetEntities;
 import net.jlefever.dsmutils.dump.db.GetEntityKinds;
+import net.jlefever.dsmutils.dump.db.GetMvps;
 import net.jlefever.dsmutils.dump.db.GetRepos;
 
 public class DumpApp
@@ -85,6 +86,18 @@ public class DumpApp
 
             var clqSums = clqs.stream().map(c -> c.getSummary()).collect(Collectors.toList());
             write(clqSums, repoPath.resolve(Paths.get("clq", "index.json")));
+
+            // MVPs
+            Files.createDirectory(repoPath.resolve("mvp"));
+            var mvps = new GetMvps(db).call(repo.getId());
+            
+            for (var mvp : mvps)
+            {
+                write(mvp, repoPath.resolve(Paths.get("mvp", mvp.getNum() + ".json")));
+            }
+
+            var mvpSums = mvps.stream().map(m -> m.getSummary()).collect(Collectors.toList());
+            write(mvpSums, repoPath.resolve(Paths.get("mvp", "index.json")));
         }
     }
 
