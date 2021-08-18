@@ -56,7 +56,7 @@ public class App
         var allowedPaths = git.lsFiles(repo, pathFilter);
 
         System.out.println("Using gitchurn to calculate changes...");
-        var flatChanges = new GetChanges(repo.getDir(), repoRev, pathFilter, 150, 30).execute();
+        var flatChanges = new GetChanges(repo.getDir(), repoRev, pathFilter, 500, 30).execute();
         var builder = new TreeTagBuilder();
         var changes = flatChanges.stream().map(c -> new ChangeImpl<>(builder.add(c.getTag()), c.getRev(), c.getChurn())).collect(toList());
         builder.build();
