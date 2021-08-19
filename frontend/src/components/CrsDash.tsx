@@ -110,7 +110,6 @@ export default class CrsDash extends React.Component<CrsDashProps, CrsDashState>
                         </div>
                     </article>
                 </div>
-
             </div>
 
             <h2 className="title is-4">Description</h2>

@@ -9,6 +9,8 @@ import Repo from "./Repo";
 import CrsDash from "./CrsDash";
 import UifDash from "./UifDash";
 import MaintPage from "./MaintPage";
+import MvpDash from "./MvpDash";
+import ClqDash from "./ClqDash";
 
 export default () => <section className="section mt-1 pt-1">
     <BrowserRouter>
@@ -31,6 +33,12 @@ export default () => <section className="section mt-1 pt-1">
                 }} />
                 <Route path="/:name/unstable-interface-:num" render={props => {
                     return <UifDash repoName={props.match.params.name} num={parseInt(props.match.params.num)} />
+                }} />
+                <Route path="/:name/mvp-:num" render={props => {
+                    return <MvpDash repoName={props.match.params.name} num={parseInt(props.match.params.num)} />
+                }} />
+                <Route path="/:name/clique-:num" render={props => {
+                    return <ClqDash repoName={props.match.params.name} num={parseInt(props.match.params.num)} />
                 }} />
                 <Route path="/:name" render={props => {
                     return <Repo name={props.match.params.name} url={props.match.url} />;
