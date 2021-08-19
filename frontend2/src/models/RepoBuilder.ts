@@ -39,6 +39,7 @@ export default class RepoBuilder {
             id: this._repoDto.id,
             name: this._repoDto.name,
             githubUrl: this._repoDto.githubUrl,
+            leadRef: this._repoDto.leadRef,
             entities: Array.from(entities.values()),
             changes: new ChangeBuilder(entities, this._changeDtos).build(),
             deps: new DepBuilder(entities, this._depDtos).build()
