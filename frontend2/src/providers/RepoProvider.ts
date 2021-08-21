@@ -21,6 +21,11 @@ export default class RepoProvider {
         }
 
         await this.ensureDtos();
+        const dto = this._dtos!.get(name);
+
+        if (dto === undefined) {
+            return null;
+        }
 
         const entityDtosTask = RepoProvider.fetchEntitieDtos(name);
         const changeDtosTask = RepoProvider.fetchChangeDtos(name);
@@ -30,7 +35,7 @@ export default class RepoProvider {
         const changeDtos = await changeDtosTask;
         const depDtos = await depDtosTask;
 
-        const repo = new RepoBuilder(this._dtos!.get(name)!)
+        const repo = new RepoBuilder(dto)
             .addEntities(entityDtos)
             .addChanges(changeDtos)
             .addDeps(depDtos)
