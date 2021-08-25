@@ -9,26 +9,26 @@ import Repo from "./Repo";
 
 export default class RepoBuilder {
     private readonly _repoDto: RepoDto;
-    private readonly _entityDtos: EntityDto[] = [];
-    private readonly _changeDtos: ChangeDto[] = [];
-    private readonly _depDtos: DepDto[] = [];
+    private _entityDtos: readonly EntityDto[] = [];
+    private _changeDtos: readonly ChangeDto[] = [];
+    private _depDtos: readonly DepDto[] = [];
 
     constructor(dto: RepoDto) {
         this._repoDto = dto;
     }
 
-    addEntities(dtos: readonly EntityDto[]): RepoBuilder {
-        this._entityDtos.push(...dtos);
+    setEntities(dtos: readonly EntityDto[]): RepoBuilder {
+        this._entityDtos = dtos;
         return this;
     }
 
-    addChanges(dtos: readonly ChangeDto[]): RepoBuilder {
-        this._changeDtos.push(...dtos);
+    setChanges(dtos: readonly ChangeDto[]): RepoBuilder {
+        this._changeDtos = dtos;
         return this;
     }
 
-    addDeps(dtos: readonly DepDto[]): RepoBuilder {
-        this._depDtos.push(...dtos);
+    setDeps(dtos: readonly DepDto[]): RepoBuilder {
+        this._depDtos = dtos;
         return this;
     }
 

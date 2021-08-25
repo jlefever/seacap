@@ -1,6 +1,7 @@
 import React from "react";
 import Repo from "../models/Repo";
 import RepoProvider from "../providers/RepoProvider";
+import CohesionPage from "./cohesion/CohesionPage";
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 
@@ -36,8 +37,6 @@ export default class RepoPage extends React.Component<RepoPageProps, RepoPageSta
             return <NotFound />;
         }
 
-        return <pre>
-            {JSON.stringify(repo.leadRef, undefined, 4)}
-        </pre>;
+        return <CohesionPage repo={repo} />;
     }
 }

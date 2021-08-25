@@ -1,3 +1,4 @@
+import objectHash from "object-hash";
 import Entity from "./Entity";
 import LineRange from "./LineRange";
 
@@ -46,9 +47,17 @@ export default class EntityImpl implements Entity {
         return this._children;
     }
 
+    get isRoot(): boolean {
+        return this.parent === null;
+    }
+
+    get isLeaf(): boolean {
+        return this.children.length === 0;
+    }
+
     get file(): EntityImpl {
         if (this.parent !== null) {
-            return this.parent.file;    
+            return this.parent.file;
         }
 
         if (this.kind !== "file") {
@@ -66,6 +75,10 @@ export default class EntityImpl implements Entity {
         const arr = this.parent.ancestory;
         arr.push(this);
         return arr;
+    }
+
+    hash(): string {
+        return objectHash(this.id);
     }
 
     setParent = (value: EntityImpl) => {

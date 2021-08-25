@@ -36,9 +36,9 @@ export default class RepoProvider {
         const depDtos = await depDtosTask;
 
         const repo = new RepoBuilder(dto)
-            .addEntities(entityDtos)
-            .addChanges(changeDtos)
-            .addDeps(depDtos)
+            .setEntities(entityDtos)
+            .setChanges(changeDtos)
+            .setDeps(depDtos)
             .build();
 
         this._repos.set(name, repo);

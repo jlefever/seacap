@@ -15,7 +15,7 @@
         "esModuleInterop": true,
         "jsx": "react",
         "moduleResolution": "node",
-        "types": ["node"]
+        "types": ["node", "jest"]
     },
     "include": [
         "src"

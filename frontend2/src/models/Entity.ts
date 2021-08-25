@@ -1,6 +1,7 @@
+import Hashable from "../collections/Hashable";
 import LineRange from "./LineRange";
 
-export default interface Entity {
+export default interface Entity extends Hashable {
     readonly id: number;
     readonly name: string;
     readonly kind: string;
@@ -10,4 +11,6 @@ export default interface Entity {
     readonly file: Entity;
     readonly ancestory: readonly Entity[];
     readonly children: readonly Entity[];
+    readonly isRoot: boolean;
+    readonly isLeaf: boolean;
 }

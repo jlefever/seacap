@@ -31,7 +31,7 @@ export default class HomePage extends React.Component<HomePageProps> {
                         <td>{r.id}</td>
                         <td>{r.name}</td>
                         <td>{r.leadRef}</td>
-                        <td><RepoPageLink name={r.name}>repo</RepoPageLink></td>
+                        <td><RepoPageLink name={r.name}>cluster</RepoPageLink></td>
                         {/* <td><Link to={`/${r.name}`}>anti-patterns</Link></td>
                         <td><Link to={`/${r.name}/maintenance`}>maintenance</Link></td> */}
                     </tr>)}

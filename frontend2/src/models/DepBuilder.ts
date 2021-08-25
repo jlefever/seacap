@@ -1,6 +1,7 @@
 import * as R from "ramda";
 import DepDto from "../dtos/DepDto";
 import Dep from "./Dep";
+import DepImpl from "./DepImpl";
 import Entity from "./Entity";
 
 export default class DepBuilder {
@@ -24,7 +25,7 @@ export default class DepBuilder {
 
     build(): readonly Dep[] {
         return R.map(
-            d => new Dep(d.id, this.getEntity(d.sourceId), this.getEntity(d.targetId), d.kind, d.weight),
+            d => new DepImpl(d.id, this.getEntity(d.sourceId), this.getEntity(d.targetId), d.kind, d.weight),
             this._dtos
         );
     }
