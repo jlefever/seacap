@@ -12,6 +12,6 @@ function intersperse<T>(arr: T[], delimiter: T): T[] {
 
 export default (props: PathBreadcrumb) => (
     <div className="ui mini breadcrumb path-breadcrumb">
-        {intersperse(props.path.split("/").map(s => <span className="section">{s}</span>), <span className="divider">/</span>)}
+        {intersperse(_.reverse(props.path.split("/")).map(s => <div className="section path-breadcrumb-section">{s}</div>), <span className="divider">/</span>)}
     </div>
 );

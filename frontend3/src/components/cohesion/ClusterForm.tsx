@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import { Dropdown } from "semantic-ui-react";
+import { Dropdown, Label, Menu, Tab } from "semantic-ui-react";
 import AvgLinker from "../../clustering/ahc/AvgLinker";
 import Clusterer from "../../clustering/ahc/Clusterer";
 import HammingDistFn from "../../clustering/ahc/HammingDistFn";
@@ -11,8 +11,8 @@ import { EntityCluster, preprocess } from "../../clustering/preprocessors";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
-import EntityItem from "../EntityItem";
-import PathBreadcrumb from "../PathBreadcrumb";
+import EntityItem from "../entity/EntityItem";
+import PathBreadcrumb from "../entity/PathBreadcrumb";
 import FileDropdown from "./FileDropdown";
 import FileNotice from "./FileNotice";
 
@@ -96,39 +96,97 @@ export default class ClusterForm extends React.Component<ClusterFormProps, Clust
     override render() {
         const { repo } = this.props;
 
-        const countryOptions = [
-            { key: 'af', value: 'af', flag: 'af', text: 'Afghanistan' },
-            { key: 'ax', value: 'ax', flag: 'ax', text: 'Aland Islands' },
-            { key: 'al', value: 'al', flag: 'al', text: 'Albania' },
-            { key: 'dz', value: 'dz', flag: 'dz', text: 'Algeria' },
-            { key: 'as', value: 'as', flag: 'as', text: 'American Samoa' },
-            { key: 'ad', value: 'ad', flag: 'ad', text: 'Andorra' },
-            { key: 'ao', value: 'ao', flag: 'ao', text: 'Angola' },
-            { key: 'ai', value: 'ai', flag: 'ai', text: 'Anguilla' },
-            { key: 'ag', value: 'ag', flag: 'ag', text: 'Antigua' },
-            { key: 'ar', value: 'ar', flag: 'ar', text: 'Argentina' },
-            { key: 'am', value: 'am', flag: 'am', text: 'Armenia' },
-            { key: 'aw', value: 'aw', flag: 'aw', text: 'Aruba' },
-            { key: 'au', value: 'au', flag: 'au', text: 'Australia' },
-            { key: 'at', value: 'at', flag: 'at', text: 'Austria' },
-            { key: 'az', value: 'az', flag: 'az', text: 'Azerbaijan' },
-            { key: 'bs', value: 'bs', flag: 'bs', text: 'Bahamas' },
-            { key: 'bh', value: 'bh', flag: 'bh', text: 'Bahrain' },
-            { key: 'bd', value: 'bd', flag: 'bd', text: 'Bangladesh' },
-            { key: 'bb', value: 'bb', flag: 'bb', text: 'Barbados' },
-            { key: 'by', value: 'by', flag: 'by', text: 'Belarus' },
-            { key: 'be', value: 'be', flag: 'be', text: 'Belgium' },
-            { key: 'bz', value: 'bz', flag: 'bz', text: 'Belize' },
-            { key: 'bj', value: 'bj', flag: 'bj', text: 'Benin' },
-        ]
+        const panes = [
+            {
+                menuItem: "Me",
+                render: () => <div className="ui relaxed divided list">
+                    {_.take(_.filter(repo.entities, e => e.exists), 6).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                </div>
+            },
+            {
+                menuItem: "My Clients",
+                render: () => <div className="ui relaxed divided list">
+                    {_.take(_.filter(repo.entities, e => e.exists), 12).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                </div>
+            },
+        ];
+
+        return <div className="ui stackable two column grid">
+            <div className="column">
+                <div className="ui segment">
+                    <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+                    <h2 className="ui top right attached label">Cluster 1</h2>
+                </div>
+            </div>
+            <div className="column">
+                <div className="ui segment">
+                    <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+                    <h2 className="ui top right attached label">Cluster 2</h2>
+                </div>
+            </div>
+            <div className="column">
+                <div className="ui segment">
+                    <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+                    <h2 className="ui top right attached label">Cluster 3</h2>
+                </div>
+            </div>
+        </div>
+
+
 
         const opts = _.uniq(repo.entities.map(e => e.file)).map(f => (
             { key: f.id, value: f.id, text: <PathBreadcrumb path={f.name} /> }
         ));
 
-        return <div className="ui relaxed divided list">
-            {_.take(repo.entities, 50).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
-        </div>
+        return <div className="ui two column grid" style={{ "padding": "0px 14px 0px 14px" }
+        }>
+            {/* <div className="ui row"> */}
+            < div className="column" >
+                <div className="ui segment">
+
+                    <h2 className="ui bottom attached label">Cluster 1</h2>
+                    <div className="ui relaxed divided list">
+                        {_.take(_.filter(repo.entities, e => e.exists), 10).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                    </div>
+                </div>
+            </div >
+            <div className="column">
+                <div className="ui segment">
+                    <h2 className="ui bottom attached label">Cluster 1</h2>
+                    <div className="ui relaxed divided list">
+                        {_.take(_.filter(repo.entities, e => e.exists), 10).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                    </div>
+                </div>
+            </div>
+            <div className="column">
+                <div className="ui segment">
+                    <h2 className="ui bottom attached label">Cluster 1</h2>
+                    <div className="ui relaxed divided list">
+                        {_.take(_.filter(repo.entities, e => e.exists), 10).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                    </div>
+                </div>
+            </div>
+            <div className="column">
+                <div className="ui segment">
+                    <h2 className="ui bottom attached label">Cluster 1</h2>
+                    <div className="ui relaxed divided list">
+                        {_.take(_.filter(repo.entities, e => e.exists), 10).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                    </div>
+                </div>
+            </div>
+            <div className="column">
+                <div className="ui segment">
+                    <h2 className="ui bottom attached label">Cluster 1</h2>
+                    <div className="ui relaxed divided list">
+                        {_.take(_.filter(repo.entities, e => e.exists), 10).map(e => <EntityItem key={e.id} entity={e} repo={repo} />)}
+                    </div>
+                </div>
+            </div>
+            {/* </div> */}
+        </div >
+
+
+
 
         return <Dropdown placeholder="Select a File"
             fluid

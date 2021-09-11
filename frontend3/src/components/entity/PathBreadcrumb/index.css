@@ -1,0 +1,7 @@
+.path-breadcrumb {
+    display: flex !important;
+    flex-flow: row-reverse wrap;
+    justify-content: flex-end;
+    overflow: hidden;
+    height: 15px;
+}

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { useState } from "react";
 import Repo from "../../models/Repo";
-import ExternalEntityLink from "../ExternalEntityLink";
+import ExternalEntityLink from "../entity/ExternalEntityLink";
 
 export interface FileNoticeProps {
     repo: Repo;

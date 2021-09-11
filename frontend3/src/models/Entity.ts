@@ -4,6 +4,7 @@ import LineRange from "./LineRange";
 export default interface Entity extends Hashable {
     readonly id: number;
     readonly name: string;
+    readonly shortName: string;
     readonly kind: string;
     readonly exists: boolean;
     readonly linenos: LineRange | null;

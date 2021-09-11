@@ -1,3 +1,4 @@
+import _ from "lodash";
 import objectHash from "object-hash";
 import Entity from "./Entity";
 import LineRange from "./LineRange";
@@ -25,6 +26,14 @@ export default class EntityImpl implements Entity {
 
     get name(): string {
         return this._name;
+    }
+
+    get shortName(): string {
+        if (this.kind !== "file") {
+            return this.name;
+        }
+        
+        return _.last(this.name.split("/")) || this.name;
     }
 
     get kind(): string {

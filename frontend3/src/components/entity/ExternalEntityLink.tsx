@@ -1,8 +1,8 @@
 import * as R from "ramda";
 import React from "react";
-import Entity from "../models/Entity";
-import Repo from "../models/Repo";
-import GithubFileLink from "./github/GithubFileLink";
+import Entity from "../../models/Entity";
+import Repo from "../../models/Repo";
+import GithubFileLink from "../github/GithubFileLink";
 
 interface ExternalEntityLinkProps {
     entity: Entity | string;
@@ -22,8 +22,8 @@ export default (props: ExternalEntityLinkProps & React.HTMLAttributes<HTMLElemen
         : entity.kind === "file" ? undefined : entity.linenos;
 
     const name = typeof (entity) === "string"
-        ? R.last(entity.split("/"))
-        : entity.kind === "file" ? R.last(entity.name.split("/")) : entity.name;
+        ? R.last(entity.split("/")) || entity
+        : entity.shortName;
 
     if (typeof (entity) !== "string" && !entity.exists) {
         return <span {...others}>{name}</span>;

@@ -20,9 +20,9 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
 
     override render() {
         return <>
-            <div className="ui text container">
+            <div className="ui container">
                 <ClusterForm repo={this.props.repo} onCluster={cluster => this.setState({ cluster })} />
-                <div className="ui divider"></div>
+                {/* <div className="ui divider"></div> */}
             </div>
             <div className="ui container">
                 {this.state.cluster && <ClusterTree repo={this.props.repo} cluster={this.state.cluster} clusterPath="1" />}

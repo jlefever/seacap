@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { EntityCluster } from "../../clustering/preprocessors";
 import Repo from "../../models/Repo";
-import ExternalEntityLink from "../ExternalEntityLink";
+import ExternalEntityLink from "../entity/ExternalEntityLink";
 
 import "./ClusterTree.css";
 
