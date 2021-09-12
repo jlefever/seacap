@@ -11,9 +11,9 @@
     "serve": "webpack serve",
     "build": "webpack"
   },
-  "dependencies": {},
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "@tensorflow/tfjs": "^3.9.0",
     "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.172",
     "@types/object-hash": "^2.1.1",
