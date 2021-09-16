@@ -1,5 +1,10 @@
 {
     "java.format.settings.url": "/.vscode/formatting.xml",
     "java.format.settings.profile": "style",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "files.watcherExclude": {
+        "**/.assets/**": true,
+        "**/.dump/**": true,
+        "**/pgdata/**": true
+    }
 }
