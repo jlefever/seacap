@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { groupBy } from "../collections/Dictionary";
+import HashDict from "../collections/HashDict";
 import Dep from "../models/Dep";
 import Entity from "../models/Entity";
 import ArrVector from "./ahc/ArrVector";
@@ -76,7 +76,7 @@ export function vectorize(deps: Dep[]): TaggedVector<boolean, Entity>[] {
 
     // console.log(deps);
 
-    return groupBy(deps, d => d.target).pairs().map(([entity, ds]) => new TaggedVector(
+    return HashDict.groupBy(deps, d => d.target).pairs().map(([entity, ds]) => new TaggedVector(
         new ArrVector(or(ds.map(d => toVector(d, sourceIds)))),
         entity
     ));

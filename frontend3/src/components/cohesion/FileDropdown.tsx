@@ -1,7 +1,7 @@
 import _ from "lodash";
 import * as R from "ramda";
 import React, { useEffect } from "react";
-import { groupBy } from "../../collections/Dictionary";
+import HashDict from "../../collections/HashDict";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
 
@@ -17,7 +17,7 @@ export default (props: FileDropdownProps) => {
     //     R.filter<Entity>(e => e.kind === "file" && e.linenos !== null)
     // )([...props.repo.entities]);
 
-    const pairs = groupBy(props.repo.deps, d => d.target.file).pairs();
+    const pairs = HashDict.groupBy(props.repo.deps, d => d.target.file).pairs();
     const ordered = _.orderBy(pairs, ([, vs]) => _.uniq(vs.map(v => v.source.file)).length, "desc");
 
     useEffect(() => props.onSelect(ordered[0][0].name), []);

@@ -16,13 +16,15 @@ type Vec = tf.Tensor1D;
 
 type Mean = Vec;
 
-type KMeans = Mean[];
+type KMeans = readonly Mean[];
 
-type Cluster = Vec[];
+type Samples = readonly Vec[];
 
-type KClusters = Cluster[];
+type Cluster = readonly number[];
 
-type Init = (observations: Vec[], k: number) => KMeans;
+type KClusters = readonly Cluster[];
+
+type Init = (observations: readonly Vec[], k: number) => KMeans;
 
 type Dist = (a: Vec, b: Vec) => number;
 
@@ -30,50 +32,52 @@ function indexFor(dist: Dist, means: KMeans, vec: Vec) {
     return argmin(means.map(m => dist(m, vec)));
 }
 
-function assign(dist: Dist, means: KMeans, curr: KClusters): [KClusters, boolean] {
-    const next = means.map(_ => new Array<Vec>());
+function assign(dist: Dist, samples: Samples, means: KMeans, curr: KClusters): [KClusters, boolean] {
+    const next = means.map(_ => new Array<number>());
 
     let modified = false;
 
     curr.forEach((cluster, clusterIndex) => {
-        cluster.forEach(vec => {
-            const index = indexFor(dist, means, vec);
+        cluster.forEach(vecIndex => {
+            const vec = samples[vecIndex];
+            const nextClusterIndex = indexFor(dist, means, vec);
 
-            if (index != clusterIndex) {
+            if (nextClusterIndex != clusterIndex) {
                 modified = true;
             }
 
-            next[index].push(vec);
+            next[nextClusterIndex].push(vecIndex);
         });
     });
 
     return [next, modified];
 }
 
-function mean(cluster: Cluster): Mean {
-    return tf.div(tf.addN(cluster), tf.scalar(cluster.length));
+function mean(samples: Samples, cluster: Cluster): Mean {
+    return tf.div(tf.addN(cluster.map(c => samples[c])), tf.scalar(cluster.length));
 }
 
-function update(clusters: KClusters): KMeans {
-    return clusters.map(c => mean(c));
+function update(samples: Samples, clusters: KClusters): KMeans {
+    return clusters.map(c => mean(samples, c));
 }
 
-export function kmeans(observations: Vec[], k: number, dist: Dist = squaredEuclideanDistance, init: Init = forgyInit): KClusters {
-    let means = init(observations, k);
-    let clusters = [observations];
+export function kmeans(samples: Samples, k: number, dist: Dist = squaredEuclideanDistance, init: Init = forgyInit): KClusters {
+    let means = init(samples, k);
+    let clusters = [Array.from(Array(samples.length).keys())];
 
     while (1) {
-        let [next, modified] = assign(dist, means, clusters);
+        let [next, modified] = assign(dist, samples, means, clusters);
         if (!modified) break;
+        // @ts-ignore
         clusters = next;
-        means = update(clusters);
+        means = update(samples, next);
     }
 
     return clusters;
 }
 
-function forgyInit(observations: Vec[], k: number): KMeans {
-    return _.take(_.shuffle(observations), k);
+function forgyInit(samples: Samples, k: number): KMeans {
+    return _.take(_.shuffle(samples), k);
 }
 
 function squaredEuclideanDistance(a: Vec, b: Vec) {
@@ -81,12 +85,15 @@ function squaredEuclideanDistance(a: Vec, b: Vec) {
     return toNum(tf.dot(difference, difference));
 }
 
-function printClusters(clusters: KClusters) {
-    clusters.forEach((cluster, i) => {
-        console.log(`Cluster ${i}`);
-        cluster.forEach(v => v.print());
-    });
-}
+// function toString(cluster: Cluster) {
+//     return `[${cluster.join(",")}]`;
+// }
+
+// function printClusters(clusters: KClusters) {
+//     clusters.forEach((cluster, i) => {
+//         console.log(`Cluster ${i}: ${toString(cluster)}`);
+//     });
+// }
 
 export function testKmeans() {
     const a = tf.tensor1d([1.1, 1.1]);
@@ -95,5 +102,5 @@ export function testKmeans() {
     const d = tf.tensor1d([3.4, 3.4]);
 
     const clusters = kmeans([a, c, b, d], 2);
-    printClusters(clusters);
+    console.log(clusters);
 }

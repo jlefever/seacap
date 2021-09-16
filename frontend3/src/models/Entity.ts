@@ -1,4 +1,4 @@
-import Hashable from "../collections/Hashable";
+import Hashable from "../collections/HashableObject";
 import LineRange from "./LineRange";
 
 export default interface Entity extends Hashable {
