@@ -8,5 +8,6 @@ export default interface Dict<K extends Hashable, V> {
     keys(): K[];
     values(): V[];
     pairs(): readonly [key: K, value: V][];
-    map<T>(fn: (k: K, v: V) => T): T[];
+    map<T>(fn: (k: K, v: V) => T): Dict<K, T>;
+    mapEntries<T>(fn: (k: K, v: V) => T): T[];
 }

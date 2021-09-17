@@ -13,8 +13,8 @@ interface EntityAncestoryProps {
     size: SemanticSIZES;
 }
 
-function intersperse<T>(arr: T[], delimiter: T): T[] {
-    return _.flatMap(arr, (x, i) => i > 0 ? [delimiter, x] : [x]);
+function intersperse(arr: JSX.Element[], getDelimiter: (i: number) => JSX.Element): JSX.Element[] {
+    return _.flatMap(arr, (x, i) => i > 0 ? [getDelimiter(i), x] : [x]);
 }
 
 export default (props: EntityAncestoryProps) => {
@@ -31,12 +31,16 @@ export default (props: EntityAncestoryProps) => {
     const inverted = props.inverted ? "inverted" : "";
 
     const sections = ancestory.map(e => <>
-        <MyIcon name={entityIconFor(e.kind)} inverted={props.inverted} />
-        <span className={`section ${inverted}`}>{e.shortName}</span>
+        <MyIcon key={`icon-${e.id}`} name={entityIconFor(e.kind)} inverted={props.inverted} />
+        <span key={`name-${e.id}`} className={`section ${inverted}`}>{e.shortName}</span>
     </>);
 
+    const getDelimiter = (i: number) => (
+        <i key={`del-${i}`} className={`right chevron icon divider ${inverted}`} />
+    );
+
     return <div className={`ui breadcrumb ${props.size} ${inverted}`}>
-        {intersperse(sections, <i className={`right chevron icon divider ${inverted}`} />)}
+        {intersperse(sections, getDelimiter)}
     </div>;
 }
 

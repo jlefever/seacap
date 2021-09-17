@@ -3,7 +3,7 @@ import { SemanticICONS } from "semantic-ui-react";
 import "./icons/vscode-light-icons/style.css";
 import "./icons/vscode-dark-icons/style.css";
 
-export interface IconProps {
+export interface MyIconProps {
     name: string;
     size?: IconSize;
     color?: IconColor;
@@ -20,7 +20,7 @@ export interface IconProps {
     children?: ReactChild;
 }
 
-export default (props: IconProps & React.HTMLAttributes<HTMLElement>) => {
+export default (props: MyIconProps & React.HTMLAttributes<HTMLElement>) => {
     let myClassName = "icon";
 
     const { name, size, color, rotate, disabled, loading, fitted, link, flipped, circular, bordered,

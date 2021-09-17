@@ -25,14 +25,14 @@ export interface PreprocessOptions {
 //     return deps.filter(d => isExternal(d));
 // }
 
-export function preprocess(deps: readonly Dep[], opts: PreprocessOptions): TaggedVector<boolean, Entity>[] {
+export function preprocess(deps: readonly Dep[], opts: PreprocessOptions) {
     let selected = selectDeps(deps, opts.filename);
     selected = selected.filter(d => opts.allowDep(d));
     selected = opts.bubbleSources ? bubbleSources(selected) : selected;
     selected = opts.bubbleTargets ? bubbleTargets(selected) : selected;
     selected = selected.filter(d => opts.allowSource(d.source));
     selected = selected.filter(d => opts.allowTarget(d.target));
-    return vectorize(selected);
+    return selected;
 }
 
 export function selectDeps(deps: readonly Dep[], targetFile: string) {

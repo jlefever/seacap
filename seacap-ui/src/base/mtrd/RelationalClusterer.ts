@@ -26,7 +26,7 @@ export default class RelationalClusterer {
         }
 
         if (relation.targets.length != this.getSize(j)) {
-            throw new Error("Relation source has wrong size.");
+            throw new Error("Relation target has wrong size.");
         }
 
         this._relations.getOrSet(i, () => new HashDict<number, Relation>()).set(j, relation);
@@ -49,16 +49,20 @@ export default class RelationalClusterer {
     }
 
     cluster(seed: number) {
-        const ortho = tf.initializers.orthogonal({ seed, gain: 1 });
-        let indicators = HashDict.fromList(this._shapes.map((i, shape) => [i, ortho.apply(shape) as tf.Tensor2D]));
+        const initializer = tf.initializers.orthogonal({ seed, gain: 1 });
+        let indicators = this._shapes.map((_, shape) => initializer.apply(shape) as tf.Tensor2D);
 
         while (1) {
-            indicators = HashDict.fromList(indicators.map((i, c) => (
-                [i, tf.addN(this.getRelationsFor(i)!.map((_, r) => {
+            indicators.map((i, c) => {
+                const relations = this.getRelationsFor(i)!;
+
+                const summands = relations.mapEntries((_, r) => {
                     const rc = tf.matMul(r.toMatrix(), c);
                     return tf.matMul(rc, rc);
-                })) as tf.Tensor2D]
-            )));
+                });
+
+                const m = tf.addN(summands) as tf.Tensor2D;
+            });
         }
     }
 

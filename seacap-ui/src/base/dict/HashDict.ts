@@ -83,10 +83,14 @@ export default class HashDict<K extends Hashable, V> implements Dict<K, V> {
     }
 
     public pairs(): [key: K, value: V][] {
-        return this.map((k, v) => [k, v]);
+        return this.mapEntries((k, v) => [k, v]);
     }
 
-    public map<T>(fn: (k: K, v: V) => T): T[] {
+    public map<T>(fn: (k: K, v: V) => T): Dict<K, T> {
+        return HashDict.fromList(this.mapEntries((k, v) => [k, fn(k, v)]));
+    }
+
+    public mapEntries<T>(fn: (k: K, v: V) => T): T[] {
         return Array.from(this._values.entries()).map(([hash, value]) => fn(this._keys.get(hash)!, value));
     }
 }

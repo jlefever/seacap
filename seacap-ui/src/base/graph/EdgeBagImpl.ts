@@ -17,13 +17,13 @@ export default class EdgeSetImpl<S extends Hashable, T extends Hashable, E exten
     constructor(edges: E[]) {
         this._edges = edges;
 
-        const { groupBy, fromList } = HashDict;
+        const { groupBy } = HashDict;
 
         this._outgoingEdges = groupBy(edges, e => e.src);
         this._incomingEdges = groupBy(edges, e => e.tgt);
 
-        this._outgoing = fromList(this._outgoingEdges.map((v, es) => [v, groupBy(es, e => e.tgt)]));
-        this._incoming = fromList(this._incomingEdges.map((v, es) => [v, groupBy(es, e => e.src)]));
+        this._outgoing = this._outgoingEdges.map((_, es) => groupBy(es, e => e.tgt));
+        this._incoming = this._incomingEdges.map((_, es) => groupBy(es, e => e.src));
 
         this._sources = this._outgoing.keys();
         this._targets = this._incoming.keys();

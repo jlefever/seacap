@@ -23,11 +23,7 @@ export default function FileNotice(props: FileNoticeProps) {
 
     const numChangeWith = incomingFilenames.filter(f => cochange(f) > 1).length;
 
-    // const centerHashs = _.uniq(repo.changes.filter(c => c.entity.name === filename).map(c => c.commitHash));
-    // const incomingHashs = _.uniq(repo.changes.filter(c => incomingFileIds.includes(c.entity.id)).map(c => c.commitHash));
-    // const cochange = _.intersection(centerHashs, incomingHashs).length;
-
-    return <div className="notification">
-        <ExternalEntityLink repo={repo} entity={filename} /> has <strong>{numIncoming}</strong> file-level dependents and is evolutionarily coupled with <strong>{numChangeWith}</strong> of them.
+    return <div className="ui message">
+        <p><ExternalEntityLink repo={repo} entity={filename} /> has <strong>{numIncoming}</strong> file-level dependents and is evolutionarily coupled with <strong>{numChangeWith}</strong> of them.</p>
     </div>;
 };
