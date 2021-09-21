@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import HashDict from "../../base/dict/HashDict";
 import Dep from "../../models/Dep";
@@ -11,17 +12,16 @@ import MyIcon from "../MyIcon";
 import { commonCommits, sortEntities } from "../util";
 import AttributeTable from "./AttributeTable";
 
-export interface ClientViewProps {
+export interface FileInterfaceViewProps {
     repo: Repo;
-    center: Entity;
     deps: Dep[];
 }
 
-export default (props: ClientViewProps) => {
-    const { repo, center, deps } = props;
+export default (props: FileInterfaceViewProps) => {
+    const { repo, deps } = props;
 
     return <div>
-        {HashDict.groupBy(sortEntities(deps.map(d => d.source)), e => e.file).mapEntries((file, entities) => {
+        {HashDict.groupBy(sortEntities(deps.map(d => d.target)), e => e.file).mapEntries((file, entities) => {
             const items = new Map<Entity, React.ReactChild>();
 
             entities.forEach(e => items.set(e,
@@ -30,18 +30,20 @@ export default (props: ClientViewProps) => {
                     <EntityName entity={e} repo={repo} />
                 </>));
 
-            const getUses = (e: Entity) => {
-                const myDeps = deps.filter(d => d.source === e);
+            const getClients = (e: Entity) => {
+                const myClients = deps.filter(d => d.target === e).map(d => d.source);
 
                 return <EntityListPopup
-                    trigger={<span>{myDeps.length} interfaces</span>}
-                    entities={myDeps.map(d => d.target)}
+                    trigger={<span>{myClients.length} clients</span>}
+                    entities={myClients}
                     repo={repo}
                 />;
             }
 
             const getCochanges = (e: Entity) => {
-                const hashes = commonCommits(repo.changes, center, e);
+                const myClients = deps.filter(d => d.target === e).map(d => d.source);
+                const hashes = _.union(...myClients.map(c => commonCommits(repo.changes, e, c)));
+                // const hashes = commonCommits(repo.changes, e, ...myClients);
 
                 return <CommitListPopup
                     trigger={<span>{hashes.length} cochanges</span>}
@@ -52,7 +54,7 @@ export default (props: ClientViewProps) => {
 
             return <div className="ui basic segment" key={file.id}>
                 <h4 className="ui horizontal divider header"><MyIcon name="vs-symbol-file" />{file.shortName}</h4>
-                <AttributeTable items={items} attributes={[getUses, getCochanges]} />
+                <AttributeTable items={items} attributes={[getClients, getCochanges]} />
             </div>
         })}
     </div>

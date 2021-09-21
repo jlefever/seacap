@@ -86,8 +86,7 @@ export const sortEntities = (entities: readonly Entity[]) => {
     return sorted.filter(s => entities.includes(s));
 }
 
-export const commonCommits = (changes: readonly Change[], a: Entity, b: Entity) => {
-    const aChanges = changes.filter(c => c.entity === a).map(c => c.commitHash);
-    const bChanges = changes.filter(c => c.entity === b).map(c => c.commitHash);
-    return _.intersection(aChanges, bChanges);
+export const commonCommits = (changes: readonly Change[], ...entities: Entity[]) => {
+    const arrs = entities.map(e => changes.filter(c => c.entity === e).map(c => c.commitHash));
+    return _.intersection(...arrs);
 }

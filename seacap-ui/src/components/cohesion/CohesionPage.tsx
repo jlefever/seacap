@@ -7,6 +7,8 @@ import Repo from "../../models/Repo";
 import MyIcon from "../MyIcon";
 import ClientView from "./ClientView";
 import ClusterForm from "./ClusterForm";
+import CommitView from "./CommitView";
+import FileInterfaceView from "./FileInterfaceView";
 import IconMenu from "./IconMenu";
 import QuantMenu from "./QuantMenu";
 
@@ -16,12 +18,13 @@ export interface CohesionPageProps {
 
 interface CohesionPageState {
     data?: [Entity, Dep[]];
+    activeView: string;
 }
 
 export default class CohesionPage extends React.Component<CohesionPageProps, CohesionPageState> {
     constructor(props: CohesionPageProps) {
         super(props);
-        this.state = {};
+        this.state = { activeView: "Clients" };
     }
 
     override render() {
@@ -39,22 +42,39 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         }
 
         const [center, deps] = this.state.data;
+        const { activeView } = this.state;
+
+        const view = (() => {
+            if (activeView === "File Interface") {
+                return <FileInterfaceView deps={deps} repo={repo} />
+            }
+
+            if (activeView === "Clients") {
+                return <ClientView center={center} deps={deps} repo={repo} />
+            }
+
+            if (activeView === "Commits") {
+                return <CommitView center={center} deps={deps} repo={repo} />
+            }
+
+            throw new Error();
+        })();
 
         return <>
             {header}
             <div className="ui text container">
                 <div className="ui basic segment">
-                    <ClientView center={center} deps={deps} repo={repo} />
+                    {view}
                     <div className="ui right rail">
                         <IconMenu items={{
                             "Browse": "vs-book",
                             "Clustering": "vs-group-by-ref-type"
-                        }} size="large" active="Browse" onChange={console.log} color="teal" />
+                        }} size="large" active="Browse" color="teal" onChange={console.log} />
                         <QuantMenu items={{
-                            "File Interface": 8,
                             "Clients": 32,
+                            "File Interface": 8,
                             "Commits": 5
-                        }} active="Clients" onChange={console.log} color="violet" />
+                        }} active={activeView} color="violet" onChange={v => this.setState({ activeView: v })} />
                     </div>
                 </div>
             </div>
