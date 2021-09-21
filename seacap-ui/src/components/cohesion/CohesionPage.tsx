@@ -72,11 +72,11 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             getTargets={h => targetChanges.filter(c => c.commitHash === h).map(c => c.entity)}
         />;
 
-        const view = (() => {
-            const targets = _.uniq(deps.map(d => d.target));
-            const sources = _.uniq(deps.map(d => d.source));
-            const commits = _.uniq(changes.map(c => c.commitHash));
+        const targets = _.uniq(deps.map(d => d.target));
+        const sources = _.uniq(deps.map(d => d.source));
+        const commits = _.uniq(changes.map(c => c.commitHash));
 
+        const view = (() => {
             if (activeClusterView === "Clustering") {
                 if (activeItemView === "File Interface") {
                     return <ClusterView clusters={randClustering(targets, 5)} render={renderTargets} />
@@ -117,9 +117,9 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                         }} active={activeClusterView} onChange={v => this.setState({ activeClusterView: v })} />
                         <div className="ui divider"></div>
                         <QuantMenu color="violet" items={{
-                            "Clients": 32,
-                            "File Interface": 8,
-                            "Commits": 5
+                            "Clients": sources.length,
+                            "File Interface": targets.length,
+                            "Commits": commits.length
                         }} active={activeItemView} onChange={v => this.setState({ activeItemView: v })} />
                     </div>
                     <div className="twelve wide column">
