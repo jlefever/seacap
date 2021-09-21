@@ -26,7 +26,7 @@ export default (props: MyMenuProps) => {
         }
     }
 
-    return <div className="ui fluid vertical menu">
+    return <div className="ui fluid secondary vertical pointing menu">
         {Object.entries(items).map(([name, fn]) =>
             <a className={getItemClass(name)} key={name} onClick={e => onClick(e, name)}>
                 {name}

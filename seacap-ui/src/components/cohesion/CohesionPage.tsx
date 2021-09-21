@@ -35,7 +35,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
     override render() {
         const { repo } = this.props;
 
-        const header = <div className="ui text container">
+        const header = <div className="ui container">
             <ClusterForm repo={this.props.repo} onSubmit={(deps, changes) => this.setState({
                 data: [deps, changes]
             })} />
@@ -73,19 +73,19 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         />;
 
         const view = (() => {
-            const targets = deps.map(d => d.target);
-            const sources = deps.map(d => d.source);
+            const targets = _.uniq(deps.map(d => d.target));
+            const sources = _.uniq(deps.map(d => d.source));
             const commits = _.uniq(changes.map(c => c.commitHash));
 
             if (activeClusterView === "Clustering") {
                 if (activeItemView === "File Interface") {
                     return <ClusterView clusters={randClustering(targets, 5)} render={renderTargets} />
                 }
-    
+
                 if (activeItemView === "Clients") {
                     return <ClusterView clusters={randClustering(sources, 5)} render={renderSources} />
                 }
-    
+
                 if (activeItemView === "Commits") {
                     return <ClusterView clusters={randClustering(commits, 5)} render={renderCommits} />
                 }
@@ -108,19 +108,25 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
 
         return <>
             {header}
-            <div className="ui text container">
-                <div className="ui basic segment">
-                    {view}
-                    <div className="ui right rail">
+            <div className="ui container">
+                <div className="ui grid">
+                    <div className="four wide column">
                         <IconMenu color="violet" items={{
                             "Browse": "book",
                             "Clustering": "cut"
                         }} active={activeClusterView} onChange={v => this.setState({ activeClusterView: v })} />
+                        <div className="ui divider"></div>
                         <QuantMenu color="violet" items={{
                             "Clients": 32,
                             "File Interface": 8,
                             "Commits": 5
                         }} active={activeItemView} onChange={v => this.setState({ activeItemView: v })} />
+                    </div>
+                    <div className="twelve wide column">
+                    {view}
+                        {/* <div className="ui basic segment">
+                            {view}
+                        </div> */}
                     </div>
                 </div>
             </div>

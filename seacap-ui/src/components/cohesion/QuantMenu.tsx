@@ -15,7 +15,7 @@ export default (props: QuantMenuProps) => {
     const myItems = _.fromPairs(Object.entries(items).map(([name, quant]) => [
         name,
         (isActive: boolean, color: string) => isActive
-            ? <div className={`ui ${color} left pointing label`}>{quant}</div>
+            ? <div className={`ui ${color} label`}>{quant}</div>
             : <div className={`ui label`}>{quant}</div>
     ]));
 
