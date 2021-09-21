@@ -7,7 +7,7 @@ import HammingDistFn from "../../clustering/ahc/HammingDistFn";
 import MaxLinker from "../../clustering/ahc/MaxLinker";
 import MinLinker from "../../clustering/ahc/MinLinker";
 import TaggedVector from "../../clustering/ahc/TaggedVector";
-import { EntityCluster, preprocess } from "../../clustering/preprocessors";
+import { EntityCluster, preprocessDeps } from "../../clustering/preprocessors";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";

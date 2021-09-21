@@ -1,6 +1,8 @@
 import _ from "lodash";
 import React from "react";
 import HashDict from "../../base/dict/HashDict";
+import { hasChanged } from "../../clustering/preprocessors";
+import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
@@ -13,12 +15,13 @@ import { commonCommits, sortEntities } from "../util";
 import AttributeTable from "./AttributeTable";
 
 export interface FileInterfaceViewProps {
-    repo: Repo;
     deps: Dep[];
+    changes: Change[];
+    repo: Repo;
 }
 
 export default (props: FileInterfaceViewProps) => {
-    const { repo, deps } = props;
+    const { deps, changes, repo } = props;
 
     return <div>
         {HashDict.groupBy(sortEntities(deps.map(d => d.target)), e => e.file).mapEntries((file, entities) => {
@@ -40,13 +43,11 @@ export default (props: FileInterfaceViewProps) => {
                 />;
             }
 
-            const getCochanges = (e: Entity) => {
-                const myClients = deps.filter(d => d.target === e).map(d => d.source);
-                const hashes = _.union(...myClients.map(c => commonCommits(repo.changes, e, c)));
-                // const hashes = commonCommits(repo.changes, e, ...myClients);
+            const getCommits = (e: Entity) => {
+                const hashes = _.uniq(changes.filter(c => hasChanged(c, e)).map(c => c.commitHash));
 
                 return <CommitListPopup
-                    trigger={<span>{hashes.length} cochanges</span>}
+                    trigger={<span>{hashes.length} commits</span>}
                     hashes={hashes}
                     repo={repo}
                 />;
@@ -54,7 +55,7 @@ export default (props: FileInterfaceViewProps) => {
 
             return <div className="ui basic segment" key={file.id}>
                 <h4 className="ui horizontal divider header"><MyIcon name="vs-symbol-file" />{file.shortName}</h4>
-                <AttributeTable items={items} attributes={[getClients, getCochanges]} />
+                <AttributeTable items={items} attributes={[getClients, getCommits]} />
             </div>
         })}
     </div>

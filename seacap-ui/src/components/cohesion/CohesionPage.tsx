@@ -1,6 +1,8 @@
 import _ from "lodash";
 import React from "react";
 import { Menu, Tab } from "semantic-ui-react";
+import { onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
+import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
@@ -17,7 +19,7 @@ export interface CohesionPageProps {
 };
 
 interface CohesionPageState {
-    data?: [Entity, Dep[]];
+    data?: [Dep[], Change[]];
     activeView: string;
 }
 
@@ -31,8 +33,8 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         const { repo } = this.props;
 
         const header = <div className="ui text container">
-            <ClusterForm repo={this.props.repo} onSubmit={(center, deps) => this.setState({
-                data: [center, deps]
+            <ClusterForm repo={this.props.repo} onSubmit={(deps, changes) => this.setState({
+                data: [deps, changes]
             })} />
             <div className="ui divider"></div>
         </div>;
@@ -41,20 +43,23 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             return header;
         }
 
-        const [center, deps] = this.state.data;
+        const [deps, changes] = this.state.data;
+        const sourceChanges = onlySourceChanges(deps, changes);
+        const targetChanges = onlyTargetChanges(deps, changes);
+
         const { activeView } = this.state;
 
         const view = (() => {
             if (activeView === "File Interface") {
-                return <FileInterfaceView deps={deps} repo={repo} />
+                return <FileInterfaceView deps={deps} changes={changes} repo={repo} />
             }
 
             if (activeView === "Clients") {
-                return <ClientView center={center} deps={deps} repo={repo} />
+                return <ClientView deps={deps} changes={changes} repo={repo} />
             }
 
             if (activeView === "Commits") {
-                return <CommitView center={center} deps={deps} repo={repo} />
+                return <CommitView sourceChanges={sourceChanges} targetChanges={targetChanges} repo={repo} />
             }
 
             throw new Error();

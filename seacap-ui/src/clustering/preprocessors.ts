@@ -1,5 +1,6 @@
 import _ from "lodash";
 import HashDict from "../base/dict/HashDict";
+import Change from "../models/Change";
 import Dep from "../models/Dep";
 import Entity from "../models/Entity";
 import ArrVector from "./ahc/ArrVector";
@@ -25,7 +26,7 @@ export interface PreprocessOptions {
 //     return deps.filter(d => isExternal(d));
 // }
 
-export function preprocess(deps: readonly Dep[], opts: PreprocessOptions) {
+export function preprocessDeps(deps: readonly Dep[], opts: PreprocessOptions) {
     let selected = selectDeps(deps, opts.filename);
     selected = selected.filter(d => opts.allowDep(d));
     selected = opts.bubbleSources ? bubbleSources(selected) : selected;
@@ -33,6 +34,11 @@ export function preprocess(deps: readonly Dep[], opts: PreprocessOptions) {
     selected = selected.filter(d => opts.allowSource(d.source));
     selected = selected.filter(d => opts.allowTarget(d.target));
     return selected;
+}
+
+export function preprocessChanges(deps: readonly Dep[], changes: readonly Change[]) {
+    const entities = _.union(deps.map(d => d.source), deps.map(d => d.target));
+    return changes.filter(c => transInclude(entities, c.entity));
 }
 
 export function selectDeps(deps: readonly Dep[], targetFile: string) {
@@ -80,6 +86,24 @@ export function vectorize(deps: Dep[]): TaggedVector<boolean, Entity>[] {
         new ArrVector(or(ds.map(d => toVector(d, sourceIds)))),
         entity
     ));
+}
+
+export function transInclude(entities: Entity[], entity: Entity) {
+    return _.some(entities, e => e.ancestory.includes(entity))
+}
+
+export function hasChanged(change: Change, entity: Entity) {
+    return entity.ancestory.includes(change.entity)
+}
+
+export function onlySourceChanges(deps: Dep[], changes: Change[]) {
+    const sources = deps.map(d => d.source);
+    return changes.filter(c => transInclude(sources, c.entity));
+}
+
+export function onlyTargetChanges(deps: Dep[], changes: Change[]) {
+    const targets = deps.map(d => d.target);
+    return changes.filter(c => transInclude(targets, c.entity));
 }
 
 function toVector(dep: Dep, sourceIds: readonly number[]) {
