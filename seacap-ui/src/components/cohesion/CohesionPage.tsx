@@ -1,16 +1,12 @@
 import _ from "lodash";
 import React from "react";
-import { Menu, Tab } from "semantic-ui-react";
-import { onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
+import { hasChanged, onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
 import Change from "../../models/Change";
 import Dep from "../../models/Dep";
-import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
-import MyIcon from "../MyIcon";
-import ClientView from "./ClientView";
 import ClusterForm from "./ClusterForm";
 import CommitView from "./CommitView";
-import FileInterfaceView from "./FileInterfaceView";
+import EntityView from "./EntityView";
 import IconMenu from "./IconMenu";
 import QuantMenu from "./QuantMenu";
 
@@ -51,15 +47,29 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
 
         const view = (() => {
             if (activeView === "File Interface") {
-                return <FileInterfaceView deps={deps} changes={changes} repo={repo} />
+                return <EntityView
+                    repo={repo} relationName="clients"
+                    entities={deps.map(d => d.target)}
+                    getRelatedEntities={e => deps.filter(d => d.target === e).map(d => d.source)}
+                    getCommitsFor={e => _.uniq(changes.filter(c => hasChanged(c, e)).map(c => c.commitHash))}
+                />
             }
 
             if (activeView === "Clients") {
-                return <ClientView deps={deps} changes={changes} repo={repo} />
+                return <EntityView
+                    repo={repo} relationName="interfaces"
+                    entities={deps.map(d => d.source)}
+                    getRelatedEntities={e => deps.filter(d => d.source === e).map(d => d.target)}
+                    getCommitsFor={e => _.uniq(changes.filter(c => hasChanged(c, e)).map(c => c.commitHash))}
+                />
             }
 
             if (activeView === "Commits") {
-                return <CommitView sourceChanges={sourceChanges} targetChanges={targetChanges} repo={repo} />
+                return <CommitView repo={repo}
+                    commits={_.uniq(changes.map(c => c.commitHash))}
+                    getSources={h => sourceChanges.filter(c => c.commitHash === h).map(c => c.entity)}
+                    getTargets={h => targetChanges.filter(c => c.commitHash === h).map(c => c.entity)}
+                />
             }
 
             throw new Error();

@@ -3,7 +3,6 @@ import React from "react";
 import HashDict from "../../base/dict/HashDict";
 import { hasChanged } from "../../clustering/preprocessors";
 import Change from "../../models/Change";
-import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
 import CommitListPopup from "../entity/CommitListPopup";
@@ -14,17 +13,19 @@ import MyIcon from "../MyIcon";
 import { sortEntities } from "../util";
 import AttributeTable from "./AttributeTable";
 
-export interface ClientViewProps {
-    deps: Dep[];
-    changes: Change[];
+export interface EntityViewProps {
     repo: Repo;
+    entities: Entity[];
+    relationName: string;
+    getRelatedEntities: (e: Entity) => readonly Entity[];
+    getCommitsFor: (e: Entity) => readonly string[];
 }
 
-export default (props: ClientViewProps) => {
-    const { deps, changes, repo } = props;
+export default (props: EntityViewProps) => {
+    const { repo, entities, relationName, getRelatedEntities, getCommitsFor } = props;
 
     return <div>
-        {HashDict.groupBy(sortEntities(deps.map(d => d.source)), e => e.file).mapEntries((file, entities) => {
+        {HashDict.groupBy(sortEntities(entities), e => e.file).mapEntries((file, entities) => {
             const items = new Map<Entity, React.ReactChild>();
 
             entities.forEach(e => items.set(e,
@@ -34,17 +35,18 @@ export default (props: ClientViewProps) => {
                 </>));
 
             const getUses = (e: Entity) => {
-                const myDeps = deps.filter(d => d.source === e);
+                const related = getRelatedEntities(e);
 
                 return <EntityListPopup
-                    trigger={<span>{myDeps.length} interfaces</span>}
-                    entities={myDeps.map(d => d.target)}
+                    trigger={<span>{related.length} {relationName}</span>}
+                    entities={related}
                     repo={repo}
                 />;
             }
 
             const getCommits = (e: Entity) => {
-                const hashes = _.uniq(changes.filter(c => hasChanged(c, e)).map(c => c.commitHash));
+                const hashes = getCommitsFor(e);
+                // const hashes = ;
 
                 return <CommitListPopup
                     trigger={<span>{hashes.length} commits</span>}

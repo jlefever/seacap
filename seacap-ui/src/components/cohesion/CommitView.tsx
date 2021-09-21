@@ -1,6 +1,7 @@
 import _ from "lodash";
 import React from "react";
 import Change from "../../models/Change";
+import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
 import EntityListPopup from "../entity/EntityListPopup";
 import ExternalCommitLink from "../entity/ExternalCommitLink";
@@ -8,25 +9,18 @@ import MyIcon from "../MyIcon";
 import AttributeTable from "./AttributeTable";
 
 export interface CommitViewProps {
-    sourceChanges: Change[];
-    targetChanges: Change[];
     repo: Repo;
+    commits: string[];
+    getSources: (h: string) => readonly Entity[];
+    getTargets: (h: string) => readonly Entity[];
 }
 
 export default (props: CommitViewProps) => {
-    const { sourceChanges, targetChanges, repo } = props;
-
-    // const clients = deps.map(d => d.source);
-    // const clientChanges = repo.changes.filter(c => transInclude(clients, c.entity));
-    // const clientCommits = clientChanges.map(c => c.commitHash);
-    // const interfaces = deps.map(d => d.target);
-    // const interfaceChanges = repo.changes.filter(c => transInclude(interfaces, c.entity));
-    // const interfaceCommits = interfaceChanges.map(c => c.commitHash);
-    // const commits = _.intersection(clientCommits, interfaceCommits);
+    const { repo, commits, getSources, getTargets } = props;
 
     const items = new Map<string, React.ReactChild>();
 
-    const commits = _.union(sourceChanges.map(c => c.commitHash), targetChanges.map(c => c.commitHash));
+    // const commits = _.union(sourceChanges.map(c => c.commitHash), targetChanges.map(c => c.commitHash));
 
     commits.forEach(hash => items.set(hash, <>
         <MyIcon name="vs-git-commit" />
@@ -34,7 +28,9 @@ export default (props: CommitViewProps) => {
     </>));
 
     const getClients = (hash: string) => {
-        const myClients = sourceChanges.filter(c => c.commitHash === hash).map(c => c.entity);
+        // const myClients = sourceChanges.filter(c => c.commitHash === hash).map(c => c.entity);
+
+        const myClients = getSources(hash);
 
         return <EntityListPopup
             trigger={<span>{myClients.length} clients</span>}
@@ -44,7 +40,9 @@ export default (props: CommitViewProps) => {
     }
 
     const getInterfaces = (hash: string) => {
-        const myInterfaces = targetChanges.filter(c => c.commitHash === hash).map(c => c.entity);
+        // const myInterfaces = targetChanges.filter(c => c.commitHash === hash).map(c => c.entity);
+
+        const myInterfaces = getTargets(hash);
 
         return <EntityListPopup
             trigger={<span>{myInterfaces.length} interfaces</span>}
