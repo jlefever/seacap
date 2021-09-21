@@ -1,20 +1,13 @@
 import _ from "lodash";
-import { F } from "ramda";
 import React from "react";
-import HashDict from "../../base/dict/HashDict";
-import { EntityCluster } from "../../clustering/preprocessors";
+import { Menu, Tab } from "semantic-ui-react";
 import Dep from "../../models/Dep";
 import Repo from "../../models/Repo";
-import CommitListPopup from "../entity/CommitListPopup";
-import EntityIcon from "../entity/EntityIcon";
-import EntityItem from "../entity/EntityItem";
-import EntityListPopup from "../entity/EntityListPopup";
-import EntityName from "../entity/EntityName";
 import MyIcon from "../MyIcon";
-import { commonCommits, entityIconFor, sortEntities } from "../util";
+import ClientView from "./ClientView";
 import ClusterForm from "./ClusterForm";
-import FileDropdown from "./FileDropdown";
-import TabbedSegment from "./TabbedSegment";
+import IconMenu from "./IconMenu";
+import QuantMenu from "./QuantMenu";
 
 export interface CohesionPageProps {
     repo: Repo
@@ -39,34 +32,20 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                 <div className="ui divider"></div>
             </div>
             <div className="ui text container">
-                {this.state.deps && <div>
-                    {HashDict.groupBy(sortEntities(this.state.deps.map(d => d.source)), e => e.file).mapEntries((file, entities) => (
-                        <div className="ui basic segment" key={file.id}>
-                            <h4 className="ui horizontal divider header"><MyIcon name="vs-symbol-file" />{file.shortName}</h4>
-                            <table className="ui very basic table">
-                                <tbody>
-                                    {entities.map(e => <tr key={e.id}>
-                                        <td><EntityIcon entity={e} /><EntityName entity={e} repo={repo} /></td>
-                                        <td className="collapsing">
-                                            <EntityListPopup
-                                                trigger={<span>{this.state.deps!.filter(d => d.source === e).length} uses</span>}
-                                                entities={this.state.deps!.filter(d => d.source === e).map(d => d.target)}
-                                                repo={repo}
-                                            />
-                                        </td>
-                                        <td className="collapsing">
-                                            <CommitListPopup
-                                                trigger={<span>{repo.changes.filter(c => c.entity === e).length} commits</span>}
-                                                hashes={repo.changes.filter(c => c.entity === e).map(c => c.commitHash)}
-                                                repo={repo}
-                                            />
-                                        </td>
-                                    </tr>)}
-                                </tbody>
-                            </table>
-                        </div>
-                    ))}
-                </div>}
+                <div className="ui basic segment">
+                    {this.state.deps && <ClientView deps={this.state.deps} repo={repo} />}
+                    <div className="ui right rail">
+                        <IconMenu items={{
+                            "Browse": "vs-book",
+                            "Clustering": "vs-group-by-ref-type"
+                        }} size="large" active="Browse" onChange={console.log} color="teal" />
+                        <QuantMenu items={{
+                            "File Interface": 8,
+                            "Clients": 32,
+                            "Commits": 5
+                        }} active="Clients" onChange={console.log} color="violet" />
+                    </div>
+                </div>
             </div>
         </>
     }
