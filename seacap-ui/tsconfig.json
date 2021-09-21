@@ -11,7 +11,7 @@
         "noUnusedParameters": true,
         "forceConsistentCasingInFileNames": true,
         "module": "esnext",
-        "target": "es2017",
+        "target": "esnext",
         "esModuleInterop": true,
         "jsx": "react",
         "moduleResolution": "node",

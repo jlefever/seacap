@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import { Dropdown } from "semantic-ui-react";
 import { preprocess } from "../../clustering/preprocessors";
@@ -9,7 +10,7 @@ import FileNotice from "./FileNotice";
 
 export interface ClusterFormProps {
     repo: Repo;
-    onSubmit: (deps: Dep[]) => void;
+    onSubmit: (center: Entity, deps: Dep[]) => void;
 }
 
 interface ClusterFormState {
@@ -68,7 +69,8 @@ export default class ClusterForm extends React.Component<ClusterFormProps, Clust
             allowDep: getAllowDep(filterDep)
         };
 
-        this.props.onSubmit(preprocess(this.props.repo.deps, options));
+        const center = _.find(this.props.repo.entities, e => e.name === filename);
+        this.props.onSubmit(center!, preprocess(this.props.repo.deps, options));
     }
 
     override render() {

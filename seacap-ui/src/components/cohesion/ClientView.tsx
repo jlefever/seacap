@@ -1,48 +1,59 @@
 import React from "react";
 import HashDict from "../../base/dict/HashDict";
 import Dep from "../../models/Dep";
+import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
 import CommitListPopup from "../entity/CommitListPopup";
 import EntityIcon from "../entity/EntityIcon";
 import EntityListPopup from "../entity/EntityListPopup";
 import EntityName from "../entity/EntityName";
 import MyIcon from "../MyIcon";
-import { sortEntities } from "../util";
+import { commonCommits, sortEntities } from "../util";
+import AttributeTable from "./AttributeTable";
 
 export interface ClientView {
-    deps: Dep[];
     repo: Repo;
+    center: Entity;
+    deps: Dep[];
 }
 
 export default (props: ClientView) => {
-    const { deps, repo } = props;
+    const { repo, center, deps } = props;
 
     return <div>
-        {HashDict.groupBy(sortEntities(deps.map(d => d.source)), e => e.file).mapEntries((file, entities) => (
-            <div className="ui basic segment" key={file.id}>
+        {HashDict.groupBy(sortEntities(deps.map(d => d.source)), e => e.file).mapEntries((file, entities) => {
+            const items = new Map<Entity, React.ReactChild>();
+
+            entities.forEach(e => items.set(e,
+                <>
+                    <EntityIcon entity={e} />
+                    <EntityName entity={e} repo={repo} />
+                </>));
+
+            const getUses = (e: Entity) => {
+                const myDeps = deps.filter(d => d.source === e);
+
+                return <EntityListPopup
+                    trigger={<span>{myDeps.length} uses</span>}
+                    entities={myDeps.filter(d => d.source === e).map(d => d.target)}
+                    repo={repo}
+                />;
+            }
+
+            const getCochanges = (e: Entity) => {
+                const hashes = commonCommits(repo.changes, center, e);
+
+                return <CommitListPopup
+                    trigger={<span>{hashes.length} cochanges</span>}
+                    hashes={hashes}
+                    repo={repo}
+                />;
+            }
+
+            return <div className="ui basic segment" key={file.id}>
                 <h4 className="ui horizontal divider header"><MyIcon name="vs-symbol-file" />{file.shortName}</h4>
-                <table className="ui very basic table">
-                    <tbody>
-                        {entities.map(e => <tr key={e.id}>
-                            <td><EntityIcon entity={e} /><EntityName entity={e} repo={repo} /></td>
-                            <td className="collapsing">
-                                <EntityListPopup
-                                    trigger={<span>{deps.filter(d => d.source === e).length} uses</span>}
-                                    entities={deps.filter(d => d.source === e).map(d => d.target)}
-                                    repo={repo}
-                                />
-                            </td>
-                            <td className="collapsing">
-                                <CommitListPopup
-                                    trigger={<span>{repo.changes.filter(c => c.entity === e).length} cochanges</span>}
-                                    hashes={repo.changes.filter(c => c.entity === e).map(c => c.commitHash)}
-                                    repo={repo}
-                                />
-                            </td>
-                        </tr>)}
-                    </tbody>
-                </table>
+                <AttributeTable items={items} attributes={[getUses, getCochanges]} />
             </div>
-        ))}
+        })}
     </div>
 }

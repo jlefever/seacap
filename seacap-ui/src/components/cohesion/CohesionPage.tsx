@@ -2,6 +2,7 @@ import _ from "lodash";
 import React from "react";
 import { Menu, Tab } from "semantic-ui-react";
 import Dep from "../../models/Dep";
+import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
 import MyIcon from "../MyIcon";
 import ClientView from "./ClientView";
@@ -14,7 +15,7 @@ export interface CohesionPageProps {
 };
 
 interface CohesionPageState {
-    deps?: Dep[];
+    data?: [Entity, Dep[]];
 }
 
 export default class CohesionPage extends React.Component<CohesionPageProps, CohesionPageState> {
@@ -26,14 +27,24 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
     override render() {
         const { repo } = this.props;
 
+        const header = <div className="ui text container">
+            <ClusterForm repo={this.props.repo} onSubmit={(center, deps) => this.setState({
+                data: [center, deps]
+            })} />
+            <div className="ui divider"></div>
+        </div>;
+
+        if (!this.state.data) {
+            return header;
+        }
+
+        const [center, deps] = this.state.data;
+
         return <>
-            <div className="ui text container">
-                <ClusterForm repo={this.props.repo} onSubmit={deps => this.setState({ deps })} />
-                <div className="ui divider"></div>
-            </div>
+            {header}
             <div className="ui text container">
                 <div className="ui basic segment">
-                    {this.state.deps && <ClientView deps={this.state.deps} repo={repo} />}
+                    <ClientView center={center} deps={deps} repo={repo} />
                     <div className="ui right rail">
                         <IconMenu items={{
                             "Browse": "vs-book",
