@@ -4,7 +4,7 @@ import Hashable from "../Hashable";
 import Edge from "./Edge";
 import EdgeBag from "./EdgeBag";
 
-export default class EdgeSetImpl<S extends Hashable, T extends Hashable, E extends Edge<S, T>> implements EdgeBag<S, T, E> {
+export default class EdgeBagImpl<S extends Hashable, T extends Hashable, E extends Edge<S, T>> implements EdgeBag<S, T, E> {
     private readonly _edges: readonly E[];
     private readonly _sources: readonly S[];
     private readonly _targets: readonly T[];
@@ -14,19 +14,21 @@ export default class EdgeSetImpl<S extends Hashable, T extends Hashable, E exten
     private readonly _outgoing: Dict<S, Dict<T, readonly E[]>>;
     private readonly _incoming: Dict<T, Dict<S, readonly E[]>>;
 
-    constructor(edges: E[]) {
+    constructor(sources: readonly S[], targets: readonly T[], edges: readonly E[]) {
         this._edges = edges;
 
         const { groupBy } = HashDict;
 
-        this._outgoingEdges = groupBy(edges, e => e.src);
-        this._incomingEdges = groupBy(edges, e => e.tgt);
+        this._outgoingEdges = groupBy(edges, e => e.source);
+        this._incomingEdges = groupBy(edges, e => e.target);
 
-        this._outgoing = this._outgoingEdges.map((_, es) => groupBy(es, e => e.tgt));
-        this._incoming = this._incomingEdges.map((_, es) => groupBy(es, e => e.src));
+        this._outgoing = this._outgoingEdges.map((_, es) => groupBy(es, e => e.target));
+        this._incoming = this._incomingEdges.map((_, es) => groupBy(es, e => e.source));
 
-        this._sources = this._outgoing.keys();
-        this._targets = this._incoming.keys();
+        // this._sources = this._outgoing.keys();
+        // this._targets = this._incoming.keys();
+        this._sources = sources;
+        this._targets = targets;
         this._vertices = (this._sources as (S | T)[]).concat(this._targets);
     }
 

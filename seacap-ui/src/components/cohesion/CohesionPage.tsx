@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import { hasChanged, onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
+import { onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
 import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
@@ -12,13 +12,17 @@ import EntityView from "./EntityView";
 import IconMenu from "./IconMenu";
 import QuantMenu from "./QuantMenu";
 import ClusterForm, { ClusterOptions } from "./ClusterForm";
+import EdgeBagImpl from "../../base/graph/EdgeBagImpl";
+import Edge from "../../base/graph/Edge";
+import RelationImpl from "../../base/mtrd/RelationImpl";
+import RelationalClusterer from "../../base/mtrd/RelationalClusterer";
 
 export interface CohesionPageProps {
     repo: Repo
 };
 
 interface CohesionPageState {
-    data?: [Dep[], Change[]];
+    data?: [readonly Dep[], readonly Change[]];
     activeClusterView: string;
     activeItemView: string;
 
@@ -66,15 +70,15 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         const renderTargets = (entities: Entity[]) => <EntityView
             repo={repo} relationName="clients"
             entities={entities}
-            getRelatedEntities={e => deps.filter(d => d.target === e).map(d => d.source)}
-            getCommitsFor={e => _.uniq(changes.filter(c => hasChanged(c, e)).map(c => c.commitHash))}
+            getRelatedEntities={e => _.uniq(deps.filter(d => d.target === e).map(d => d.source))}
+            getCommitsFor={e => _.uniq(changes.filter(c => c.entity === e).map(c => c.commitHash))}
         />;
 
         const renderSources = (entities: Entity[]) => <EntityView
             repo={repo} relationName="interfaces"
             entities={entities}
-            getRelatedEntities={e => deps.filter(d => d.source === e).map(d => d.target)}
-            getCommitsFor={e => _.uniq(changes.filter(c => hasChanged(c, e)).map(c => c.commitHash))}
+            getRelatedEntities={e => _.uniq(deps.filter(d => d.source === e).map(d => d.target))}
+            getCommitsFor={e => _.uniq(changes.filter(c => c.entity === e).map(c => c.commitHash))}
         />;
 
         const renderCommits = (hashes: string[]) => <CommitView repo={repo}
@@ -124,6 +128,59 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             this.setState({ targetClusters, sourceClusters, commitClusters });
         }
 
+        const cluster2 = (opts: ClusterOptions) => {
+            type ChangeEdge = Edge<Entity, string>;
+
+            const s2tEdges = new EdgeBagImpl<Entity, Entity, Dep>(sources, targets, deps);
+            const t2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(targets, commits, targetChanges.map(c => ({ source: c.entity, target: c.commitHash })));
+            const s2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(sources, commits, sourceChanges.map(c => ({ source: c.entity, target: c.commitHash })));
+
+            const sources2targets = new RelationImpl(s2tEdges);
+            const targets2sources = sources2targets.transpose();
+            const targets2commits = new RelationImpl(t2cEdges);
+            const commits2targets = targets2commits.transpose();
+            const sources2commits = new RelationImpl(s2cEdges);
+            const commits2sources = sources2commits.transpose();
+
+            const clusterer = new RelationalClusterer();
+
+            // targets (0)
+            clusterer.setSize(0, targets.length);
+            clusterer.setNumClusters(0, opts.numTargetClusters);
+
+            // sources (1)
+            clusterer.setSize(1, sources.length);
+            clusterer.setNumClusters(1, opts.numSourceClusters);
+
+            // commits (2)
+            clusterer.setSize(2, commits.length);
+            clusterer.setNumClusters(2, opts.numCommitClusters);
+
+            // relations
+            clusterer.setRelation(0, 1, targets2sources);
+            clusterer.setRelation(0, 2, targets2commits);
+            clusterer.setRelation(1, 0, sources2targets);
+            clusterer.setRelation(1, 2, sources2commits);
+            clusterer.setRelation(2, 0, commits2targets);
+            clusterer.setRelation(2, 1, commits2sources);
+
+            // console.log(targets);
+            // console.log(sources);
+            // console.log(commits);
+            // targets2sources.toMatrix().print(false);
+            // targets2commits.toMatrix().print(false);
+            // sources2targets.toMatrix().print(false);
+            // sources2commits.toMatrix().print(false);
+            // commits2targets.toMatrix().print(false);
+            // commits2sources.toMatrix().print(false);
+
+            const clusterss = clusterer.cluster();
+            const targetClusters = clusterss[0].map(clusters => clusters.map(i => targets[i]));
+            const sourceClusters = clusterss[1].map(clusters => clusters.map(i => sources[i]));
+            const commitClusters = clusterss[2].map(clusters => clusters.map(i => commits[i]));
+            this.setState({ targetClusters, sourceClusters, commitClusters });
+        }
+
         return <>
             {header}
             <div className="ui container">
@@ -141,7 +198,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                         }} active={activeItemView} onChange={v => this.setState({ activeItemView: v })} />
                     </div>
                     <div className="twelve wide column">
-                        {activeClusterView === "Clustering" && <ClusterForm onSubmit={cluster} />}
+                        {activeClusterView === "Clustering" && <ClusterForm onSubmit={cluster2} />}
                         {view}
                     </div>
                 </div>

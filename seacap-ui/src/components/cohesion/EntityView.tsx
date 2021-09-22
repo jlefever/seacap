@@ -1,8 +1,6 @@
 import _ from "lodash";
 import React from "react";
 import HashDict from "../../base/dict/HashDict";
-import { hasChanged } from "../../clustering/preprocessors";
-import Change from "../../models/Change";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
 import CommitListPopup from "../entity/CommitListPopup";
@@ -46,7 +44,6 @@ export default (props: EntityViewProps) => {
 
             const getCommits = (e: Entity) => {
                 const hashes = getCommitsFor(e);
-                // const hashes = ;
 
                 return <CommitListPopup
                     trigger={<span>{hashes.length} commits</span>}

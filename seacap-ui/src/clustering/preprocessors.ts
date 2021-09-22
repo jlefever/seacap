@@ -1,15 +1,13 @@
 import _ from "lodash";
-import HashDict from "../base/dict/HashDict";
 import Change from "../models/Change";
 import Dep from "../models/Dep";
 import Entity from "../models/Entity";
-import ArrVector from "./ahc/ArrVector";
 import Cluster from "./ahc/Cluster";
 import TaggedVector from "./ahc/TaggedVector";
 
 export type EntityCluster = Cluster<boolean, TaggedVector<boolean, Entity>>;
 
-export interface PreprocessOptions {
+export interface PreprocessDepsOptions {
     filename: string;
     bubbleTargets: boolean;
     bubbleSources: boolean;
@@ -18,15 +16,7 @@ export interface PreprocessOptions {
     allowDep: (d: Dep) => boolean;
 }
 
-// function isExternal(dep: Dep) {
-//     return dep.source.file.id !== dep.target.file.id;
-// }
-
-// function externalDeps(deps: readonly Dep[]) {
-//     return deps.filter(d => isExternal(d));
-// }
-
-export function preprocessDeps(deps: readonly Dep[], opts: PreprocessOptions) {
+export function preprocessDeps(deps: readonly Dep[], opts: PreprocessDepsOptions) {
     let selected = selectDeps(deps, opts.filename);
     selected = selected.filter(d => opts.allowDep(d));
     selected = opts.bubbleSources ? bubbleSources(selected) : selected;
@@ -38,7 +28,7 @@ export function preprocessDeps(deps: readonly Dep[], opts: PreprocessOptions) {
 
 export function preprocessChanges(deps: readonly Dep[], changes: readonly Change[]) {
     const entities = _.union(deps.map(d => d.source), deps.map(d => d.target));
-    return changes.filter(c => transInclude(entities, c.entity));
+    return changes.filter(c => entities.includes(c.entity));
 }
 
 export function selectDeps(deps: readonly Dep[], targetFile: string) {
@@ -77,49 +67,16 @@ export function onlyLeafSources(deps: Dep[]) {
     return deps.filter(d => d.source.isLeaf);
 }
 
-export function vectorize(deps: Dep[]): TaggedVector<boolean, Entity>[] {
-    const sourceIds = Array.from(new Set(deps.map(d => d.source.id)));
-
-    // console.log(deps);
-
-    return HashDict.groupBy(deps, d => d.target).pairs().map(([entity, ds]) => new TaggedVector(
-        new ArrVector(or(ds.map(d => toVector(d, sourceIds)))),
-        entity
-    ));
-}
-
 export function transInclude(entities: Entity[], entity: Entity) {
     return _.some(entities, e => e.ancestory.includes(entity))
 }
 
-export function hasChanged(change: Change, entity: Entity) {
-    return entity.ancestory.includes(change.entity)
-}
-
-export function onlySourceChanges(deps: Dep[], changes: Change[]) {
+export function onlySourceChanges(deps: readonly Dep[], changes: readonly Change[]) {
     const sources = deps.map(d => d.source);
-    return changes.filter(c => transInclude(sources, c.entity));
+    return changes.filter(c => sources.includes(c.entity));
 }
 
-export function onlyTargetChanges(deps: Dep[], changes: Change[]) {
+export function onlyTargetChanges(deps: readonly Dep[], changes: readonly Change[]) {
     const targets = deps.map(d => d.target);
-    return changes.filter(c => transInclude(targets, c.entity));
-}
-
-function toVector(dep: Dep, sourceIds: readonly number[]) {
-    const vec = _.fill(Array(sourceIds.length), false);
-    vec[sourceIds.indexOf(dep.source.id)] = true;
-    return vec;
-}
-
-function or(vecs: boolean[][]) {
-    return vecs.reduce((acc, cur) => _.map(_.zip(acc, cur), ([x, y]) => valueOf(x) || valueOf(y)));
-}
-
-function valueOf<T>(x: T | undefined | null): T {
-    if (x === undefined || x === null) {
-        throw new Error("missing value");
-    }
-
-    return x;
+    return changes.filter(c => targets.includes(c.entity));
 }

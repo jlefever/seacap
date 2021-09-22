@@ -1,17 +1,19 @@
 import * as tf from "@tensorflow/tfjs-core";
 import Dict from "../dict/Dict";
 import HashDict from "../dict/HashDict";
-import SimpleEdgeSet from "../graph/SimpleEdgeSet";
+import Edge from "../graph/Edge";
+import EdgeBag from "../graph/EdgeBag";
+import EdgeBagImpl from "../graph/EdgeBagImpl";
 import Hashable from "../Hashable";
 import Relation from "./Relation";
 
 export default class RelationImpl<S extends Hashable, T extends Hashable> implements Relation<S, T> {
-    private readonly _edges: SimpleEdgeSet<S, T>;
+    private readonly _edges: EdgeBag<S, T, Edge<S, T>>;
     private readonly _sourceIndices: Dict<S, number> = new HashDict<S, number>();
     private readonly _targetIndices: Dict<T, number> = new HashDict<T, number>();
     private _matrix?: tf.Tensor2D;
 
-    constructor(edges: SimpleEdgeSet<S, T>) {
+    constructor(edges: EdgeBag<S, T, Edge<S, T>>) {
         this._edges = edges;
         this._edges.sources.forEach((source, index) => this._sourceIndices.set(source, index));
         this._edges.targets.forEach((target, index) => this._targetIndices.set(target, index));
@@ -23,6 +25,11 @@ export default class RelationImpl<S extends Hashable, T extends Hashable> implem
 
     get targets() {
         return this._edges.targets;
+    }
+
+    transpose(): Relation<T, S> {
+        const edges = this._edges.edges.map(e => ({ source: e.target, target: e.source }));
+        return new RelationImpl(new EdgeBagImpl(this._edges.targets, this._edges.sources, edges));
     }
 
     indexForSource(source: S): number {
@@ -56,7 +63,7 @@ export default class RelationImpl<S extends Hashable, T extends Hashable> implem
         const matrix = tf.buffer<tf.Rank.R2>([sources.length, targets.length]);
 
         sources.forEach((src, srcIndex) => {
-            this._edges.targetsOf(src).forEach(tgt => {
+            this._edges.outgoing(src).forEach(tgt => {
                 matrix.set(1, srcIndex, this.indexForTarget(tgt));
             });
         });
