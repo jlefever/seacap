@@ -5,12 +5,13 @@ import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
-import ClusterForm from "./ClusterForm";
+import PreprocessForm from "./PreprocessForm";
 import ClusterView from "./ClusterView";
 import CommitView from "./CommitView";
 import EntityView from "./EntityView";
 import IconMenu from "./IconMenu";
 import QuantMenu from "./QuantMenu";
+import ClusterForm, { ClusterOptions } from "./ClusterForm";
 
 export interface CohesionPageProps {
     repo: Repo
@@ -20,6 +21,10 @@ interface CohesionPageState {
     data?: [Dep[], Change[]];
     activeClusterView: string;
     activeItemView: string;
+
+    sourceClusters: Entity[][];
+    targetClusters: Entity[][];
+    commitClusters: string[][];
 }
 
 function randClustering<T>(items: T[], k: number): T[][] {
@@ -29,14 +34,20 @@ function randClustering<T>(items: T[], k: number): T[][] {
 export default class CohesionPage extends React.Component<CohesionPageProps, CohesionPageState> {
     constructor(props: CohesionPageProps) {
         super(props);
-        this.state = { activeClusterView: "Browse", activeItemView: "Clients" };
+        this.state = {
+            activeClusterView: "Browse",
+            activeItemView: "Clients",
+            sourceClusters: [],
+            targetClusters: [],
+            commitClusters: [],
+        };
     }
 
     override render() {
         const { repo } = this.props;
 
         const header = <div className="ui container">
-            <ClusterForm repo={this.props.repo} onSubmit={(deps, changes) => this.setState({
+            <PreprocessForm repo={this.props.repo} onSubmit={(deps, changes) => this.setState({
                 data: [deps, changes]
             })} />
             <div className="ui divider"></div>
@@ -79,15 +90,15 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         const view = (() => {
             if (activeClusterView === "Clustering") {
                 if (activeItemView === "File Interface") {
-                    return <ClusterView clusters={randClustering(targets, 5)} render={renderTargets} />
+                    return <ClusterView clusters={this.state.targetClusters} render={renderTargets} />
                 }
 
                 if (activeItemView === "Clients") {
-                    return <ClusterView clusters={randClustering(sources, 5)} render={renderSources} />
+                    return <ClusterView clusters={this.state.sourceClusters} render={renderSources} />
                 }
 
                 if (activeItemView === "Commits") {
-                    return <ClusterView clusters={randClustering(commits, 5)} render={renderCommits} />
+                    return <ClusterView clusters={this.state.commitClusters} render={renderCommits} />
                 }
             }
 
@@ -106,6 +117,13 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             throw new Error();
         })();
 
+        const cluster = (opts: ClusterOptions) => {
+            const targetClusters = randClustering(targets, opts.numTargetClusters);
+            const sourceClusters = randClustering(sources, opts.numSourceClusters);
+            const commitClusters = randClustering(commits, opts.numCommitClusters);
+            this.setState({ targetClusters, sourceClusters, commitClusters });
+        }
+
         return <>
             {header}
             <div className="ui container">
@@ -117,16 +135,14 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                         }} active={activeClusterView} onChange={v => this.setState({ activeClusterView: v })} />
                         <div className="ui divider"></div>
                         <QuantMenu color="violet" items={{
-                            "Clients": sources.length,
                             "File Interface": targets.length,
+                            "Clients": sources.length,
                             "Commits": commits.length
                         }} active={activeItemView} onChange={v => this.setState({ activeItemView: v })} />
                     </div>
                     <div className="twelve wide column">
-                    {view}
-                        {/* <div className="ui basic segment">
-                            {view}
-                        </div> */}
+                        {activeClusterView === "Clustering" && <ClusterForm onSubmit={cluster} />}
+                        {view}
                     </div>
                 </div>
             </div>
