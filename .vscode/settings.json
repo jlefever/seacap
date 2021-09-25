@@ -6,5 +6,6 @@
         "**/.assets/**": true,
         "**/.dump/**": true,
         "**/pgdata/**": true
-    }
+    },
+    "python.formatting.provider": "black"
 }

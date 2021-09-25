@@ -1,0 +1,37 @@
+{
+    "sets": [
+        {
+            "name": "interfaces",
+            "size": 7,
+            "num_clusters": 3      
+        },
+        {
+            "name": "clients",
+            "size": 34,
+            "num_clusters": 4
+        },
+        {
+            "name": "commits",
+            "size": 129,
+            "num_clusters": 5
+        }
+    ],
+    "relations": [
+        {
+            "rows": "interfaces",
+            "cols": "clients",
+            "matrix": [
+                [
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    1
+                ]
+            ]
+        }
+    ]
+}
