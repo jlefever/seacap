@@ -1,4 +1,5 @@
 import * as tf from "@tensorflow/tfjs-core";
+import Triplet from "./Triplet";
 
 export default interface Relation<S = any, T = any> {
     readonly sources: readonly S[];
@@ -9,4 +10,5 @@ export default interface Relation<S = any, T = any> {
     sourceForIndex(index: number): S;
     targetForIndex(index: number): T;
     toMatrix(): tf.Tensor2D;
+    toTriplets(): readonly Triplet[];
 }

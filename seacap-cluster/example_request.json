@@ -3,7 +3,7 @@
         {
             "name": "interfaces",
             "size": 7,
-            "num_clusters": 3      
+            "num_clusters": 3
         },
         {
             "name": "clients",
@@ -20,7 +20,7 @@
         {
             "rows": "interfaces",
             "cols": "clients",
-            "matrix": [
+            "triplets": [
                 [
                     0,
                     0,
@@ -29,6 +29,22 @@
                 [
                     0,
                     1,
+                    1
+                ]
+            ]
+        },
+				{
+            "rows": "clients",
+            "cols": "commits",
+            "triplets": [
+                [
+                    33,
+                    128,
+                    1
+                ],
+                [
+                    1,
+                    0,
                     1
                 ]
             ]

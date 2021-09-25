@@ -1,21 +1,21 @@
 import _ from "lodash";
 import React from "react";
+import Edge from "../../base/graph/Edge";
+import EdgeBagImpl from "../../base/graph/EdgeBagImpl";
+import RelationImpl from "../../base/mtrd/RelationImpl";
+import Triplet from "../../base/mtrd/Triplet";
 import { onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
 import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
 import Repo from "../../models/Repo";
-import PreprocessForm from "./PreprocessForm";
+import ClusterForm, { ClusterOptions } from "./ClusterForm";
 import ClusterView from "./ClusterView";
 import CommitView from "./CommitView";
 import EntityView from "./EntityView";
 import IconMenu from "./IconMenu";
+import PreprocessForm from "./PreprocessForm";
 import QuantMenu from "./QuantMenu";
-import ClusterForm, { ClusterOptions } from "./ClusterForm";
-import EdgeBagImpl from "../../base/graph/EdgeBagImpl";
-import Edge from "../../base/graph/Edge";
-import RelationImpl from "../../base/mtrd/RelationImpl";
-import RelationalClusterer from "../../base/mtrd/RelationalClusterer";
 
 export interface CohesionPageProps {
     repo: Repo
@@ -34,6 +34,23 @@ interface CohesionPageState {
 function randClustering<T>(items: T[], k: number): T[][] {
     return Object.values(_.groupBy(items, () => _.random(1, k)));
 }
+
+// interface DataSet {
+//     name: string;
+//     size: number;
+//     num_clusters: number;
+// }
+
+// interface RelationObj {
+//     rows: string;
+//     cols: string;
+//     triplets: Triplet[]
+// }
+
+// interface ClusterRequest {
+//     sets: DataSet[];
+//     relations: RelationObj[];
+// }
 
 export default class CohesionPage extends React.Component<CohesionPageProps, CohesionPageState> {
     constructor(props: CohesionPageProps) {
@@ -135,50 +152,81 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             const t2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(targets, commits, targetChanges.map(c => ({ source: c.entity, target: c.commitHash })));
             const s2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(sources, commits, sourceChanges.map(c => ({ source: c.entity, target: c.commitHash })));
 
-            const sources2targets = new RelationImpl(s2tEdges);
-            const targets2sources = sources2targets.transpose();
-            const targets2commits = new RelationImpl(t2cEdges);
-            const commits2targets = targets2commits.transpose();
-            const sources2commits = new RelationImpl(s2cEdges);
-            const commits2sources = sources2commits.transpose();
+            const datasets = [
+                {
+                    name: "interfaces",
+                    size: targets.length,
+                    num_clusters: opts.numTargetClusters
+                },
+                {
+                    name: "clients",
+                    size: sources.length,
+                    num_clusters: opts.numSourceClusters
+                },
+                {
+                    name: "commits",
+                    size: commits.length,
+                    num_clusters: opts.numCommitClusters
+                },
+            ];
 
-            const clusterer = new RelationalClusterer();
+            const relations = [
+                {
+                    rows: "clients",
+                    cols: "interfaces",
+                    triplets: new RelationImpl(s2tEdges).toTriplets()
+                },
+                {
+                    rows: "interfaces",
+                    cols: "commits",
+                    triplets: new RelationImpl(t2cEdges).toTriplets()
+                },
+                {
+                    rows: "clients",
+                    cols: "commits",
+                    triplets: new RelationImpl(s2cEdges).toTriplets()
+                }
+            ];
 
-            // targets (0)
-            clusterer.setSize(0, targets.length);
-            clusterer.setNumClusters(0, opts.numTargetClusters);
+            const req = {
+                sets: datasets,
+                relations: relations
+            };
 
-            // sources (1)
-            clusterer.setSize(1, sources.length);
-            clusterer.setNumClusters(1, opts.numSourceClusters);
+            const headers = {
+                "Content-Type": "application/json"
+            }
 
-            // commits (2)
-            clusterer.setSize(2, commits.length);
-            clusterer.setNumClusters(2, opts.numCommitClusters);
+            const body = JSON.stringify(req);
 
-            // relations
-            clusterer.setRelation(0, 1, targets2sources);
-            clusterer.setRelation(0, 2, targets2commits);
-            clusterer.setRelation(1, 0, sources2targets);
-            clusterer.setRelation(1, 2, sources2commits);
-            clusterer.setRelation(2, 0, commits2targets);
-            clusterer.setRelation(2, 1, commits2sources);
+            fetch("/clustering/src", { method: "POST", headers, body })
+                .then(res => res.json())
+                .then(res => {
+                    console.log(res);
+                    const targetClusters: any[] = [];
+                    const sourceClusters: any[] = [];
+                    const commitClusters: any[] = [];
 
-            // console.log(targets);
-            // console.log(sources);
-            // console.log(commits);
-            // targets2sources.toMatrix().print(false);
-            // targets2commits.toMatrix().print(false);
-            // sources2targets.toMatrix().print(false);
-            // sources2commits.toMatrix().print(false);
-            // commits2targets.toMatrix().print(false);
-            // commits2sources.toMatrix().print(false);
+                    const clusters = res["clusters"];
 
-            const clusterss = clusterer.cluster();
-            const targetClusters = clusterss[0].map(clusters => clusters.map(i => targets[i]));
-            const sourceClusters = clusterss[1].map(clusters => clusters.map(i => sources[i]));
-            const commitClusters = clusterss[2].map(clusters => clusters.map(i => commits[i]));
-            this.setState({ targetClusters, sourceClusters, commitClusters });
+                    // @ts-ignore
+                    clusters.forEach(cluster => {
+                        if (cluster["set"] === "interfaces") {
+                            targetClusters.push(cluster["indices"].map((i: number) => targets[i]));
+                        }
+
+                        if (cluster["set"] === "clients") {
+                            sourceClusters.push(cluster["indices"].map((i: number) => sources[i]));
+                        }
+
+                        if (cluster["set"] === "commits") {
+                            commitClusters.push(cluster["indices"].map((i: number) => commits[i]));
+                        }
+                    });
+
+                    // @ts-ignore
+                    this.setState({ targetClusters, sourceClusters, commitClusters });
+                })
         }
 
         return <>

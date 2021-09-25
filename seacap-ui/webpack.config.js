@@ -41,7 +41,10 @@ module.exports = {
         contentBase: path.join(__dirname, "dist"),
         compress: true,
         port: 9000,
-        historyApiFallback: true
+        historyApiFallback: true,
+        proxy: {
+            "/clustering": "http://localhost:5000"
+        }
     },
     output: {
         filename: "bundle.js",

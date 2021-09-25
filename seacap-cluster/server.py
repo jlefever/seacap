@@ -40,6 +40,8 @@ def verify_request(req: model.Request) -> Optional[str]:
             return "set '{}' must have at least one element".format(dataset.name)
         if dataset.num_clusters < 1:
             return "set '{}' must have at least one cluster".format(dataset.name)
+        if dataset.num_clusters > dataset.size:
+            return "set '{}' must have more elements than clusters".format(dataset.name)
 
     # Ensure relations are valid
     rel_history = set()
@@ -98,7 +100,7 @@ def rand_custer(req: model.Request) -> model.Response:
 
     def key_fn(i: int):
         random.seed(base_seed + i)
-        return random.randint(0, s.num_clusters)
+        return random.randint(1, s.num_clusters)
 
     for s in req.sets.values():
         indices = list(range(s.size))

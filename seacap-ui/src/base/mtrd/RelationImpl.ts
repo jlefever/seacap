@@ -6,6 +6,7 @@ import EdgeBag from "../graph/EdgeBag";
 import EdgeBagImpl from "../graph/EdgeBagImpl";
 import Hashable from "../Hashable";
 import Relation from "./Relation";
+import Triplet from "./Triplet";
 
 export default class RelationImpl<S extends Hashable, T extends Hashable> implements Relation<S, T> {
     private readonly _edges: EdgeBag<S, T, Edge<S, T>>;
@@ -56,6 +57,19 @@ export default class RelationImpl<S extends Hashable, T extends Hashable> implem
         }
 
         return this._matrix;
+    }
+
+    toTriplets() {
+        const triplets = new Array<Triplet>();
+
+        this._edges.sources.forEach((src, srcIndex) => {
+            this._edges.outgoing(src).forEach(tgt => {
+                const tgtIndex = this.indexForTarget(tgt)
+                triplets.push([srcIndex, tgtIndex, 1]);
+            });
+        });
+
+        return triplets
     }
 
     private createMatrix(): tf.Tensor2D {
