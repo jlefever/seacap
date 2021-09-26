@@ -1,10 +1,14 @@
 import itertools as it
 import random
 from typing import Dict, List, Optional
+from collections import defaultdict
 
 from flask import Flask, request
+from sklearn.cluster import KMeans
 
 import model
+import clustering
+import numpy as np
 
 app = Flask(__name__)
 
@@ -112,10 +116,24 @@ def rand_custer(req: model.Request) -> model.Response:
     return model.Response(clusters)
 
 
+def to_cluster_dtos(set_name: str, indicator: np.ndarray):
+    for i in range(indicator.shape[1]):
+        indices = np.flatnonzero(indicator[:, i]).tolist()
+        yield model.Cluster(set_name, i + 1, indices, [])
+        
+
+
+
 @app.route("/clustering/src", methods=["POST"])
 def src_clustering():
     req = parse_request(request.json)
     error_msg = verify_request(req)
     if error_msg:
         return error_msg, 400
-    return rand_custer(req)._asdict()
+    indicators = clustering.cluster(req.sets, clustering.get_relations(req))
+    clusters = []
+    for i, set in enumerate(req.sets):
+        indicator = clustering.discretize(indicators[i])
+        dtos = to_cluster_dtos(set, indicator)
+        clusters.extend(dtos)
+    return model.Response(clusters)._asdict()
