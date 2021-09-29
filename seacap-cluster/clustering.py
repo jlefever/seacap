@@ -89,4 +89,27 @@ def onehot(length: int, index: int):
 def discretize(indicator):
     k = indicator.shape[1]
     kmeans = KMeans(n_clusters=k, random_state=0).fit(indicator)
-    return np.vstack(map(lambda c: onehot(k, c), kmeans.labels_))
+    return np.vstack(list(map(lambda c: onehot(k, c), kmeans.labels_)))
+
+
+# normalize cols
+def normalize(indicator: np.ndarray):
+    vigorous = np.zeros(indicator.shape)
+    for i in range(indicator.shape[1]):
+        count = np.sum(indicator[:, i])
+        if count == 0:
+            continue
+        scalar = (1 / np.sqrt(count))
+        vigorous[:, i] = scalar * indicator[:, i]
+    return vigorous
+    
+
+def get_associations(indicators, relations):
+    assocs = defaultdict(dict)
+    for row_set, col_sets in relations.items():
+        for col_set, R in col_sets.items():
+            row_C = indicators[row_set]
+            col_C = indicators[col_set]
+            A = np.matmul(np.matmul(row_C.T, R), col_C)
+            assocs[row_set][col_set] = A
+    return assocs
