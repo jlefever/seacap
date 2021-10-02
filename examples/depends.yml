@@ -1,0 +1,33 @@
+# A URL-safe name for this project. Must be unique among other projects.
+name: depends
+
+# How the project name will be displayed.
+display_name: Depends
+
+# A brief description of the project. (Optional)
+description: Depends is a fast, comprehensive code dependency analysis tool
+
+# The git repository. May be a URL or local path.
+git: git@github.com:multilang-depends/depends.git
+
+# A GitHub or GitLab project URL. (Optional)
+git_web: https://github.com/multilang-depends/depends
+
+# The commit to extract structural information from. Examples:
+# - a41d0bc65bcb34a4b37983e789d2c0f4b4b5df99
+# - branch_name
+# - HEAD
+# - tags/0.9.6e
+git_lead_ref: tags/0.9.6e
+
+# The maximum number of commits to analyze. (Optional)
+git_max_commits: 2000
+
+# Will only analyze files which match one of these glob patterns. (Optional)
+allowed_paths:
+  - "**/*.java"
+
+# Ignore any files which match one of these glob patterns. (Optional)
+# (If a file matches both allowed and ignored patterns, it will be ignored.)
+ignored_paths:
+  - "**/src/test/**"

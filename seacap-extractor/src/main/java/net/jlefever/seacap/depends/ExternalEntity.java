@@ -65,7 +65,7 @@ public class ExternalEntity implements Entity
     @Override
     public int hashCode()
     {
-        return Objects.hash(getName(), getKind(), getParent());
+        return Objects.hash(getParent(), getName(), getKind());
     }
 
     @Override

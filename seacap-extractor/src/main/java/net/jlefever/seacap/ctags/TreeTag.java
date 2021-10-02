@@ -115,4 +115,16 @@ public class TreeTag implements Tree<Tag>, Tag, Entity
             && Objects.equals(tag.getScope(), this.getFullName())
             && Objects.equals(tag.getScopeKind(), this.getInner().getKind());
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return Objects.hashCode(this) == Objects.hashCode(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getParent(), getName(), getKind());
+    }
 }

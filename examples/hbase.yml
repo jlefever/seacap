@@ -1,0 +1,35 @@
+# A URL-safe name for this project. Must be unique among other projects.
+name: hbase
+
+# How the project name will be displayed.
+display_name: Apache HBase
+
+# A brief description of the project. (Optional)
+description: >
+  Apache HBase is an open-source, distributed, versioned, column-oriented store
+  modeled after Google' Bigtable: A Distributed Storage System for Structured
+  Data by Chang et al.  Just as Bigtable leverages the distributed data
+  storage provided by the Google File System, HBase provides Bigtable-like
+  capabilities on top of Apache Hadoop.
+
+# The git repository. May be a URL or local path.
+git: git@github.com:apache/hbase.git
+
+# A GitHub or GitLab project URL. (Optional)
+git_web: https://github.com/apache/hbase
+
+# The commit to extract structural information from. Examples:
+# - a41d0bc65bcb34a4b37983e789d2c0f4b4b5df99
+# - branch_name
+# - HEAD
+# - tags/0.9.6e
+git_lead_ref: tags/rel/2.4.6
+
+# Will only analyze files which match one of these glob patterns. (Optional)
+allowed_paths:
+  - "**/*.java"
+
+# Ignore any files which match one of these glob patterns. (Optional)
+# (If a file matches both allowed and ignored patterns, it will be ignored.)
+ignored_paths:
+  - "**/src/test/**"

@@ -1,5 +1,7 @@
 package net.jlefever.seacap.churn;
 
+import java.util.Objects;
+
 public class ChangeImpl<T> implements Change<T> {
     private final T tag;
     private final String rev;
@@ -25,5 +27,17 @@ public class ChangeImpl<T> implements Change<T> {
     public int getChurn()
     {
         return churn;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return Objects.hashCode(this) == Objects.hashCode(obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getTag(), getRev(), getChurn());
     }
 }

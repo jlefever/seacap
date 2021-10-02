@@ -1,4 +1,5 @@
 package net.jlefever.seacap.churn;
+
 public interface Change<T>
 {
     T getTag();

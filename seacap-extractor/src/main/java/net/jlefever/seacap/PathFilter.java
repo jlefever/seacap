@@ -6,30 +6,31 @@ import static java.util.stream.Collectors.toList;
 import static java.util.Collections.unmodifiableCollection;
 
 public class PathFilter {
-    private final Collection<String> whitelist;
-    private final Collection<String> blacklist;
+    private final Collection<String> allowed;
+    private final Collection<String> ignored;
 
-    public PathFilter(Collection<String> whitelist, Collection<String> blacklist)
+    public PathFilter(Collection<String> allowed, Collection<String> ignored)
     {
-        this.whitelist = whitelist;
-        this.blacklist = blacklist;
+        this.allowed = allowed;
+        this.ignored = ignored;
     }
 
     public Collection<String> toArgs()
     {
+        // https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
         var patterns = new ArrayList<String>();
-        patterns.addAll(getWhitelist());
-        patterns.addAll(getBlacklist().stream().map(p -> ":^" + p).collect(toList()));
+        patterns.addAll(getAllowed().stream().map(p -> ":(glob)" + p).collect(toList()));
+        patterns.addAll(getIgnored().stream().map(p -> ":(glob,exclude)" + p).collect(toList()));
         return patterns;
     }
 
-    public Collection<String> getWhitelist()
+    public Collection<String> getAllowed()
     {
-        return unmodifiableCollection(this.whitelist);
+        return unmodifiableCollection(this.allowed);
     }
 
-    public Collection<String> getBlacklist()
+    public Collection<String> getIgnored()
     {
-        return unmodifiableCollection(this.blacklist);
+        return unmodifiableCollection(this.ignored);
     }
 }
