@@ -5,33 +5,17 @@ import org.sql2o.Query;
 
 import net.jlefever.seacap.ctags.TreeTag;
 
-public class EntityInserter implements Inserter<TreeTag>
+public class BatchEntityInsertTask implements BatchTask<TreeTag>
 {
     private final IdMap<TreeTag> ids;
 
-    public EntityInserter(IdMap<TreeTag> ids)
+    public BatchEntityInsertTask(IdMap<TreeTag> ids)
     {
         this.ids = ids;
     }
 
     @Override
-    public Query prepareCreateTable(Connection con)
-    {
-        var sql = "CREATE TABLE entities ("
-                + "id INT PRIMARY KEY, "
-                + "parent_id INT REFERENCES entities (id), "
-                + "name TEXT NOT NULL, "
-                + "kind TEXT NOT NULL, "
-                + "start_lineno INT, "
-                + "end_lineno INT, "
-                + "UNIQUE (parent_id, name, kind)"
-                + ")";
-
-        return con.createQuery(sql, false);
-    }
-
-    @Override
-    public Query prepareInsert(Connection con)
+    public Query prepare(Connection con)
     {
         var sql = "INSERT INTO entities (id, parent_id, name, kind) "
                 + "VALUES (:id, :parent_id, :name, :kind)";
@@ -40,7 +24,7 @@ public class EntityInserter implements Inserter<TreeTag>
     }
 
     @Override
-    public void addToBatch(Query query, TreeTag tag)
+    public void add(Query query, TreeTag tag)
     {
         if (tag.hasParent())
         {
@@ -67,7 +51,7 @@ public class EntityInserter implements Inserter<TreeTag>
                 .addParameter("id", id)
                 .addParameter("parent_id", Integer.class, parentId)
                 .addParameter("name", tag.getName())
-                .addParameter("kind", tag.getKind())
+                .addParameter("kind", tag.getRealKind())
                 .addToBatch();
         }
 

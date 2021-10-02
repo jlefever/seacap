@@ -125,6 +125,6 @@ public class TreeTag implements Tree<Tag>, Tag, Entity
     @Override
     public int hashCode()
     {
-        return Objects.hash(getParent(), getName(), getKind());
+        return Objects.hash(getParent(), getName(), getRealKind());
     }
 }

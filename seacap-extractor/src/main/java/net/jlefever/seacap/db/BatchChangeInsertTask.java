@@ -6,13 +6,13 @@ import org.sql2o.Query;
 import net.jlefever.seacap.churn.Change;
 import net.jlefever.seacap.ctags.TreeTag;
 
-public class ChangeInserter implements Inserter<Change<TreeTag>>
+public class BatchChangeInsertTask implements BatchTask<Change<TreeTag>>
 {
     private final IdMap<Change<TreeTag>> ids;
     private final IdMap<TreeTag> entityIds;
     private final IdMap<String> commitIds;
 
-    public ChangeInserter(IdMap<Change<TreeTag>> ids, IdMap<TreeTag> entityIds, IdMap<String> commitIds)
+    public BatchChangeInsertTask(IdMap<Change<TreeTag>> ids, IdMap<TreeTag> entityIds, IdMap<String> commitIds)
     {
         this.ids = ids;
         this.entityIds = entityIds;
@@ -20,21 +20,7 @@ public class ChangeInserter implements Inserter<Change<TreeTag>>
     }
 
     @Override
-    public Query prepareCreateTable(Connection con)
-    {
-        var sql = "CREATE TABLE changes ("
-                + "id INT PRIMARY KEY, "
-                + "entity_id INT REFERENCES entities (id) NOT NULL, "
-                + "commit_id INT REFERENCES commits (id) NOT NULL, "
-                + "churn INT NOT NULL, "
-                + "UNIQUE (commit_id, entity_id)"
-                + ")";
-
-        return con.createQuery(sql, false);
-    }
-
-    @Override
-    public Query prepareInsert(Connection con)
+    public Query prepare(Connection con)
     {
         var sql = "INSERT INTO changes (id, entity_id, commit_id, churn) "
                 + "VALUES (:id, :entity_id, :commit_id, :churn)";
@@ -43,7 +29,7 @@ public class ChangeInserter implements Inserter<Change<TreeTag>>
     }
 
     @Override
-    public void addToBatch(Query query, Change<TreeTag> change)
+    public void add(Query query, Change<TreeTag> change)
     {
         if (this.ids.contains(change))
         {

@@ -13,7 +13,7 @@ import net.jlefever.seacap.ctags.TreeTag;
 import net.jlefever.seacap.depends.Dep;
 import net.jlefever.seacap.ir.Entity;
 
-public class DepInserter implements Inserter<Entry<Dep, Integer>>
+public class BatchDepInsertTask implements BatchTask<Entry<Dep, Integer>>
 {
     private class LowResEntity implements Entity
     {
@@ -92,7 +92,7 @@ public class DepInserter implements Inserter<Entry<Dep, Integer>>
     private final IdMap<Dep> ids = new IdMapImpl<Dep>();
     private final Map<Entity, Integer> lowResEntityIds;
 
-    public DepInserter(IdMap<TreeTag> entityIds, Collection<TreeTag> tags)
+    public BatchDepInsertTask(IdMap<TreeTag> entityIds, Collection<TreeTag> tags)
     {
         var lowResEntityIds = new HashMap<Entity, Integer>();
 
@@ -112,23 +112,7 @@ public class DepInserter implements Inserter<Entry<Dep, Integer>>
     }
 
     @Override
-    public Query prepareCreateTable(Connection con)
-    {
-        var sql = "CREATE TABLE deps ("
-                + "id INT PRIMARY KEY, "
-                + "source_id INT REFERENCES entities (id) NOT NULL, "
-                + "target_id INT REFERENCES entities (id) NOT NULL, "
-                + "kind TEXT NOT NULL, "
-                + "weight INT NOT NULL, "
-                + "UNIQUE (source_id, target_id, kind), "
-                + "CHECK (weight > 0) "
-                + ")";
-
-        return con.createQuery(sql, false);
-    }
-
-    @Override
-    public Query prepareInsert(Connection con)
+    public Query prepare(Connection con)
     {
         var sql = "INSERT INTO deps (id, source_id, target_id, kind, weight) "
                 + "VALUES (:id, :source_id, :target_id, :kind, :weight)";
@@ -137,7 +121,7 @@ public class DepInserter implements Inserter<Entry<Dep, Integer>>
     }
 
     @Override
-    public void addToBatch(Query query, Entry<Dep, Integer> depEntry)
+    public void add(Query query, Entry<Dep, Integer> depEntry)
     {
         var dep = depEntry.getKey();
 

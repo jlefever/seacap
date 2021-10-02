@@ -2,6 +2,7 @@ package net.jlefever.seacap.ctags;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,12 +37,12 @@ public class TreeTagBuilder
 
     public Collection<TreeTag> getRoots()
     {
-        return findRoots();
+        return Collections.unmodifiableCollection(findRoots());
     }
 
-    public Collection<TreeTag> getTrees()
+    public Collection<TreeTag> getTreeTags()
     {
-        return this.trees.values();
+        return Collections.unmodifiableCollection(this.trees.values());
     }
 
     private void refresh()

@@ -37,9 +37,4 @@ public class IdMapImpl<T> implements IdMap<T>
         
         return id;
     }
-
-    public Map<T, Integer> getUnderlyingMap()
-    {
-        return this.ids;
-    }
 }
