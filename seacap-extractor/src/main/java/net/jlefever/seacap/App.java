@@ -8,7 +8,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.sql2o.Sql2o;
 
 import net.jlefever.seacap.churn.Change;
@@ -22,11 +29,13 @@ import net.jlefever.seacap.db.BatchCommitInsertTask;
 import net.jlefever.seacap.db.BatchDepInsertTask;
 import net.jlefever.seacap.db.BatchEntityInsertTask;
 import net.jlefever.seacap.db.BatchLinenoUpdateTask;
+import net.jlefever.seacap.db.BatchMetaInsertTask;
 import net.jlefever.seacap.db.BatchTaskRunner;
 import net.jlefever.seacap.db.CreateChangeTableTask;
 import net.jlefever.seacap.db.CreateCommitTableTask;
 import net.jlefever.seacap.db.CreateDepTableTask;
 import net.jlefever.seacap.db.CreateEntityTableTask;
+import net.jlefever.seacap.db.CreateMetaTableTask;
 import net.jlefever.seacap.db.IdMapImpl;
 import net.jlefever.seacap.depends.GetDepsFromDepends;
 import net.jlefever.seacap.git.GitDriver;
@@ -35,12 +44,40 @@ public class App
 {
     public static void main(String[] args) throws IOException, InterruptedException
     {
+        var options = new Options();
+
+        var input = new Option("p", "project", true, "input project yml");
+        input.setRequired(true);
+        options.addOption(input);
+
+        var output = new Option("o", "output", true, "output sqlite database file");
+        output.setRequired(true);
+        options.addOption(output);
+
+        var parser = new DefaultParser();
+        var formatter = new HelpFormatter();
+        CommandLine cmd = null;
+        
+        try
+        {
+            cmd = parser.parse(options, args);
+        }
+        catch (ParseException e)
+        {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name", options);
+            System.exit(1);
+        }
+
+        var ymlFilePath = cmd.getOptionValue("project");
+        var dbFilePath = cmd.getOptionValue("output");
+
         // Setup Git
         var cacheDir = Paths.get(System.getProperty("user.home"), ".seacap").toString();
         var git = new GitDriver("git", cacheDir);
 
         // Load project yaml
-        var project = Project.loadFromYaml(new FileInputStream(new File("examples/depends.yml")));
+        var project = Project.loadFromYaml(new FileInputStream(new File(ymlFilePath)));
         var leadRef = project.getGitLeadRef();
         var pathFilter = project.getPathFilter();
 
@@ -59,9 +96,8 @@ public class App
         var entities = builder.getRoots();
 
         // Database
-        var dbFilename = "sample.db";
-        clean(dbFilename);
-        var db = new Sql2o("jdbc:sqlite:" + dbFilename, null, null);
+        clean(dbFilePath);
+        var db = new Sql2o("jdbc:sqlite:" + dbFilePath, null, null);
 
         // Create tables
         System.out.println("Creating tables...");
@@ -71,6 +107,7 @@ public class App
             new CreateCommitTableTask().prepare(con).executeUpdate();
             new CreateChangeTableTask().prepare(con).executeUpdate();
             new CreateDepTableTask().prepare(con).executeUpdate();
+            new CreateMetaTableTask().prepare(con).executeUpdate();
         }
 
         // Create batch runner
@@ -110,9 +147,13 @@ public class App
         System.out.println("Fetching dependencies...");
         var deps = new GetDepsFromDepends().call(repo.getDir(), "java", paths);
 
-        // Insert dependencies 
+        // Insert dependencies
         System.out.println("Inserting dependencies...");
         runner.run(new BatchDepInsertTask(entityIds, builder2.getTreeTags()), deps.entrySet());
+
+        // Insert project info
+        System.out.println("Inserting project info...");
+        runner.run(new BatchMetaInsertTask(), Arrays.asList(project));
     }
 
     private static void clean(String dir)
