@@ -36,10 +36,9 @@ export default class RepoBuilder {
         const entities = new EntityBuilder(this._entityDtos).build();
 
         return {
-            id: this._repoDto.id,
             name: this._repoDto.name,
-            githubUrl: this._repoDto.githubUrl,
-            leadRef: this._repoDto.leadRef,
+            gitWeb: this._repoDto.gitWeb,
+            gitLeadRef: this._repoDto.gitLeadRef,
             entities: Array.from(entities.values()),
             changes: new ChangeBuilder(entities, this._changeDtos).build(),
             deps: new DepBuilder(entities, this._depDtos).build()

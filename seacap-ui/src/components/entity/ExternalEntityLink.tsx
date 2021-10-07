@@ -11,7 +11,7 @@ interface ExternalEntityLinkProps {
 
 export default (props: ExternalEntityLinkProps & React.HTMLAttributes<HTMLElement>) => {
     const { entity, repo, ...others } = props;
-    const { githubUrl, leadRef } = repo;
+    const { gitWeb, gitLeadRef } = repo;
 
     const filename = typeof (entity) === "string"
         ? entity
@@ -30,8 +30,8 @@ export default (props: ExternalEntityLinkProps & React.HTMLAttributes<HTMLElemen
     }
 
     return <GithubFileLink
-        repoUrl={githubUrl}
-        gitRef={leadRef}
+        repoUrl={gitWeb}
+        gitRef={gitLeadRef}
         filename={filename}
         linenos={linenos!}
         {...others}>

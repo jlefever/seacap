@@ -2,9 +2,11 @@
 .classpath
 .project
 .settings/
+.factorypath
 
 pgdata/
 target/
 .assets/
 .dump/
 depends.log
+*.db

@@ -11,7 +11,7 @@ interface RepoListProps {
 export default (props: RepoListProps) => (
     <div className="ui divided items">
         {props.repos.map(r => (
-            <div key={r.id} className="item">
+            <div key={r.name} className="item">
                 <div className="content">
                     <RepoPageLink name={r.name} className="header">{r.name}</RepoPageLink>
                     <div className="meta">
@@ -25,8 +25,8 @@ export default (props: RepoListProps) => (
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis porta venenatis lacus, sed auctor sem efficitur non. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.</p>
                     </div>
                     <div className="extra">
-                        <GithubTagLink repoUrl={r.githubUrl} tag={r.leadRef} style={{ "color": "rgba(0, 0, 0, 0.4)" }} >
-                            <MyIcon name="code branch" />{r.leadRef}
+                        <GithubTagLink repoUrl={r.gitWeb} tag={r.gitLeadRef} style={{ "color": "rgba(0, 0, 0, 0.4)" }} >
+                            <MyIcon name="code branch" />{r.gitLeadRef}
                         </GithubTagLink>
                     </div>
                 </div>

@@ -1,6 +1,3 @@
-# A URL-safe name for this project. Must be unique among other projects.
-name: depends
-
 # How the project name will be displayed.
 display_name: Depends
 
@@ -21,7 +18,7 @@ git_web: https://github.com/multilang-depends/depends
 git_lead_ref: tags/0.9.6e
 
 # The maximum number of commits to analyze. (Optional)
-git_max_commits: 2000
+git_max_commits: 1000
 
 # Will only analyze files which match one of these glob patterns. (Optional)
 allowed_paths:

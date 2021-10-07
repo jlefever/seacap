@@ -21,12 +21,10 @@ public class BatchMetaInsertTask implements BatchTask<Project>
     @Override
     public void add(Query query, Project project)
     {
-        add(query, "name", project.getName());
-        add(query, "display_name", project.getDisplayName());
+        add(query, "displayName", project.getDisplayName());
         add(query, "description", project.getDescription());
-        add(query, "git", project.getGit());
-        add(query, "git_web", project.getGitWeb());
-        add(query, "git_lead_ref", project.getGitLeadRef());
+        add(query, "gitWeb", project.getGitWeb());
+        add(query, "gitLeadRef", project.getGitLeadRef());
     }
 
     private void add(Query query, String key, String value)

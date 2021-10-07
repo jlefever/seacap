@@ -9,7 +9,6 @@ import org.yaml.snakeyaml.Yaml;
 
 public class Project
 {
-    private String name;
     private String displayName;
     private String description;
     private String git;
@@ -20,16 +19,6 @@ public class Project
     private List<String> ignoredPaths;
 
     public Project() { }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
 
     public String getDisplayName()
     {

@@ -52,7 +52,7 @@ export default class RepoProvider {
     }
 
     private static async fetchRepoDtos(): Promise<Map<string, RepoDto>> {
-        const url = "/dump/repos.json";
+        const url = "/api/repos";
         const dtos = (await fetch(url).then(res => res.json())) as RepoDto[];
         const dict = new Map<string, RepoDto>();
         R.map(d => dict.set(d.name, d), dtos);
@@ -60,17 +60,17 @@ export default class RepoProvider {
     }
 
     private static async fetchEntitieDtos(repoName: string): Promise<EntityDto[]> {
-        const url = `/dump/${repoName}/entities.json`;
+        const url = `/api/repo/${repoName}/entities`;
         return (await fetch(url).then(res => res.json())) as EntityDto[];
     }
 
     private static async fetchChangeDtos(repoName: string): Promise<readonly ChangeDto[]> {
-        const url = `/dump/${repoName}/changes.json`;
+        const url = `/api/repo/${repoName}/changes`;
         return (await fetch(url).then(res => res.json())) as ChangeDto[];
     }
 
     private static async fetchDepDtos(repoName: string): Promise<readonly DepDto[]> {
-        const url = `/dump/${repoName}/deps.json`;
+        const url = `/api/repo/${repoName}/deps`;
         return (await fetch(url).then(res => res.json())) as DepDto[];
     }
 }

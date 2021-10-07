@@ -9,10 +9,10 @@ interface ExternalCommitLinkProps {
 
 export default (props: ExternalCommitLinkProps & React.HTMLAttributes<HTMLElement>) => {
     const { hash, repo, ...others } = props;
-    const { githubUrl } = repo;
+    const { gitWeb } = repo;
 
     return <GithubCommitLink
-        repoUrl={githubUrl}
+        repoUrl={gitWeb}
         commitHash={hash}
         {...others}>
         {hash}

@@ -1,5 +1,4 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
 module.exports = {
@@ -7,8 +6,7 @@ module.exports = {
     mode: "development",
     devtool: "inline-source-map",
     plugins: [
-        new HtmlWebpackPlugin({ title: "Demo" }),
-        new CopyWebpackPlugin({ patterns: [{ from: "../.dump/", to: "dump/" }] })
+        new HtmlWebpackPlugin({ title: "Demo" })
     ],
     module: {
         rules: [
@@ -43,6 +41,7 @@ module.exports = {
         port: 9000,
         historyApiFallback: true,
         proxy: {
+            "/api": "http://localhost:3000",
             "/clustering": "http://localhost:5000"
         }
     },

@@ -13,10 +13,7 @@ public enum HighResEntityKind {
     ENUM_CONSTANT("enumConstant"),
     FIELD("field");
 
-    private final String name;
-
     private HighResEntityKind(String name) {
-        this.name = name;
     }
 
     public LowResEntityKind toLowRes() {

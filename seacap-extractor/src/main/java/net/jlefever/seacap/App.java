@@ -65,7 +65,7 @@ public class App
         catch (ParseException e)
         {
             System.out.println(e.getMessage());
-            formatter.printHelp("utility-name", options);
+            formatter.printHelp("seacap-extractor", options);
             System.exit(1);
         }
 
