@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React from "react";
 import { Dropdown } from "semantic-ui-react";
-import { preprocessChanges, preprocessDeps } from "../../clustering/preprocessors";
+import { preprocessChanges, preprocessDeps } from "../../base/preprocessors";
 import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";

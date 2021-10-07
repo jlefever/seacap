@@ -3,7 +3,6 @@ import React from "react";
 import "bulma/css/bulma.css";
 
 import HomePage from "./HomePage";
-import Client from "../Client";
 import { Link, Route, BrowserRouter, Switch } from "react-router-dom";
 
 export interface Crumb {

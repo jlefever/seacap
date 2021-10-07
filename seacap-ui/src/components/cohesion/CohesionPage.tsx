@@ -4,7 +4,7 @@ import Edge from "../../base/graph/Edge";
 import EdgeBagImpl from "../../base/graph/EdgeBagImpl";
 import RelationImpl from "../../base/mtrd/RelationImpl";
 import Triplet from "../../base/mtrd/Triplet";
-import { onlySourceChanges, onlyTargetChanges } from "../../clustering/preprocessors";
+import { onlySourceChanges, onlyTargetChanges } from "../../base/preprocessors";
 import Change from "../../models/Change";
 import Dep from "../../models/Dep";
 import Entity from "../../models/Entity";
