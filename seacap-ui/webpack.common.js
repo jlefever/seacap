@@ -1,12 +1,10 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     entry: "./src/index.ts",
-    mode: "development",
-    devtool: "inline-source-map",
     plugins: [
-        new HtmlWebpackPlugin({ title: "Demo" })
+        new HtmlWebpackPlugin({ title: "SEA Captain" })
     ],
     module: {
         rules: [
@@ -34,16 +32,6 @@ module.exports = {
     },
     experiments: {
         topLevelAwait: true,
-    },
-    devServer: {
-        contentBase: path.join(__dirname, "dist"),
-        compress: true,
-        port: 9000,
-        historyApiFallback: true,
-        proxy: {
-            "/api": "http://localhost:3000",
-            "/clustering": "http://localhost:5000"
-        }
     },
     output: {
         filename: "bundle.js",
