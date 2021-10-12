@@ -68,10 +68,10 @@ function handle(name: string, sql: string, res: express.Response) {
     });
 }
 
-const dbs = getDatabases("../projects/");
+const dbs = getDatabases(process.env["PROJECT_DB_DIR"] ?? "projects");
 const repos = await getRepos(dbs);
 const app = express();
-const port = 3000;
+const port = 80;
 
 app.get("/api/repos", (_, res) => res.status(200).json(repos));
 

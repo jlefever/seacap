@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+    seacap-ui:
+        build: seacap-ui
+        volumes:
+          - ./seacap-ui/dist:/usr/share/nginx/html
+        ports:
+          - 9000:80
+        depends_on:
+          - seacap-server
+    seacap-server:
+      image: node:16-alpine3.11
+      user: node
+      working_dir: /home/node/app
+      volumes:
+        - ./seacap-server:/home/node/app
+      environment:
+        - NODE_ENV=development
+        - PROJECT_DB_DIR=projects
+      command: "npm start"
+      ports:
+          - 9001:80
+    seacap-cluster:
+      build: seacap-cluster
+      environment:
+        - FLASK_APP=app.py
+        - FLASK_ENV=development
+      ports:
+        - 9002:80

@@ -1,14 +1,12 @@
 import itertools as it
 import random
 from typing import Dict, List, Optional
-from collections import defaultdict
 
-from flask import Flask, request
-from sklearn.cluster import KMeans
-
-import model
-import clustering
 import numpy as np
+from flask import Flask, request
+
+import clustering
+import model
 
 app = Flask(__name__)
 
@@ -116,21 +114,10 @@ def rand_custer(req: model.Request) -> model.Response:
     return model.Response(clusters)
 
 
-def to_cluster_dtos(set_name: str, indicator: np.ndarray, relations):
+def to_cluster_dtos(set_name: str, indicator: np.ndarray):
     for i in range(indicator.shape[1]):
         indices = np.flatnonzero(indicator[:, i]).tolist()
-        assocs = to_assoc_dtos(set_name, i, relations)
-        yield model.Cluster(set_name, i + 1, indices, assocs)
-        
-
-def to_assoc_dtos(set_name: str, cluster_idx: int, relations):
-    assocs = list()
-    rels = relations[set_name]
-    for set, A in rels.items():
-        print("hello")
-        for i, score in enumerate(A[cluster_idx].tolist()[0]):
-            assocs.append(model.AssocCluster(set, i + 1, score))
-    return assocs
+        yield model.Cluster(set_name, i + 1, indices, [])
 
 
 @app.route("/clustering/src", methods=["POST"])
@@ -139,19 +126,10 @@ def src_clustering():
     error_msg = verify_request(req)
     if error_msg:
         return error_msg, 400
-    relations = clustering.get_relations(req)
-    indicators = clustering.cluster(req.sets, relations)
-
-    # Calculate association matrices
-    indicators_d = dict()
-    for i, name in enumerate(req.sets.keys()):
-        ind = clustering.normalize(clustering.discretize(indicators[i]))
-        indicators_d[name] = ind
-
-    assocs = clustering.get_associations(indicators_d, relations)
-
+    indicators = clustering.cluster(req.sets, clustering.get_relations(req))
     clusters = []
     for i, set in enumerate(req.sets):
-        dtos = to_cluster_dtos(set, indicators_d[set], assocs)
+        indicator = clustering.discretize(indicators[i])
+        dtos = to_cluster_dtos(set, indicator)
         clusters.extend(dtos)
     return model.Response(clusters)._asdict()
