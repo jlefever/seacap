@@ -5,7 +5,7 @@ display_name: Depends
 description: Depends is a fast, comprehensive code dependency analysis tool
 
 # The git repository. May be a URL or local path.
-git: https://github.com/multilang-depends/depends.git
+git: git@github.com:multilang-depends/depends.git
 
 # A GitHub or GitLab project URL. (Optional)
 git_web: https://github.com/multilang-depends/depends
@@ -15,7 +15,7 @@ git_web: https://github.com/multilang-depends/depends
 # - branch_name
 # - HEAD
 # - tags/0.9.6e
-git_lead_ref: 0.9.6e
+git_lead_ref: tags/0.9.6e
 
 # The maximum number of commits to analyze. (Optional)
 git_max_commits: 1000

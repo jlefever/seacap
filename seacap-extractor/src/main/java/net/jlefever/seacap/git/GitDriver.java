@@ -13,10 +13,8 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import net.jlefever.seacap.PathFilter;
+import net.jlefever.seacap.ProcessUtils;
 
 public class GitDriver
 {
@@ -31,33 +29,31 @@ public class GitDriver
         this.hasher = Hashing.murmur3_128(0);
     }
 
-    public Git clone(String url, String branch) throws GitAPIException, IOException
+    public Repo clone(String url)
     {
-        var dir = new File(getRepoDir(url));
+        var repo = new Repo(url, getRepoDir(url));
 
-        if (dir.exists())
+        if (new File(repo.getDir()).exists())
         {
-            var git     = Git.open(dir);
-            var command = git.checkout();
-            command.setName(branch);
-            command.call();
-            return git;
+            return repo;
         }
 
-        var command = Git.cloneRepository();
-        command.setBranch(branch);
-        command.setURI(url);
-        command.setDirectory(dir);
-        return command.call();
+        ProcessUtils.run(new ProcessBuilder(this.gitBin, "clone", url, repo.getDir()));
+        return repo;
     }
 
-    public List<String> lsFiles(String dir, PathFilter filter) throws IOException
+    public List<String> lsFiles(Repo repo, PathFilter filter) throws IOException
     {
-        var args = new ArrayList<String>(Arrays.asList(this.gitBin, "-C", dir, "ls-files"));
+        var args = new ArrayList<String>(Arrays.asList(this.gitBin, "-C", repo.getDir(), "ls-files"));
         args.addAll(filter.toArgs());
         var process = new ProcessBuilder(args).start();
         var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         return reader.lines().collect(Collectors.toList());
+    }
+
+    public void checkout(Repo repo, String ref)
+    {
+        ProcessUtils.run(new ProcessBuilder(this.gitBin, "-C", repo.getDir(), "checkout", ref));
     }
 
     private String getRepoDir(String url)
