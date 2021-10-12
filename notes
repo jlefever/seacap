@@ -1,0 +1,7 @@
+TagMap: A map from blob ids -> TreeTag roots
+
+We have a single thread walking the commit DAG. For each commit, we calculate the diff between it and its parent (assuming 1-parent for now). For each file in the diff, we get the tags of the old blob and new blob. Cache them in TagMap. Then run the following function.
+
+A function from (oldTreeTagRoot, newTreeTagRoot, edits) -> a list of changes
+
+Then insert the changes into the database.
