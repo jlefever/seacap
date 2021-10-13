@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  seacap-ui:
+    build:
+      dockerfile: Dockerfile.prod
+    ports:
+      - 37373:80
+  seacap-server:
+    build:
+      dockerfile: Dockerfile.prod
+    environment:
+      - NODE_ENV=production
+      - PROJECT_DB_DIR=projects
+  seacap-clusterer:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - FLASK_ENV=production

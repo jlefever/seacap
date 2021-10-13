@@ -1,30 +1,19 @@
 version: "3.9"
 services:
-    seacap-ui:
-        build: seacap-ui
-        volumes:
-          - ./seacap-ui/dist:/usr/share/nginx/html
-        ports:
-          - 9000:80
-        depends_on:
-          - seacap-server
-          - seacap-clusterer
-    seacap-server:
-      image: node:16-alpine3.11
-      user: node
-      working_dir: /home/node/app
-      volumes:
-        - ./seacap-server:/home/node/app
-      environment:
-        - NODE_ENV=development
-        - PROJECT_DB_DIR=projects
-      command: "npm start"
-      ports:
-          - 9001:80
-    seacap-clusterer:
-      build: seacap-clusterer
-      environment:
-        - FLASK_APP=app.py
-        - FLASK_ENV=development
-      ports:
-        - 9002:80
+  seacap-ui:
+    container_name: seacap-ui
+    build:
+      context: seacap-ui
+    depends_on:
+      - seacap-server
+      - seacap-clusterer
+  seacap-server:
+    container_name: seacap-server
+    build:
+      context: seacap-server
+  seacap-clusterer:
+    container_name: seacap-clusterer
+    build:
+      context: seacap-clusterer
+    environment:
+      - FLASK_APP=app.py

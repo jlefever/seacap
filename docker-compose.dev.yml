@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  seacap-ui:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./seacap-ui/dist:/usr/share/nginx/html
+    ports:
+      - 9000:80
+  seacap-server:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./seacap-server:/home/node/app
+    environment:
+      - NODE_ENV=development
+      - PROJECT_DB_DIR=projects
+    ports:
+      - 9001:80
+  seacap-clusterer:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - FLASK_ENV=development
+    ports:
+      - 9002:80
