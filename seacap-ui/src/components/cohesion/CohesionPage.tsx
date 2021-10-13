@@ -3,7 +3,6 @@ import React from "react";
 import Edge from "../../base/graph/Edge";
 import EdgeBagImpl from "../../base/graph/EdgeBagImpl";
 import RelationImpl from "../../base/mtrd/RelationImpl";
-import Triplet from "../../base/mtrd/Triplet";
 import { onlySourceChanges, onlyTargetChanges } from "../../base/preprocessors";
 import Change from "../../models/Change";
 import Dep from "../../models/Dep";
@@ -152,45 +151,53 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             const t2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(targets, commits, targetChanges.map(c => ({ source: c.entity, target: c.commitHash })));
             const s2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(sources, commits, sourceChanges.map(c => ({ source: c.entity, target: c.commitHash })));
 
+            const numClusters = {
+                "interfaces": opts.numTargetClusters,
+                "clients": opts.numSourceClusters,
+                "commits": opts.numCommitClusters
+            }
+
             const datasets = [
                 {
                     name: "interfaces",
                     size: targets.length,
-                    num_clusters: opts.numTargetClusters
                 },
                 {
                     name: "clients",
                     size: sources.length,
-                    num_clusters: opts.numSourceClusters
                 },
                 {
                     name: "commits",
                     size: commits.length,
-                    num_clusters: opts.numCommitClusters
                 },
             ];
 
-            const relations = [
+            const matrices = [
                 {
                     rows: "clients",
                     cols: "interfaces",
-                    triplets: new RelationImpl(s2tEdges).toTriplets()
+                    triples: new RelationImpl(s2tEdges).toTriplets()
                 },
                 {
                     rows: "interfaces",
                     cols: "commits",
-                    triplets: new RelationImpl(t2cEdges).toTriplets()
+                    triples: new RelationImpl(t2cEdges).toTriplets()
                 },
                 {
                     rows: "clients",
                     cols: "commits",
-                    triplets: new RelationImpl(s2cEdges).toTriplets()
+                    triples: new RelationImpl(s2cEdges).toTriplets()
                 }
             ];
 
             const req = {
-                sets: datasets,
-                relations: relations
+                options: {
+                    numClusters: numClusters
+                },
+                graph: {
+                    indexSets: datasets,
+                    matrices: matrices,
+                }
             };
 
             const headers = {
