@@ -15,9 +15,9 @@ export default class HomePage extends React.Component<HomePageProps> {
     override render() {
         const { repos } = this.props;
         return <>
-            <div className="ui container">
-                <div className="ui huge message">
-                    <h1 className="ui huge header">Welcome!</h1>
+            <div className="ui text container">
+                <div className="ui message">
+                    <h1 className="header">Welcome!</h1>
                     <p><abbr title="Software Engineering Artifact">SEA</abbr> Captain helps you refactor problematic code. Select a project below to get started.</p>
                 </div>
             </div>
