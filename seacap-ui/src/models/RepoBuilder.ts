@@ -37,6 +37,8 @@ export default class RepoBuilder {
 
         return {
             name: this._repoDto.name,
+            displayName: this._repoDto.displayName,
+            description: this._repoDto.description,
             gitWeb: this._repoDto.gitWeb,
             gitLeadRef: this._repoDto.gitLeadRef,
             entities: Array.from(entities.values()),

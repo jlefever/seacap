@@ -13,7 +13,7 @@ export default (props: RepoListProps) => (
         {props.repos.map(r => (
             <div key={r.name} className="item">
                 <div className="content">
-                    <RepoPageLink name={r.name} className="header">{r.name}</RepoPageLink>
+                    <RepoPageLink name={r.name} className="header">{r.displayName}</RepoPageLink>
                     <div className="meta">
                         <span>150 commits</span>
                         <span>&#183;</span>
@@ -22,7 +22,7 @@ export default (props: RepoListProps) => (
                         <span>2113 entities</span>
                     </div>
                     <div className="description">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis porta venenatis lacus, sed auctor sem efficitur non. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.</p>
+                        <p>{r.description}</p>
                     </div>
                     <div className="extra">
                         <GithubTagLink repoUrl={r.gitWeb} tag={r.gitLeadRef} style={{ "color": "rgba(0, 0, 0, 0.4)" }} >

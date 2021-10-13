@@ -33,7 +33,7 @@ export default class App extends Component<{}, AppState> {
                 <div className="ui container">
                     <Link to="/" className="header item">SEA Captain</Link>
                     <Link to="/" className="header item">Home</Link>
-                    <div className="ui simple dropdown item">
+                    {/* <div className="ui simple dropdown item">
                         <MyIcon name="laptop code" />
                         <span>Projects</span>
                         <MyIcon name="dropdown" />
@@ -41,7 +41,7 @@ export default class App extends Component<{}, AppState> {
                             <a className="item" href="#">DeltaSpike</a>
                             <a className="item" href="#">Flume</a>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="main">
@@ -57,7 +57,7 @@ export default class App extends Component<{}, AppState> {
             </div>
             <footer className="ui fixed inverted vertical footer segment">
                 <div className="ui center aligned container">
-                    <div className="ui stackable inverted divided grid">
+                    {/* <div className="ui stackable inverted divided grid">
                         <div className="three wide column">
                             <h4 className="ui inverted header">Group 1</h4>
                             <div className="ui inverted link list">
@@ -89,8 +89,8 @@ export default class App extends Component<{}, AppState> {
                             <h4 className="ui inverted header">Footer Header</h4>
                             <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
                         </div>
-                    </div>
-                    <div className="ui inverted section divider"></div>
+                    </div> */}
+                    {/* <div className="ui inverted section divider"></div> */}
                     {/* <img src="assets/images/logo.png" className="ui centered mini image" /> */}
                     <div className="ui horizontal inverted small divided link list">
                         <a className="item" href="#">Site Map</a>

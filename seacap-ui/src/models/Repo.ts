@@ -4,6 +4,8 @@ import Entity from "./Entity";
 
 export default interface Repo {
     readonly name: string;
+    readonly displayName: string;
+    readonly description: string;
     readonly gitWeb: string;
     readonly gitLeadRef: string;
     readonly entities: readonly Entity[];

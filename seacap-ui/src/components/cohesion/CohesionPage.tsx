@@ -34,29 +34,12 @@ function randClustering<T>(items: T[], k: number): T[][] {
     return Object.values(_.groupBy(items, () => _.random(1, k)));
 }
 
-// interface DataSet {
-//     name: string;
-//     size: number;
-//     num_clusters: number;
-// }
-
-// interface RelationObj {
-//     rows: string;
-//     cols: string;
-//     triplets: Triplet[]
-// }
-
-// interface ClusterRequest {
-//     sets: DataSet[];
-//     relations: RelationObj[];
-// }
-
 export default class CohesionPage extends React.Component<CohesionPageProps, CohesionPageState> {
     constructor(props: CohesionPageProps) {
         super(props);
         this.state = {
             activeClusterView: "Browse",
-            activeItemView: "Clients",
+            activeItemView: "Interfaces",
             sourceClusters: [],
             targetClusters: [],
             commitClusters: [],
@@ -109,7 +92,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
 
         const view = (() => {
             if (activeClusterView === "Clustering") {
-                if (activeItemView === "File Interface") {
+                if (activeItemView === "Interfaces") {
                     return <ClusterView clusters={this.state.targetClusters} render={renderTargets} />
                 }
 
@@ -122,7 +105,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                 }
             }
 
-            if (activeItemView === "File Interface") {
+            if (activeItemView === "Interfaces") {
                 return renderTargets(targets);
             }
 
@@ -247,7 +230,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                         }} active={activeClusterView} onChange={v => this.setState({ activeClusterView: v })} />
                         <div className="ui divider"></div>
                         <QuantMenu color="violet" items={{
-                            "File Interface": targets.length,
+                            "Interfaces": targets.length,
                             "Clients": sources.length,
                             "Commits": commits.length
                         }} active={activeItemView} onChange={v => this.setState({ activeItemView: v })} />

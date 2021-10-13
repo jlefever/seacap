@@ -84,13 +84,13 @@ export default class PreprocessForm extends React.Component<PreprocessFormProps,
 
         return <form className="ui form">
             <div className="field">
-                <label>Target File</label>
+                <label>Interface File</label>
                 <FileDropdown repo={repo} onSelect={filename => this.setState({ filename })} />
                 <FileNotice repo={repo} filename={this.state.filename} />
             </div>
             <div className="fields">
                 <div className="six wide field">
-                    <label>Target Entities</label>
+                    <label>Interface Entities</label>
                     <div className="two fields">
                         <div className="field">
                             <Dropdown fluid selection
@@ -115,7 +115,7 @@ export default class PreprocessForm extends React.Component<PreprocessFormProps,
                     </div>
                 </div>
                 <div className="six wide field">
-                    <label>Source Entities</label>
+                    <label>Client Entities</label>
                     <div className="two fields">
                         <div className="field">
                             <Dropdown fluid selection

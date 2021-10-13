@@ -18,7 +18,7 @@ export default (props: ClusterFormProps) => {
     return <div className="ui form">
         <div className="four fields">
             <div className="field">
-                <label># Target Clusters</label>
+                <label># Interface Clusters</label>
                 <div className="ui mini input">
                     <input type="number" min="1"
                         value={numTargetClusters}
@@ -26,7 +26,7 @@ export default (props: ClusterFormProps) => {
                 </div>
             </div>
             <div className="field">
-                <label># Source Clusters</label>
+                <label># Client Clusters</label>
                 <div className="ui mini input">
                     <input type="number" min="1"
                         value={numSourceClusters}
