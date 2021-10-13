@@ -8,12 +8,13 @@ export interface ClusterOptions {
 
 export interface ClusterFormProps {
     value: ClusterOptions;
+    loading: boolean;
     onChange: (value: ClusterOptions) => void;
     onSubmit: () => void;
 }
 
 export default (props: ClusterFormProps) => {
-    const { value, onChange, onSubmit } = props;
+    const { value, loading, onChange, onSubmit } = props;
 
     return <div className="ui form">
         <div className="four fields">
@@ -43,7 +44,7 @@ export default (props: ClusterFormProps) => {
             </div>
             <div className="field">
                 <button style={({ "height": "100%" })}
-                    className="ui fluid violet basic button"
+                    className={`ui fluid basic ${loading ? "loading" : ""} button`}
                     type="submit"
                     onClick={() => onSubmit()}>
                     Cluster

@@ -25,6 +25,7 @@ interface CohesionPageState {
     activeClusterView: string;
     activeItemView: string;
     clusterOptions: ClusterOptions;
+    waitingForRes: boolean;
 
     sourceClusters: Entity[][];
     targetClusters: Entity[][];
@@ -46,6 +47,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                 numSourceClusters: 2,
                 numCommitClusters: 2
             },
+            waitingForRes: false,
             sourceClusters: [],
             targetClusters: [],
             commitClusters: [],
@@ -134,6 +136,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         }
 
         const cluster2 = () => {
+            this.setState({ waitingForRes: true });
             const opts = this.state.clusterOptions;
             type ChangeEdge = Edge<Entity, string>;
 
@@ -224,6 +227,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                     // @ts-ignore
                     this.setState({ targetClusters, sourceClusters, commitClusters });
                 })
+                .then(_ => this.setState({ waitingForRes: false }));
         }
 
         return <>
@@ -245,6 +249,7 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                     <div className="twelve wide column">
                         {activeClusterView === "Clustering" && <ClusterForm
                             value={this.state.clusterOptions}
+                            loading={this.state.waitingForRes}
                             onChange={clusterOptions => this.setState({ clusterOptions })}
                             onSubmit={cluster2} />}
                         {view}
