@@ -24,6 +24,7 @@ interface CohesionPageState {
     data?: [readonly Dep[], readonly Change[]];
     activeClusterView: string;
     activeItemView: string;
+    clusterOptions: ClusterOptions;
 
     sourceClusters: Entity[][];
     targetClusters: Entity[][];
@@ -40,6 +41,11 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         this.state = {
             activeClusterView: "Browse",
             activeItemView: "Interfaces",
+            clusterOptions: {
+                numTargetClusters: 2,
+                numSourceClusters: 2,
+                numCommitClusters: 2
+            },
             sourceClusters: [],
             targetClusters: [],
             commitClusters: [],
@@ -127,7 +133,8 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             this.setState({ targetClusters, sourceClusters, commitClusters });
         }
 
-        const cluster2 = (opts: ClusterOptions) => {
+        const cluster2 = () => {
+            const opts = this.state.clusterOptions;
             type ChangeEdge = Edge<Entity, string>;
 
             const s2tEdges = new EdgeBagImpl<Entity, Entity, Dep>(sources, targets, deps);
@@ -236,7 +243,10 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                         }} active={activeItemView} onChange={v => this.setState({ activeItemView: v })} />
                     </div>
                     <div className="twelve wide column">
-                        {activeClusterView === "Clustering" && <ClusterForm onSubmit={cluster2} />}
+                        {activeClusterView === "Clustering" && <ClusterForm
+                            value={this.state.clusterOptions}
+                            onChange={clusterOptions => this.setState({ clusterOptions })}
+                            onSubmit={cluster2} />}
                         {view}
                     </div>
                 </div>

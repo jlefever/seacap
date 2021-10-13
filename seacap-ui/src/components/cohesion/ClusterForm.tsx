@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 export interface ClusterOptions {
     numTargetClusters: number;
@@ -7,13 +7,13 @@ export interface ClusterOptions {
 }
 
 export interface ClusterFormProps {
-    onSubmit: (options: ClusterOptions) => void;
+    value: ClusterOptions;
+    onChange: (value: ClusterOptions) => void;
+    onSubmit: () => void;
 }
 
 export default (props: ClusterFormProps) => {
-    const [numTargetClusters, setNumTargetClusters] = useState(1);
-    const [numSourceClusters, setNumSourceClusters] = useState(1);
-    const [numCommitClusters, setNumCommitClusters] = useState(1);
+    const { value, onChange, onSubmit } = props;
 
     return <div className="ui form">
         <div className="four fields">
@@ -21,33 +21,31 @@ export default (props: ClusterFormProps) => {
                 <label># Interface Clusters</label>
                 <div className="ui mini input">
                     <input type="number" min="1"
-                        value={numTargetClusters}
-                        onChange={e => setNumTargetClusters(Number.parseInt(e.target.value))} />
+                        value={value.numTargetClusters}
+                        onChange={e => onChange({ ...value, numTargetClusters: Number.parseInt(e.target.value) })} />
                 </div>
             </div>
             <div className="field">
                 <label># Client Clusters</label>
                 <div className="ui mini input">
                     <input type="number" min="1"
-                        value={numSourceClusters}
-                        onChange={e => setNumSourceClusters(Number.parseInt(e.target.value))} />
+                        value={value.numSourceClusters}
+                        onChange={e => onChange({ ...value, numSourceClusters: Number.parseInt(e.target.value) })} />
                 </div>
             </div>
             <div className="field">
                 <label># Commit Clusters</label>
                 <div className="ui mini input">
                     <input type="number" min="1"
-                        value={numCommitClusters}
-                        onChange={e => setNumCommitClusters(Number.parseInt(e.target.value))} />
+                        value={value.numCommitClusters}
+                        onChange={e => onChange({ ...value, numCommitClusters: Number.parseInt(e.target.value) })} />
                 </div>
             </div>
             <div className="field">
                 <button style={({ "height": "100%" })}
-                    className="ui fluid violet basic button" type="submit" onClick={() => props.onSubmit({
-                        numTargetClusters,
-                        numSourceClusters,
-                        numCommitClusters
-                    })}>
+                    className="ui fluid violet basic button"
+                    type="submit"
+                    onClick={() => onSubmit()}>
                     Cluster
                 </button>
             </div>
