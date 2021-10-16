@@ -35,9 +35,9 @@ public class TreeTagBuilder
         }
     }
 
-    public Collection<TreeTag> getRoots()
+    public List<TreeTag> getRoots()
     {
-        return Collections.unmodifiableCollection(findRoots());
+        return findRoots();
     }
 
     public Collection<TreeTag> getTreeTags()

@@ -2,8 +2,12 @@ package net.jlefever.seacap.ctags;
 
 import java.util.Objects;
 
+import com.google.gson.Gson;
+
 public class TagImpl implements Tag
 {
+    private final static Gson GSON = new Gson();
+
     private final String name;
     private final String kind;
     private final String path;
@@ -26,6 +30,11 @@ public class TagImpl implements Tag
         this.scopeKind = scopeKind;
         this.line = line;
         this.end = end;
+    }
+
+    public static TagImpl fromJson(String text)
+    {
+        return GSON.fromJson(text, TagImpl.class);
     }
 
     public String getName()
