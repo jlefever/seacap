@@ -30,12 +30,17 @@ public class TagImpl implements Tag
 
     public String getName()
     {
-        if (this.kind.equals("file"))
+        if (this.isFile())
         {
             return this.getPath();
         }
         
         return this.name;
+    }
+
+    private boolean isFile()
+    {
+        return this.kind.equals("file");
     }
 
     public String getKind()
@@ -66,7 +71,7 @@ public class TagImpl implements Tag
 
     public String getScope()
     {
-        if (this.scope == null && !this.getKind().equals("file"))
+        if (this.scope == null && !this.isFile())
         {
             return this.getPath();
         }
@@ -76,7 +81,7 @@ public class TagImpl implements Tag
 
     public String getScopeKind()
     {
-        if (this.scope == null && !this.getKind().equals("file"))
+        if (this.scope == null && !this.isFile())
         {
             return "file";
         }
