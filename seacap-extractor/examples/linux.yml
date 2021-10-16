@@ -1,33 +1,35 @@
 # How the project name will be displayed.
-display_name: Apache HBase
+display_name: Linux Kernel
 
 # A brief description of the project. (Optional)
 description: >
-  Apache HBase is an open-source, distributed, versioned, column-oriented store
-  modeled after Google' Bigtable: A Distributed Storage System for Structured
-  Data by Chang et al.  Just as Bigtable leverages the distributed data
-  storage provided by the Google File System, HBase provides Bigtable-like
-  capabilities on top of Apache Hadoop.
+  Linux is a clone of the operating system Unix, written from scratch by Linus
+  Torvalds with assistance from a loosely-knit team of hackers across the Net.
+  It aims towards POSIX and Single UNIX Specification compliance.
 
 # The git repository. May be a URL or local path.
-git: https://github.com/apache/hbase.git
+git: https://github.com/torvalds/linux.git
 
 # A GitHub or GitLab project URL. (Optional)
-git_web: https://github.com/apache/hbase
+git_web: https://github.com/torvalds/linux
 
 # The commit to extract structural information from. Examples:
 # - a41d0bc65bcb34a4b37983e789d2c0f4b4b5df99
 # - branch_name
 # - HEAD
 # - tags/0.9.6e
-git_lead_ref: rel/2.4.6
+git_lead_ref: v5.14
+
+# The maximum number of commits to analyze. (Optional)
+git_max_commits: 10000
 
 # Will only analyze files which match one of these glob patterns. (Optional)
 allowed_paths:
-  - "**/*.java"
+  - "**/*.c"
+  - "**/*.h"
 
 # Ignore any files which match one of these glob patterns. (Optional)
 # (If a file matches both allowed and ignored patterns, it will be ignored.)
 ignored_paths:
-  - "**/src/test/**"
-  - "**/generated/**"
+  - "**/test/**"
+  - "**/tests/**"
