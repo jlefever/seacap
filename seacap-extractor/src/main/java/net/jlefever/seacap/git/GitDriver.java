@@ -27,7 +27,7 @@ public class GitDriver
 
         if (dir.exists())
         {
-            var git     = Git.open(dir);
+            var git = Git.open(dir);
             var command = git.checkout();
             command.setName(branch);
             command.call();

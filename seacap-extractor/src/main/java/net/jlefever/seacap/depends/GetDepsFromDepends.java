@@ -16,20 +16,19 @@ import depends.relations.RelationCounter;
 import multilang.depends.util.file.FolderCollector;
 import multilang.depends.util.file.path.UnixPathFilenameWritter;
 import multilang.depends.util.file.strip.LeadingNameStripper;
+import net.jlefever.seacap.PathFilter;
 
 public class GetDepsFromDepends
 {
-    public Map<Dep, Integer> call(String dir, String lang, List<String> paths)
+    public Map<Dep, Integer> call(String dir, String lang, PathFilter pathFilter)
     {
         dir = ensureTrailingSlash(dir);
 
-        var includeDir = new String[]
-        {};
+        var includeDir = new String[] {};
         var includePathCollector = new FolderCollector();
         var additionalIncludePaths = includePathCollector.getFolders(dir);
         additionalIncludePaths.addAll(Arrays.asList(includeDir));
-        includeDir = additionalIncludePaths.toArray(new String[]
-        {});
+        includeDir = additionalIncludePaths.toArray(new String[] {});
 
         new LangRegister().register();
         var processor = LangProcessorRegistration.getRegistry().getProcessorOf(lang);
@@ -39,8 +38,7 @@ public class GetDepsFromDepends
         new RelationCounter(entityRepo, false, processor, resolver).computeRelations();
 
         var dependencyGenerator = new StructureDependencyGenerator();
-        dependencyGenerator.setLeadingStripper(new LeadingNameStripper(true, dir, new String[]
-        {}));
+        dependencyGenerator.setLeadingStripper(new LeadingNameStripper(true, dir, new String[] {}));
         dependencyGenerator.setGenerateDetail(false);
         dependencyGenerator.setFilenameRewritter(new UnixPathFilenameWritter());
 
@@ -65,11 +63,11 @@ public class GetDepsFromDepends
                 var kind = dependency.getType().toLowerCase();
                 var dep = new Dep(source, target, kind);
 
-                if (!isPathAllowed(paths, dep))
+                if (!isPathAllowed(pathFilter, dep))
                 {
                     continue;
                 }
-                
+
                 if (deps.containsKey(dep))
                 {
                     deps.put(dep, deps.get(dep) + dependency.getWeight());
@@ -129,11 +127,11 @@ public class GetDepsFromDepends
         return dir + "/";
     }
 
-    private static boolean isPathAllowed(List<String> paths, Dep dep)
+    private static boolean isPathAllowed(PathFilter filter, Dep dep)
     {
         var srcPath = dep.getSource().getPath();
         var tgtPath = dep.getTarget().getPath();
-        return paths.contains(srcPath) && paths.contains(tgtPath);
+        return filter.allowed(srcPath) && filter.allowed(tgtPath);
     }
 
     private static ExternalEntity rewrite(ExternalEntity entity)

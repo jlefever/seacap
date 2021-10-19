@@ -12,7 +12,7 @@ public class CreateChangeTableTask implements Task
                 + "id INT PRIMARY KEY, "
                 + "entity_id INT REFERENCES entities (id) NOT NULL, "
                 + "commit_id INT REFERENCES commits (id) NOT NULL, "
-                + "churn INT NOT NULL, "
+                + "kind CHARACTER(1) NOT NULL, "
                 + "UNIQUE (commit_id, entity_id)"
                 + ")";
 

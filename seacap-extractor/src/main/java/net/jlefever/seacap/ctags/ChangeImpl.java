@@ -1,17 +1,18 @@
-package net.jlefever.seacap.churn;
+package net.jlefever.seacap.ctags;
 
 import java.util.Objects;
 
-public class ChangeImpl<T> implements Change<T> {
+public class ChangeImpl<T, R> implements Change<T, R>
+{
     private final T tag;
-    private final String rev;
-    private final int churn;
+    private final R rev;
+    private final ChangeKind kind;
 
-    public ChangeImpl(T tag, String rev, int churn)
+    public ChangeImpl(T tag, R rev, ChangeKind kind)
     {
         this.tag = tag;
         this.rev = rev;
-        this.churn = churn;
+        this.kind = kind;
     }
 
     public T getTag()
@@ -19,14 +20,14 @@ public class ChangeImpl<T> implements Change<T> {
         return this.tag;
     }
 
-    public String getRev()
+    public R getRev()
     {
         return rev;
     }
 
-    public int getChurn()
+    public ChangeKind getKind()
     {
-        return churn;
+        return kind;
     }
 
     @Override
@@ -38,6 +39,6 @@ public class ChangeImpl<T> implements Change<T> {
     @Override
     public int hashCode()
     {
-        return Objects.hash(getTag(), getRev(), getChurn());
+        return Objects.hash(getTag(), getRev(), getKind());
     }
 }

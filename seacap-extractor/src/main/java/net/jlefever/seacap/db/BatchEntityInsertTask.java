@@ -26,17 +26,7 @@ public class BatchEntityInsertTask implements BatchTask<TreeTag>
     @Override
     public void add(Query query, TreeTag tag)
     {
-        if (tag.hasParent())
-        {
-            throw new RuntimeException("`tag` must be a root");
-        }
-
-        if (!tag.getKind().equals("file"))
-        {
-            throw new RuntimeException("`tag` must be a file");
-        }
-
-        this.addToBatch(query, tag, null);
+        this.addToBatch(query, tag.getRoot(), null);
     }
 
     private void addToBatch(Query query, TreeTag tag, Integer parentId)
