@@ -3,11 +3,13 @@ package net.jlefever.seacap.db;
 import org.sql2o.Connection;
 import org.sql2o.Query;
 
-public class BatchCommitInsertTask implements BatchTask<String>
-{
-    private final IdMap<String> ids;
+import net.jlefever.seacap.ir.Commit;
 
-    public BatchCommitInsertTask(IdMap<String> ids)
+public class BatchCommitInsertTask implements BatchTask<Commit>
+{
+    private final IdMap<Commit> ids;
+
+    public BatchCommitInsertTask(IdMap<Commit> ids)
     {
         this.ids = ids;
     }
@@ -15,21 +17,24 @@ public class BatchCommitInsertTask implements BatchTask<String>
     @Override
     public Query prepare(Connection con)
     {
-        var sql = "INSERT INTO commits (id, sha1) VALUES (:id, :sha1)";
+        var sql = "INSERT INTO commits (id, sha1, msg, commit_time) "
+                + "VALUES (:id, :sha1, :msg, :commit_time)";
         return con.createQuery(sql, false);
     }
 
     @Override
-    public void add(Query query, String sha1)
+    public void add(Query query, Commit commit)
     {
-        if (this.ids.contains(sha1))
+        if (this.ids.contains(commit))
         {
             return;
         }
 
         query
-            .addParameter("id", this.ids.assign(sha1))
-            .addParameter("sha1", sha1)
+            .addParameter("id", this.ids.assign(commit))
+            .addParameter("sha1", commit.getHash())
+            .addParameter("msg", commit.getMessage())
+            .addParameter("commit_time", commit.getCommitTime())
             .addToBatch();
     }
 }

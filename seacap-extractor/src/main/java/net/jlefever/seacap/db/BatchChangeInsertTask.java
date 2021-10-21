@@ -6,13 +6,15 @@ import org.sql2o.Query;
 import net.jlefever.seacap.ctags.Change;
 import net.jlefever.seacap.ctags.TreeTag;
 
-public class BatchChangeInsertTask implements BatchTask<Change<TreeTag, String>>
-{
-    private final IdMap<Change<TreeTag, String>> ids;
-    private final IdMap<TreeTag> entityIds;
-    private final IdMap<String> commitIds;
+import net.jlefever.seacap.ir.Commit;
 
-    public BatchChangeInsertTask(IdMap<Change<TreeTag, String>> ids, IdMap<TreeTag> entityIds, IdMap<String> commitIds)
+public class BatchChangeInsertTask implements BatchTask<Change<TreeTag, Commit>>
+{
+    private final IdMap<Change<TreeTag, Commit>> ids;
+    private final IdMap<TreeTag> entityIds;
+    private final IdMap<Commit> commitIds;
+
+    public BatchChangeInsertTask(IdMap<Change<TreeTag, Commit>> ids, IdMap<TreeTag> entityIds, IdMap<Commit> commitIds)
     {
         this.ids = ids;
         this.entityIds = entityIds;
@@ -29,7 +31,7 @@ public class BatchChangeInsertTask implements BatchTask<Change<TreeTag, String>>
     }
 
     @Override
-    public void add(Query query, Change<TreeTag, String> change)
+    public void add(Query query, Change<TreeTag, Commit> change)
     {
         if (this.ids.contains(change))
         {

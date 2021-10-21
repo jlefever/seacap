@@ -26,6 +26,7 @@ import org.eclipse.jgit.diff.HistogramDiff;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
@@ -52,6 +53,7 @@ import net.jlefever.seacap.db.CreateMetaTableTask;
 import net.jlefever.seacap.db.IdMapImpl;
 import net.jlefever.seacap.depends.GetDepsFromDepends;
 import net.jlefever.seacap.git.GitDriver;
+import net.jlefever.seacap.ir.Commit;
 
 public class App
 {
@@ -130,12 +132,12 @@ public class App
         // Insert commits
         System.out.println("Inserting commits...");
         var commits = changes.stream().map(c -> c.getRev()).collect(toSet());
-        var commitIds = new IdMapImpl<String>();
+        var commitIds = new IdMapImpl<Commit>();
         runner.run(new BatchCommitInsertTask(commitIds), commits);
 
         // Insert changes
         System.out.println("Inserting changes...");
-        var changeIds = new IdMapImpl<Change<TreeTag, String>>();
+        var changeIds = new IdMapImpl<Change<TreeTag, Commit>>();
         runner.run(new BatchChangeInsertTask(changeIds, entityIds, commitIds), changes);
 
         // Fetch current entities
@@ -220,10 +222,10 @@ public class App
         return tags;
     }
 
-    private static List<Change<TreeTag, String>> calcChanges(Repository repo, String branch, PathFilter filter)
+    private static List<Change<TreeTag, Commit>> calcChanges(Repository repo, String branch, PathFilter filter)
             throws IOException
     {
-        var changes = new ArrayList<Change<TreeTag, String>>();
+        var changes = new ArrayList<Change<TreeTag, Commit>>();
 
         var ref = repo.getRefDatabase().findRef(branch);
         var objectId = ref.getLeaf().getObjectId();
@@ -247,8 +249,7 @@ public class App
                 continue;
             }
 
-            var commitHash = commit.getId().getName();
-            var changeProvider = new ChangeProvider<String>(commitHash);
+            var changeProvider = new ChangeProvider<Commit>(Commit.fromRevCommit(commit));
 
             var tree = commit.getTree();
             var parent = commit.getParents()[0];

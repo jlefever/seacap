@@ -10,7 +10,9 @@ public class CreateCommitTableTask implements Task
     {
         var sql = "CREATE TABLE commits ("
                 + "id INT PRIMARY KEY, "
-                + "sha1 CHAR(40) NOT NULL UNIQUE "
+                + "sha1 CHAR(40) NOT NULL UNIQUE, "
+                + "msg TEXT NOT NULL, "
+                + "commit_time INT NOT NULL "
                 + ")";
 
         return con.createQuery(sql, false);
