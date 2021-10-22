@@ -7,5 +7,13 @@
         "**/.dump/**": true,
         "**/pgdata/**": true
     },
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+    "typescript.format.insertSpaceAfterTypeAssertion": true,
+    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+    "typescript.format.semicolons": "insert",
+    "javascript.format.placeOpenBraceOnNewLineForFunctions": true,
+    "javascript.format.semicolons": "insert",
+    "javascript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+    "typescript.preferences.quoteStyle": "double"
 }
