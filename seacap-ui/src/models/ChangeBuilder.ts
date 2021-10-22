@@ -24,7 +24,7 @@ export default class ChangeBuilder {
 
     build(): readonly Change[] {
         return R.map(
-            d => new Change(d.id, d.commitHash, this.getEntity(d.entityId), d.churn),
+            d => new Change(d.id, d.commitHash, this.getEntity(d.entityId), d.kind),
             this._dtos
         );
     }

@@ -95,7 +95,7 @@ app.get("/api/repo/:name/changes", (req, res) => {
             CH.id,
             CH.entity_id as entityId,
             CO.sha1 AS commitHash,
-            CH.churn
+            CH.kind
         FROM changes CH
         LEFT JOIN commits CO ON CH.commit_id = CO.id`;
 
