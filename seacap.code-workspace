@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "seacap-clusterer"
+		},
+		{
+			"path": "seacap-extractor"
+		},
+		{
+			"path": "seacap-next"
+		},
+		{
+			"path": "seacap-server"
+		},
+		{
+			"path": "seacap-ui"
+		}
+	]
+}

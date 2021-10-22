@@ -6,11 +6,11 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch App",
+            "name": "Launch Extractor",
             "request": "launch",
             "mainClass": "net.jlefever.seacap.App",
             "projectName": "seacap-extractor",
-            "args": "-p seacap-extractor/examples/depends.yml -o depends.db"
+            "args": "-p examples/depends.yml -o depends.db"
         }
     ]
 }

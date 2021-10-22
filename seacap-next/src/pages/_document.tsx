@@ -34,8 +34,6 @@ export default class MyDocument extends Document
     {
         return <Html>
             <Head>
-                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-
                 {/* Generated with https://realfavicongenerator.net/ */}
                 {/* The logo is "code" from https://feathericons.com/ */}
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
