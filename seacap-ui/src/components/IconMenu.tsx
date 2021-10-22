@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react"
-import MyIcon, { IconSize } from "../MyIcon";
+import MyIcon, { IconSize } from "./MyIcon";
 import MyMenu from "./MyMenu";
 
 export interface IconMenuProps {

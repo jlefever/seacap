@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link, Route, BrowserRouter, Switch } from "react-router-dom";
-import RepoDto from "../dtos/RepoDto";
+import RepoDto from "../models/RepoDto";
 import RepoProvider from "../providers/RepoProvider";
 import Loading from "./Loading";
 import RepoPage from "./RepoPage";

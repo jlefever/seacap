@@ -1,5 +1,5 @@
 import React from "react";
-import RepoDto from "../dtos/RepoDto";
+import RepoDto from "../models/RepoDto";
 import GithubTagLink from "./github/GithubTagLink";
 import MyIcon from "./MyIcon";
 import RepoPageLink from "./RepoPageLink";

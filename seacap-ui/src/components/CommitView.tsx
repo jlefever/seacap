@@ -1,11 +1,11 @@
 import _ from "lodash";
 import React from "react";
-import Change from "../../models/Change";
-import Entity from "../../models/Entity";
-import Repo from "../../models/Repo";
-import EntityListPopup from "../entity/EntityListPopup";
-import ExternalCommitLink from "../entity/ExternalCommitLink";
-import MyIcon from "../MyIcon";
+import Change from "../models/Change";
+import Entity from "../models/Entity";
+import Repo from "../models/Repo";
+import EntityListPopup from "./entity/EntityListPopup";
+import ExternalCommitLink from "./entity/ExternalCommitLink";
+import MyIcon from "./MyIcon";
 import AttributeTable from "./AttributeTable";
 
 export interface CommitViewProps {

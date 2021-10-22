@@ -1,14 +1,14 @@
 import _ from "lodash";
 import React from "react";
-import HashDict from "../../base/dict/HashDict";
-import Entity from "../../models/Entity";
-import Repo from "../../models/Repo";
-import CommitListPopup from "../entity/CommitListPopup";
-import EntityIcon from "../entity/EntityIcon";
-import EntityListPopup from "../entity/EntityListPopup";
-import EntityName from "../entity/EntityName";
-import MyIcon from "../MyIcon";
-import { sortEntities } from "../util";
+import HashDict from "../base/dict/HashDict";
+import Entity from "../models/Entity";
+import Repo from "../models/Repo";
+import CommitListPopup from "./entity/CommitListPopup";
+import EntityIcon from "./entity/EntityIcon";
+import EntityListPopup from "./entity/EntityListPopup";
+import EntityName from "./entity/EntityName";
+import MyIcon from "./MyIcon";
+import { sortEntities } from "./util";
 import AttributeTable from "./AttributeTable";
 
 export interface EntityViewProps {

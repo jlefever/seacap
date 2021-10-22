@@ -1,0 +1,24 @@
+# How the project name will be displayed.
+display_name: Android Settings App
+
+# A brief description of the project. (Optional)
+description: The built-in settings app on Android.
+
+# The git repository. May be a URL or local path.
+git: https://android.googlesource.com/platform/packages/apps/Settings.git
+
+# A GitHub or GitLab project URL. (Optional)
+git_web: https://github.com/aosp-mirror/platform_packages_apps_settings
+
+# The commit to extract structural information from.
+git_lead_ref: platform-tools-31.0.3
+
+# Will only analyze files which match one of these glob patterns. (Optional)
+allowed_paths:
+  - "**/*.java"
+
+# Ignore any files which match one of these glob patterns. (Optional)
+# (If a file matches both allowed and ignored patterns, it will be ignored.)
+ignored_paths:
+  - "**/src/test/**"
+  - "tests/**"

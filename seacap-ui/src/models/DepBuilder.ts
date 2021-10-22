@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import DepDto from "../dtos/DepDto";
+import DepDto from "./DepDto";
 import Dep from "./Dep";
 import DepImpl from "./DepImpl";
 import Entity from "./Entity";

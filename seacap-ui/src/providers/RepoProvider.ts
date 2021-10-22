@@ -1,8 +1,8 @@
 import * as R from "ramda";
-import ChangeDto from "../dtos/ChangeDto";
-import DepDto from "../dtos/DepDto";
-import EntityDto from "../dtos/EntityDto";
-import RepoDto from "../dtos/RepoDto";
+import ChangeDto from "../models/ChangeDto";
+import DepDto from "../models/DepDto";
+import EntityDto from "../models/EntityDto";
+import RepoDto from "../models/RepoDto";
 import Repo from "../models/Repo";
 import RepoBuilder from "../models/RepoBuilder";
 

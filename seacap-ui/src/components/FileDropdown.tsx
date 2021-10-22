@@ -1,8 +1,8 @@
 import _ from "lodash";
 import React, { useEffect } from "react";
 import { Dropdown } from "semantic-ui-react";
-import HashDict from "../../base/dict/HashDict";
-import Repo from "../../models/Repo";
+import HashDict from "../base/dict/HashDict";
+import Repo from "../models/Repo";
 
 export interface FileDropdownProps {
     repo: Repo;

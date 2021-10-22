@@ -1,5 +1,5 @@
 import React from "react";
-import RepoDto from "../dtos/RepoDto";
+import RepoDto from "../models/RepoDto";
 import RepoList from "./RepoList";
 import RepoListLoader from "./RepoListLoader";
 

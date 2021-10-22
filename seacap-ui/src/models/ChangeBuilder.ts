@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import ChangeDto from "../dtos/ChangeDto";
+import ChangeDto from "./ChangeDto";
 import Change from "./Change";
 import Entity from "./Entity";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Repo from "../models/Repo";
 import RepoProvider from "../providers/RepoProvider";
-import CohesionPage from "./cohesion/CohesionPage";
+import CohesionPage from "./CohesionPage";
 import Loading from "./Loading";
 import NotFound from "./NotFound";
 

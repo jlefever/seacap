@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import EntityDto from "../dtos/EntityDto";
+import EntityDto from "./EntityDto";
 import Entity from "./Entity";
 import EntityImpl from "./EntityImpl";
 import LineRange from "./LineRange";
