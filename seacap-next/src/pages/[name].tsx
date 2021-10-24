@@ -1,5 +1,6 @@
 import Repo from "models/repo";
 import { GetStaticPaths, GetStaticProps } from "next";
+import Head from "next/head";
 import { getRepo, getRepos } from "serverutil";
 
 interface RepoPageProps
@@ -7,9 +8,12 @@ interface RepoPageProps
     repo: Repo;
 }
 
-const RepoPage = ({ repo }: RepoPageProps) => 
+const RepoPage = ({ repo }: RepoPageProps) =>
 (
     <div className="ui text container">
+        <Head>
+            <title>{repo.displayName}</title>
+        </Head>
         <h1 className="ui header">{repo.displayName}</h1>
         <p>{repo.description}</p>
     </div>

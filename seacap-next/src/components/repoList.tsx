@@ -19,11 +19,11 @@ const RepoList = ({ repos }: RepoListProps) =>
                         <a className="header">{repo.displayName}</a>
                     </Link>
                     <div className="meta">
-                        <span>150 commits</span>
+                        <span>{repo.blurb.numCommits} commits</span>
                         <span>&#183;</span>
-                        <span>1543 files</span>
+                        <span>{repo.blurb.numFiles} files</span>
                         <span>&#183;</span>
-                        <span>2113 entities</span>
+                        <span>{repo.blurb.numEntities} entities</span>
                     </div>
                     <div className="description">
                         <p>{repo.description}</p>

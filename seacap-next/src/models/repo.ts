@@ -1,3 +1,5 @@
+import RepoBlurb from "./repoBlurb";
+
 export default interface Repo
 {
     name: string;
@@ -5,4 +7,5 @@ export default interface Repo
     description: string;
     gitWeb: string | null;
     gitLeadRef: string;
+    blurb: RepoBlurb;
 }
