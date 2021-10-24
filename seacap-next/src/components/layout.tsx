@@ -13,6 +13,10 @@ const StyledRootDiv = styled.div`
     flex-direction: column;
 `;
 
+const StyledMenuDiv = styled.div`
+    margin-bottom: 32px !important;
+`;
+
 const StyledMain = styled.main`
     flex: 1;
 `;
@@ -20,7 +24,7 @@ const StyledMain = styled.main`
 const Layout = ({ children }: LayoutProps) =>
 (
     <StyledRootDiv>
-        <div className="ui inverted menu">
+        <StyledMenuDiv className="ui inverted menu">
             <div className="ui container">
                 <Link href="/"><a className="header item">SEA Captain</a></Link>
                 <Link href="/"><a className="header item">Home</a></Link>
@@ -34,7 +38,7 @@ const Layout = ({ children }: LayoutProps) =>
                     </div>
                 </div> */}
             </div>
-        </div>
+        </StyledMenuDiv>
         <StyledMain>
             {children}
         </StyledMain>

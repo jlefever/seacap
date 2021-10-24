@@ -2,6 +2,7 @@ import MyIcon from "components/myIcon";
 import Repo from "models/repo";
 import Link from "next/link";
 import React from "react";
+import GithubTagLink from "components/github/githubTagLink";
 
 interface RepoListProps
 {
@@ -28,10 +29,12 @@ const RepoList = ({ repos }: RepoListProps) =>
                         <p>{repo.description}</p>
                     </div>
                     <div className="extra">
-                        <MyIcon name="code branch" />{repo.gitLeadRef}
-                        {/* <GithubTagLink repoUrl={r.gitWeb} tag={r.gitLeadRef} style={{ "color": "rgba(0, 0, 0, 0.4)" }} >
-                            <MyIcon name="code branch" />{r.gitLeadRef}
-                        </GithubTagLink> */}
+                        <GithubTagLink gitWebUrl={repo.gitWeb}
+                            tag={repo.gitLeadRef}
+                            style={{ "color": "rgba(0, 0, 0, 0.4)" }}
+                        >
+                            <MyIcon name="code branch" />{repo.gitLeadRef}
+                        </GithubTagLink>
                     </div>
                 </div>
             </div>
