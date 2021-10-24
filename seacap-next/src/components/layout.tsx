@@ -16,9 +16,9 @@ const StyledMain = styled.main`
     flex: 1;
 `;
 
-function Layout({ children }: LayoutProps)
-{
-    return <StyledRootDiv>
+const Layout = ({ children }: LayoutProps) =>
+(
+    <StyledRootDiv>
         <div className="ui inverted menu">
             <div className="ui container">
                 <a href="#" className="header item">SEA Captain</a>
@@ -47,7 +47,7 @@ function Layout({ children }: LayoutProps)
                 </div>
             </div>
         </footer>
-    </StyledRootDiv>;
-}
+    </StyledRootDiv>
+);
 
 export default Layout;

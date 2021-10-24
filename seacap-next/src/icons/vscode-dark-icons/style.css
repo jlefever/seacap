@@ -1,0 +1,1392 @@
+@font-face {
+  font-family: 'vscode-dark-icons';
+  src:
+    url('fonts/vscode-dark-icons.ttf?6pukph') format('truetype'),
+    url('fonts/vscode-dark-icons.woff?6pukph') format('woff'),
+    url('fonts/vscode-dark-icons.svg?6pukph#vscode-dark-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="vs-dark-"], [class*=" vs-dark-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'vscode-dark-icons' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.vs-dark-account:before {
+  content: "\e900";
+  color: #c5c5c5;
+}
+.vs-dark-activate-breakpoints:before {
+  content: "\e901";
+  color: #c5c5c5;
+}
+.vs-dark-add:before {
+  content: "\e902";
+  color: #c5c5c5;
+}
+.vs-dark-archive:before {
+  content: "\e903";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-both:before {
+  content: "\e904";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-down:before {
+  content: "\e905";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-left:before {
+  content: "\e906";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-right:before {
+  content: "\e907";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-small-down:before {
+  content: "\e908";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-small-left:before {
+  content: "\e909";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-small-right:before {
+  content: "\e90a";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-small-up:before {
+  content: "\e90b";
+  color: #c5c5c5;
+}
+.vs-dark-arrow-up:before {
+  content: "\e90c";
+  color: #c5c5c5;
+}
+.vs-dark-beaker:before {
+  content: "\e90d";
+  color: #c5c5c5;
+}
+.vs-dark-bell:before {
+  content: "\e90e";
+  color: #c5c5c5;
+}
+.vs-dark-bell-dot:before {
+  content: "\e90f";
+  color: #c5c5c5;
+}
+.vs-dark-blocked:before {
+  content: "\e910";
+  color: #c5c5c5;
+}
+.vs-dark-bold:before {
+  content: "\e911";
+  color: #c5c5c5;
+}
+.vs-dark-book:before {
+  content: "\e912";
+  color: #c5c5c5;
+}
+.vs-dark-bookmark:before {
+  content: "\e913";
+  color: #c5c5c5;
+}
+.vs-dark-briefcase:before {
+  content: "\e914";
+  color: #c5c5c5;
+}
+.vs-dark-broadcast:before {
+  content: "\e915";
+  color: #c5c5c5;
+}
+.vs-dark-browser:before {
+  content: "\e916";
+  color: #c5c5c5;
+}
+.vs-dark-bug:before {
+  content: "\e917";
+  color: #c5c5c5;
+}
+.vs-dark-build:before {
+  content: "\e918";
+  color: #c5c5c5;
+}
+.vs-dark-calendar:before {
+  content: "\e919";
+  color: #c5c5c5;
+}
+.vs-dark-call-incoming:before {
+  content: "\e91a";
+  color: #c5c5c5;
+}
+.vs-dark-call-outgoing:before {
+  content: "\e91b";
+  color: #c5c5c5;
+}
+.vs-dark-case-sensitive:before {
+  content: "\e91c";
+  color: #c5c5c5;
+}
+.vs-dark-check:before {
+  content: "\e91d";
+  color: #c5c5c5;
+}
+.vs-dark-checklist:before {
+  content: "\e91e";
+  color: #c5c5c5;
+}
+.vs-dark-chevron-down:before {
+  content: "\e91f";
+  color: #c5c5c5;
+}
+.vs-dark-chevron-left:before {
+  content: "\e920";
+  color: #c5c5c5;
+}
+.vs-dark-chevron-right:before {
+  content: "\e921";
+  color: #c5c5c5;
+}
+.vs-dark-chevron-up:before {
+  content: "\e922";
+  color: #c5c5c5;
+}
+.vs-dark-chrome-close:before {
+  content: "\e923";
+  color: #c5c5c5;
+}
+.vs-dark-chrome-maximize:before {
+  content: "\e924";
+  color: #c5c5c5;
+}
+.vs-dark-chrome-minimize:before {
+  content: "\e925";
+  color: #c5c5c5;
+}
+.vs-dark-chrome-restore:before {
+  content: "\e926";
+  color: #c5c5c5;
+}
+.vs-dark-circle-filled:before {
+  content: "\e927";
+  color: #c5c5c5;
+}
+.vs-dark-circle-outline:before {
+  content: "\e928";
+  color: #c5c5c5;
+}
+.vs-dark-circle-slash:before {
+  content: "\e929";
+  color: #c5c5c5;
+}
+.vs-dark-circuit-board:before {
+  content: "\e92a";
+  color: #c5c5c5;
+}
+.vs-dark-clear-all:before {
+  content: "\e92b";
+  color: #c5c5c5;
+}
+.vs-dark-clippy:before {
+  content: "\e92c";
+  color: #c5c5c5;
+}
+.vs-dark-close:before {
+  content: "\e92d";
+  color: #c5c5c5;
+}
+.vs-dark-close-all:before {
+  content: "\e92e";
+  color: #c5c5c5;
+}
+.vs-dark-cloud:before {
+  content: "\e92f";
+  color: #c5c5c5;
+}
+.vs-dark-cloud-download:before {
+  content: "\e930";
+  color: #c5c5c5;
+}
+.vs-dark-cloud-upload:before {
+  content: "\e931";
+  color: #c5c5c5;
+}
+.vs-dark-code:before {
+  content: "\e932";
+  color: #c5c5c5;
+}
+.vs-dark-collapse-all:before {
+  content: "\e933";
+  color: #c5c5c5;
+}
+.vs-dark-color-mode:before {
+  content: "\e934";
+  color: #c5c5c5;
+}
+.vs-dark-comment:before {
+  content: "\e935";
+  color: #c5c5c5;
+}
+.vs-dark-comment-discussion:before {
+  content: "\e936";
+  color: #c5c5c5;
+}
+.vs-dark-comment-discussion-quote:before {
+  content: "\e937";
+  color: #c5c5c5;
+}
+.vs-dark-console:before {
+  content: "\e938";
+  color: #c5c5c5;
+}
+.vs-dark-credit-card:before {
+  content: "\e939";
+  color: #c5c5c5;
+}
+.vs-dark-dash:before {
+  content: "\e93a";
+  color: #c5c5c5;
+}
+.vs-dark-dashboard:before {
+  content: "\e93b";
+  color: #c5c5c5;
+}
+.vs-dark-database:before {
+  content: "\e93c";
+  color: #c5c5c5;
+}
+.vs-dark-debug:before {
+  content: "\e93d";
+  color: #c5c5c5;
+}
+.vs-dark-debug-alt:before {
+  content: "\e93e";
+  color: #c5c5c5;
+}
+.vs-dark-debug-alt-small:before {
+  content: "\e93f";
+  color: #c5c5c5;
+}
+.vs-dark-debug-breakpoint-conditional:before {
+  content: "\e940";
+  color: #e51400;
+}
+.vs-dark-debug-breakpoint-conditional-unverified:before {
+  content: "\e941";
+  color: #848484;
+}
+.vs-dark-debug-breakpoint-data:before {
+  content: "\e942";
+  color: #e51400;
+}
+.vs-dark-debug-breakpoint-data-unverified:before {
+  content: "\e943";
+  color: #c5c5c5;
+}
+.vs-dark-debug-breakpoint-function:before {
+  content: "\e944";
+  color: #e51400;
+}
+.vs-dark-debug-breakpoint-function-unverified:before {
+  content: "\e945";
+  color: #848484;
+}
+.vs-dark-debug-breakpoint-log:before {
+  content: "\e946";
+  color: #e51400;
+}
+.vs-dark-debug-breakpoint-log-unverified:before {
+  content: "\e947";
+  color: #848484;
+}
+.vs-dark-debug-breakpoint-stackframe:before {
+  content: "\e948";
+  color: #fc0;
+}
+.vs-dark-debug-breakpoint-stackframe-active .path1:before {
+  content: "\e949";
+  color: rgb(229, 20, 0);
+}
+.vs-dark-debug-breakpoint-stackframe-active .path2:before {
+  content: "\e94a";
+  margin-left: -1em;
+  color: rgb(255, 204, 0);
+}
+.vs-dark-debug-breakpoint-stackframe-dot:before {
+  content: "\e94b";
+  color: #e51400;
+}
+.vs-dark-debug-breakpoint-unsupported:before {
+  content: "\e94c";
+  color: #e51400;
+}
+.vs-dark-debug-console:before {
+  content: "\e94d";
+  color: #c5c5c5;
+}
+.vs-dark-debug-continue:before {
+  content: "\e94e";
+  color: #75beff;
+}
+.vs-dark-debug-disconnect:before {
+  content: "\e94f";
+  color: #f48771;
+}
+.vs-dark-debug-pause:before {
+  content: "\e950";
+  color: #75beff;
+}
+.vs-dark-debug-restart:before {
+  content: "\e951";
+  color: #89d185;
+}
+.vs-dark-debug-restart-frame:before {
+  content: "\e952";
+  color: #89d185;
+}
+.vs-dark-debug-reverse-continue:before {
+  content: "\e953";
+  color: #75beff;
+}
+.vs-dark-debug-start:before {
+  content: "\e954";
+  color: #89d185;
+}
+.vs-dark-debug-step-back:before {
+  content: "\e955";
+  color: #75beff;
+}
+.vs-dark-debug-step-into:before {
+  content: "\e956";
+  color: #75beff;
+}
+.vs-dark-debug-step-out:before {
+  content: "\e957";
+  color: #75beff;
+}
+.vs-dark-debug-step-over:before {
+  content: "\e958";
+  color: #75beff;
+}
+.vs-dark-debug-stop:before {
+  content: "\e959";
+  color: #f48771;
+}
+.vs-dark-desktop-download:before {
+  content: "\e95a";
+  color: #c5c5c5;
+}
+.vs-dark-device-camera:before {
+  content: "\e95b";
+  color: #c5c5c5;
+}
+.vs-dark-device-camera-video:before {
+  content: "\e95c";
+  color: #c5c5c5;
+}
+.vs-dark-device-mobile:before {
+  content: "\e95d";
+  color: #c5c5c5;
+}
+.vs-dark-diff:before {
+  content: "\e95e";
+  color: #c5c5c5;
+}
+.vs-dark-diff-added:before {
+  content: "\e95f";
+  color: #c5c5c5;
+}
+.vs-dark-diff-ignored:before {
+  content: "\e960";
+  color: #c5c5c5;
+}
+.vs-dark-diff-modified:before {
+  content: "\e961";
+  color: #c5c5c5;
+}
+.vs-dark-diff-removed:before {
+  content: "\e962";
+  color: #c5c5c5;
+}
+.vs-dark-diff-renamed:before {
+  content: "\e963";
+  color: #c5c5c5;
+}
+.vs-dark-discard:before {
+  content: "\e964";
+  color: #c5c5c5;
+}
+.vs-dark-edit:before {
+  content: "\e965";
+  color: #c5c5c5;
+}
+.vs-dark-editor-layout:before {
+  content: "\e966";
+  color: #c5c5c5;
+}
+.vs-dark-ellipsis:before {
+  content: "\e967";
+  color: #c5c5c5;
+}
+.vs-dark-empty-window:before {
+  content: "\e968";
+  color: #c5c5c5;
+}
+.vs-dark-error:before {
+  content: "\e969";
+  color: #f48771;
+}
+.vs-dark-exclude:before {
+  content: "\e96a";
+  color: #c5c5c5;
+}
+.vs-dark-expand-all:before {
+  content: "\e96b";
+  color: #c5c5c5;
+}
+.vs-dark-export:before {
+  content: "\e96c";
+  color: #c5c5c5;
+}
+.vs-dark-extensions:before {
+  content: "\e96d";
+  color: #c5c5c5;
+}
+.vs-dark-eye:before {
+  content: "\e96e";
+  color: #c5c5c5;
+}
+.vs-dark-eye-closed:before {
+  content: "\e96f";
+  color: #c5c5c5;
+}
+.vs-dark-feedback:before {
+  content: "\e970";
+  color: #c5c5c5;
+}
+.vs-dark-file:before {
+  content: "\e971";
+  color: #c5c5c5;
+}
+.vs-dark-file-binary:before {
+  content: "\e972";
+  color: #c5c5c5;
+}
+.vs-dark-file-code:before {
+  content: "\e973";
+  color: #c5c5c5;
+}
+.vs-dark-file-media:before {
+  content: "\e974";
+  color: #c5c5c5;
+}
+.vs-dark-file-pdf:before {
+  content: "\e975";
+  color: #c5c5c5;
+}
+.vs-dark-files:before {
+  content: "\e976";
+  color: #c5c5c5;
+}
+.vs-dark-file-submodule:before {
+  content: "\e977";
+  color: #c5c5c5;
+}
+.vs-dark-file-symlink-directory:before {
+  content: "\e978";
+  color: #c5c5c5;
+}
+.vs-dark-file-symlink-file:before {
+  content: "\e979";
+  color: #c5c5c5;
+}
+.vs-dark-file-zip:before {
+  content: "\e97a";
+  color: #c5c5c5;
+}
+.vs-dark-filter:before {
+  content: "\e97b";
+  color: #c5c5c5;
+}
+.vs-dark-flame:before {
+  content: "\e97c";
+  color: #c5c5c5;
+}
+.vs-dark-fold:before {
+  content: "\e97d";
+  color: #c5c5c5;
+}
+.vs-dark-fold-down:before {
+  content: "\e97e";
+  color: #c5c5c5;
+}
+.vs-dark-folder:before {
+  content: "\e97f";
+  color: #c5c5c5;
+}
+.vs-dark-folder-active .path1:before {
+  content: "\e980";
+  color: rgb(197, 197, 197);
+}
+.vs-dark-folder-active .path2:before {
+  content: "\e981";
+  margin-left: -1em;
+  color: rgb(56, 138, 52);
+}
+.vs-dark-folder-opened:before {
+  content: "\e982";
+  color: #c5c5c5;
+}
+.vs-dark-fold-up:before {
+  content: "\e983";
+  color: #c5c5c5;
+}
+.vs-dark-gear:before {
+  content: "\e984";
+  color: #c5c5c5;
+}
+.vs-dark-gift:before {
+  content: "\e985";
+  color: #c5c5c5;
+}
+.vs-dark-gist:before {
+  content: "\e986";
+  color: #c5c5c5;
+}
+.vs-dark-gist-secret:before {
+  content: "\e987";
+  color: #c5c5c5;
+}
+.vs-dark-git-commit:before {
+  content: "\e988";
+  color: #c5c5c5;
+}
+.vs-dark-git-compare:before {
+  content: "\e989";
+  color: #c5c5c5;
+}
+.vs-dark-github-action:before {
+  content: "\e98a";
+  color: #c5c5c5;
+}
+.vs-dark-github-inverted:before {
+  content: "\e98b";
+  color: #c5c5c5;
+}
+.vs-dark-git-merge:before {
+  content: "\e98c";
+  color: #c5c5c5;
+}
+.vs-dark-git-pull-request:before {
+  content: "\e98d";
+  color: #c5c5c5;
+}
+.vs-dark-globe:before {
+  content: "\e98e";
+  color: #c5c5c5;
+}
+.vs-dark-go-to-file:before {
+  content: "\e98f";
+  color: #c5c5c5;
+}
+.vs-dark-grabber:before {
+  content: "\e990";
+  color: #c5c5c5;
+}
+.vs-dark-graph:before {
+  content: "\e991";
+  color: #c5c5c5;
+}
+.vs-dark-graph-left:before {
+  content: "\e992";
+  color: #c5c5c5;
+}
+.vs-dark-gripper:before {
+  content: "\e993";
+  color: #c5c5c5;
+}
+.vs-dark-group-by-ref-type:before {
+  content: "\e994";
+  color: #c5c5c5;
+}
+.vs-dark-heart:before {
+  content: "\e995";
+  color: #c5c5c5;
+}
+.vs-dark-help:before {
+  content: "\e996";
+  color: #c5c5c5;
+}
+.vs-dark-history:before {
+  content: "\e997";
+  color: #c5c5c5;
+}
+.vs-dark-home:before {
+  content: "\e998";
+  color: #c5c5c5;
+}
+.vs-dark-horizontal-rule:before {
+  content: "\e999";
+  color: #c5c5c5;
+}
+.vs-dark-hubot:before {
+  content: "\e99a";
+  color: #c5c5c5;
+}
+.vs-dark-inbox:before {
+  content: "\e99b";
+  color: #c5c5c5;
+}
+.vs-dark-info:before {
+  content: "\e99c";
+  color: #75beff;
+}
+.vs-dark-issue-closed:before {
+  content: "\e99d";
+  color: #c5c5c5;
+}
+.vs-dark-issue-reopened:before {
+  content: "\e99e";
+  color: #c5c5c5;
+}
+.vs-dark-issues:before {
+  content: "\e99f";
+  color: #c5c5c5;
+}
+.vs-dark-italic:before {
+  content: "\e9a0";
+  color: #c5c5c5;
+}
+.vs-dark-jersey:before {
+  content: "\e9a1";
+  color: #c5c5c5;
+}
+.vs-dark-json:before {
+  content: "\e9a2";
+  color: #c5c5c5;
+}
+.vs-dark-kebab-vertical:before {
+  content: "\e9a3";
+  color: #c5c5c5;
+}
+.vs-dark-key:before {
+  content: "\e9a4";
+  color: #c5c5c5;
+}
+.vs-dark-law:before {
+  content: "\e9a5";
+  color: #c5c5c5;
+}
+.vs-dark-library:before {
+  content: "\e9a6";
+  color: #c5c5c5;
+}
+.vs-dark-lightbulb:before {
+  content: "\e9a7";
+  color: #fc0;
+}
+.vs-dark-lightbulb-autofix:before {
+  content: "\e9a8";
+  color: #75beff;
+}
+.vs-dark-link:before {
+  content: "\e9a9";
+  color: #c5c5c5;
+}
+.vs-dark-link-external:before {
+  content: "\e9aa";
+  color: #c5c5c5;
+}
+.vs-dark-list-filter:before {
+  content: "\e9ab";
+  color: #c5c5c5;
+}
+.vs-dark-list-flat:before {
+  content: "\e9ac";
+  color: #c5c5c5;
+}
+.vs-dark-list-ordered:before {
+  content: "\e9ad";
+  color: #c5c5c5;
+}
+.vs-dark-list-selection:before {
+  content: "\e9ae";
+  color: #c5c5c5;
+}
+.vs-dark-list-tree:before {
+  content: "\e9af";
+  color: #c5c5c5;
+}
+.vs-dark-list-unordered:before {
+  content: "\e9b0";
+  color: #c5c5c5;
+}
+.vs-dark-loading:before {
+  content: "\e9b1";
+  color: #c5c5c5;
+}
+.vs-dark-location:before {
+  content: "\e9b2";
+  color: #c5c5c5;
+}
+.vs-dark-lock:before {
+  content: "\e9b3";
+  color: #c5c5c5;
+}
+.vs-dark-magnet:before {
+  content: "\e9b4";
+  color: #c5c5c5;
+}
+.vs-dark-mail:before {
+  content: "\e9b5";
+  color: #c5c5c5;
+}
+.vs-dark-mail-read:before {
+  content: "\e9b6";
+  color: #c5c5c5;
+}
+.vs-dark-markdown:before {
+  content: "\e9b7";
+  color: #c5c5c5;
+}
+.vs-dark-megaphone:before {
+  content: "\e9b8";
+  color: #c5c5c5;
+}
+.vs-dark-mention:before {
+  content: "\e9b9";
+  color: #c5c5c5;
+}
+.vs-dark-menu:before {
+  content: "\e9ba";
+  color: #c5c5c5;
+}
+.vs-dark-merge:before {
+  content: "\e9bb";
+  color: #c5c5c5;
+}
+.vs-dark-milestone:before {
+  content: "\e9bc";
+  color: #c5c5c5;
+}
+.vs-dark-mirror:before {
+  content: "\e9bd";
+  color: #c5c5c5;
+}
+.vs-dark-more:before {
+  content: "\e9be";
+  color: #c5c5c5;
+}
+.vs-dark-mortar-board:before {
+  content: "\e9bf";
+  color: #c5c5c5;
+}
+.vs-dark-move:before {
+  content: "\e9c0";
+  color: #c5c5c5;
+}
+.vs-dark-multiple-windows:before {
+  content: "\e9c1";
+  color: #c5c5c5;
+}
+.vs-dark-mute:before {
+  content: "\e9c2";
+  color: #c5c5c5;
+}
+.vs-dark-new-file:before {
+  content: "\e9c3";
+  color: #c5c5c5;
+}
+.vs-dark-new-folder:before {
+  content: "\e9c4";
+  color: #c5c5c5;
+}
+.vs-dark-no-newline:before {
+  content: "\e9c5";
+  color: #c5c5c5;
+}
+.vs-dark-note:before {
+  content: "\e9c6";
+  color: #c5c5c5;
+}
+.vs-dark-octoface:before {
+  content: "\e9c7";
+  color: #c5c5c5;
+}
+.vs-dark-open-preview:before {
+  content: "\e9c8";
+  color: #c5c5c5;
+}
+.vs-dark-organization:before {
+  content: "\e9c9";
+  color: #c5c5c5;
+}
+.vs-dark-output:before {
+  content: "\e9ca";
+  color: #c5c5c5;
+}
+.vs-dark-package:before {
+  content: "\e9cb";
+  color: #c5c5c5;
+}
+.vs-dark-paintcan:before {
+  content: "\e9cc";
+  color: #c5c5c5;
+}
+.vs-dark-pass:before {
+  content: "\e9cd";
+  color: #89d185;
+}
+.vs-dark-person:before {
+  content: "\e9ce";
+  color: #c5c5c5;
+}
+.vs-dark-pin:before {
+  content: "\e9cf";
+  color: #c5c5c5;
+}
+.vs-dark-pinned:before {
+  content: "\e9d0";
+  color: #c5c5c5;
+}
+.vs-dark-play-circle:before {
+  content: "\e9d1";
+  color: #c5c5c5;
+}
+.vs-dark-plug:before {
+  content: "\e9d2";
+  color: #c5c5c5;
+}
+.vs-dark-preserve-case:before {
+  content: "\e9d3";
+  color: #c5c5c5;
+}
+.vs-dark-preview:before {
+  content: "\e9d4";
+  color: #c5c5c5;
+}
+.vs-dark-primitive-square:before {
+  content: "\e9d5";
+  color: #c5c5c5;
+}
+.vs-dark-project:before {
+  content: "\e9d6";
+  color: #c5c5c5;
+}
+.vs-dark-pulse:before {
+  content: "\e9d7";
+  color: #c5c5c5;
+}
+.vs-dark-question:before {
+  content: "\e9d8";
+  color: #c5c5c5;
+}
+.vs-dark-quote:before {
+  content: "\e9d9";
+  color: #c5c5c5;
+}
+.vs-dark-quotes:before {
+  content: "\e9da";
+  color: #c5c5c5;
+}
+.vs-dark-radio-tower:before {
+  content: "\e9db";
+  color: #c5c5c5;
+}
+.vs-dark-reactions:before {
+  content: "\e9dc";
+  color: #c5c5c5;
+}
+.vs-dark-record:before {
+  content: "\e9dd";
+  color: #f48771;
+}
+.vs-dark-record-keys:before {
+  content: "\e9de";
+  color: #c5c5c5;
+}
+.vs-dark-record-start:before {
+  content: "\e9df";
+}
+.vs-dark-record-stop:before {
+  content: "\e9e0";
+  color: #c5c5c5;
+}
+.vs-dark-references:before {
+  content: "\e9e1";
+  color: #c5c5c5;
+}
+.vs-dark-refresh:before {
+  content: "\e9e2";
+  color: #c5c5c5;
+}
+.vs-dark-regex:before {
+  content: "\e9e3";
+  color: #c5c5c5;
+}
+.vs-dark-remote:before {
+  content: "\e9e4";
+  color: #c5c5c5;
+}
+.vs-dark-remote-explorer:before {
+  content: "\e9e5";
+  color: #c5c5c5;
+}
+.vs-dark-remove:before {
+  content: "\e9e6";
+  color: #c5c5c5;
+}
+.vs-dark-rename:before {
+  content: "\e9e7";
+  color: #c5c5c5;
+}
+.vs-dark-replace:before {
+  content: "\e9e8";
+  color: #c5c5c5;
+}
+.vs-dark-replace-all:before {
+  content: "\e9e9";
+  color: #c5c5c5;
+}
+.vs-dark-reply:before {
+  content: "\e9ea";
+  color: #c5c5c5;
+}
+.vs-dark-repo:before {
+  content: "\e9eb";
+  color: #c5c5c5;
+}
+.vs-dark-repo-clone:before {
+  content: "\e9ec";
+  color: #c5c5c5;
+}
+.vs-dark-repo-force-push:before {
+  content: "\e9ed";
+  color: #c5c5c5;
+}
+.vs-dark-repo-forked:before {
+  content: "\e9ee";
+  color: #c5c5c5;
+}
+.vs-dark-repo-pull:before {
+  content: "\e9ef";
+  color: #c5c5c5;
+}
+.vs-dark-repo-push:before {
+  content: "\e9f0";
+  color: #c5c5c5;
+}
+.vs-dark-report:before {
+  content: "\e9f1";
+  color: #c5c5c5;
+}
+.vs-dark-request-changes:before {
+  content: "\e9f2";
+  color: #c5c5c5;
+}
+.vs-dark-rocket:before {
+  content: "\e9f3";
+  color: #c5c5c5;
+}
+.vs-dark-root-folder:before {
+  content: "\e9f4";
+  color: #c5c5c5;
+}
+.vs-dark-root-folder-opened:before {
+  content: "\e9f5";
+  color: #c5c5c5;
+}
+.vs-dark-rss:before {
+  content: "\e9f6";
+  color: #c5c5c5;
+}
+.vs-dark-ruby:before {
+  content: "\e9f7";
+  color: #c5c5c5;
+}
+.vs-dark-run:before {
+  content: "\e9f8";
+  color: #c5c5c5;
+}
+.vs-dark-run-above:before {
+  content: "\e9f9";
+  color: #c5c5c5;
+}
+.vs-dark-run-all:before {
+  content: "\e9fa";
+  color: #c5c5c5;
+}
+.vs-dark-run-below:before {
+  content: "\e9fb";
+  color: #c5c5c5;
+}
+.vs-dark-save:before {
+  content: "\e9fc";
+  color: #c5c5c5;
+}
+.vs-dark-save-all:before {
+  content: "\e9fd";
+  color: #c5c5c5;
+}
+.vs-dark-save-as:before {
+  content: "\e9fe";
+  color: #c5c5c5;
+}
+.vs-dark-screen-full:before {
+  content: "\e9ff";
+  color: #c5c5c5;
+}
+.vs-dark-screen-normal:before {
+  content: "\ea00";
+  color: #c5c5c5;
+}
+.vs-dark-search:before {
+  content: "\ea01";
+  color: #c5c5c5;
+}
+.vs-dark-search-stop:before {
+  content: "\ea02";
+  color: #c5c5c5;
+}
+.vs-dark-server:before {
+  content: "\ea03";
+  color: #c5c5c5;
+}
+.vs-dark-server-environment:before {
+  content: "\ea04";
+  color: #c5c5c5;
+}
+.vs-dark-server-process:before {
+  content: "\ea05";
+  color: #c5c5c5;
+}
+.vs-dark-settings:before {
+  content: "\ea06";
+  color: #c5c5c5;
+}
+.vs-dark-settings-gear:before {
+  content: "\ea07";
+  color: #c5c5c5;
+}
+.vs-dark-shield:before {
+  content: "\ea08";
+  color: #c5c5c5;
+}
+.vs-dark-sign-in:before {
+  content: "\ea09";
+  color: #c5c5c5;
+}
+.vs-dark-sign-out:before {
+  content: "\ea0a";
+  color: #c5c5c5;
+}
+.vs-dark-smiley:before {
+  content: "\ea0b";
+  color: #c5c5c5;
+}
+.vs-dark-sort-precedence:before {
+  content: "\ea0c";
+  color: #c5c5c5;
+}
+.vs-dark-source-control:before {
+  content: "\ea0d";
+  color: #c5c5c5;
+}
+.vs-dark-split-horizontal:before {
+  content: "\ea0e";
+  color: #c5c5c5;
+}
+.vs-dark-split-vertical:before {
+  content: "\ea0f";
+  color: #c5c5c5;
+}
+.vs-dark-squirrel:before {
+  content: "\ea10";
+  color: #c5c5c5;
+}
+.vs-dark-star-empty:before {
+  content: "\ea11";
+  color: #c5c5c5;
+}
+.vs-dark-star-full:before {
+  content: "\ea12";
+  color: #ff8e00;
+}
+.vs-dark-star-half:before {
+  content: "\ea13";
+  color: #ff8e00;
+}
+.vs-dark-stop-circle:before {
+  content: "\ea14";
+  color: #f48771;
+}
+.vs-dark-symbol-array:before {
+  content: "\ea15";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-boolean:before {
+  content: "\ea16";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-class:before {
+  content: "\ea17";
+  color: #ee9d28;
+}
+.vs-dark-symbol-color:before {
+  content: "\ea18";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-constant:before {
+  content: "\ea19";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-enum:before {
+  content: "\ea1a";
+  color: #ee9d28;
+}
+.vs-dark-symbol-enum-member:before {
+  content: "\ea1b";
+  color: #75beff;
+}
+.vs-dark-symbol-event:before {
+  content: "\ea1c";
+  color: #ee9d28;
+}
+.vs-dark-symbol-field:before {
+  content: "\ea1d";
+  color: #75beff;
+}
+.vs-dark-symbol-file:before {
+  content: "\ea1e";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-interface:before {
+  content: "\ea1f";
+  color: #75beff;
+}
+.vs-dark-symbol-key:before {
+  content: "\ea20";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-keyword:before {
+  content: "\ea21";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-method:before {
+  content: "\ea22";
+  color: #b180d7;
+}
+.vs-dark-symbol-misc:before {
+  content: "\ea23";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-namespace:before {
+  content: "\ea24";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-numeric:before {
+  content: "\ea25";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-operator:before {
+  content: "\ea26";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-parameter:before {
+  content: "\ea27";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-property:before {
+  content: "\ea28";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-ruler:before {
+  content: "\ea29";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-snippet:before {
+  content: "\ea2a";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-string:before {
+  content: "\ea2b";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-structure:before {
+  content: "\ea2c";
+  color: #c5c5c5;
+}
+.vs-dark-symbol-variable:before {
+  content: "\ea2d";
+  color: #75beff;
+}
+.vs-dark-sync:before {
+  content: "\ea2e";
+  color: #c5c5c5;
+}
+.vs-dark-sync-ignored:before {
+  content: "\ea2f";
+  color: #c5c5c5;
+}
+.vs-dark-tag:before {
+  content: "\ea30";
+  color: #c5c5c5;
+}
+.vs-dark-tasklist:before {
+  content: "\ea31";
+  color: #c5c5c5;
+}
+.vs-dark-telescope:before {
+  content: "\ea32";
+  color: #c5c5c5;
+}
+.vs-dark-terminal:before {
+  content: "\ea33";
+  color: #c5c5c5;
+}
+.vs-dark-text-size:before {
+  content: "\ea34";
+  color: #c5c5c5;
+}
+.vs-dark-three-bars:before {
+  content: "\ea35";
+  color: #c5c5c5;
+}
+.vs-dark-thumbsdown:before {
+  content: "\ea36";
+  color: #c5c5c5;
+}
+.vs-dark-thumbsup:before {
+  content: "\ea37";
+  color: #c5c5c5;
+}
+.vs-dark-tools:before {
+  content: "\ea38";
+  color: #c5c5c5;
+}
+.vs-dark-trash:before {
+  content: "\ea39";
+  color: #c5c5c5;
+}
+.vs-dark-triangle-down:before {
+  content: "\ea3a";
+  color: #c5c5c5;
+}
+.vs-dark-triangle-left:before {
+  content: "\ea3b";
+  color: #c5c5c5;
+}
+.vs-dark-triangle-right:before {
+  content: "\ea3c";
+  color: #c5c5c5;
+}
+.vs-dark-triangle-up:before {
+  content: "\ea3d";
+  color: #c5c5c5;
+}
+.vs-dark-twitter:before {
+  content: "\ea3e";
+  color: #c5c5c5;
+}
+.vs-dark-unfold:before {
+  content: "\ea3f";
+  color: #c5c5c5;
+}
+.vs-dark-ungroup-by-ref-type:before {
+  content: "\ea40";
+  color: #c5c5c5;
+}
+.vs-dark-unlock:before {
+  content: "\ea41";
+  color: #c5c5c5;
+}
+.vs-dark-unmute:before {
+  content: "\ea42";
+  color: #c5c5c5;
+}
+.vs-dark-unverified:before {
+  content: "\ea43";
+  color: #c5c5c5;
+}
+.vs-dark-verified:before {
+  content: "\ea44";
+  color: #c5c5c5;
+}
+.vs-dark-versions:before {
+  content: "\ea45";
+  color: #c5c5c5;
+}
+.vs-dark-vm:before {
+  content: "\ea46";
+  color: #c5c5c5;
+}
+.vs-dark-vm-active .path1:before {
+  content: "\ea47";
+  color: rgb(197, 197, 197);
+}
+.vs-dark-vm-active .path2:before {
+  content: "\ea48";
+  margin-left: -1em;
+  color: rgb(56, 138, 52);
+}
+.vs-dark-vm-connect:before {
+  content: "\ea49";
+  color: #c5c5c5;
+}
+.vs-dark-vm-outline:before {
+  content: "\ea4a";
+  color: #c5c5c5;
+}
+.vs-dark-vm-pending:before {
+  content: "\ea4b";
+  color: #c5c5c5;
+}
+.vs-dark-vm-running:before {
+  content: "\ea4c";
+  color: #c5c5c5;
+}
+.vs-dark-warning:before {
+  content: "\ea4d";
+  color: #fc0;
+}
+.vs-dark-watch:before {
+  content: "\ea4e";
+  color: #c5c5c5;
+}
+.vs-dark-whitespace:before {
+  content: "\ea4f";
+  color: #c5c5c5;
+}
+.vs-dark-whole-word:before {
+  content: "\ea50";
+  color: #c5c5c5;
+}
+.vs-dark-window:before {
+  content: "\ea51";
+  color: #c5c5c5;
+}
+.vs-dark-word-wrap:before {
+  content: "\ea52";
+  color: #c5c5c5;
+}
+.vs-dark-zoom-in:before {
+  content: "\ea53";
+  color: #c5c5c5;
+}
+.vs-dark-zoom-out:before {
+  content: "\ea54";
+  color: #c5c5c5;
+}

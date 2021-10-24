@@ -1,0 +1,1098 @@
+@font-face {
+  font-family: 'vscode-light-icons';
+  src:
+    url('fonts/vscode-light-icons.ttf?hm2r7y') format('truetype'),
+    url('fonts/vscode-light-icons.woff?hm2r7y') format('woff'),
+    url('fonts/vscode-light-icons.svg?hm2r7y#vscode-light-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="vs-light-"], [class*=" vs-light-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'vscode-light-icons' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.vs-light-account:before {
+  content: "\ea55";
+}
+.vs-light-activate-breakpoints:before {
+  content: "\ea56";
+}
+.vs-light-add:before {
+  content: "\ea57";
+}
+.vs-light-archive:before {
+  content: "\ea58";
+}
+.vs-light-arrow-both:before {
+  content: "\ea59";
+}
+.vs-light-arrow-down:before {
+  content: "\ea5a";
+}
+.vs-light-arrow-left:before {
+  content: "\ea5b";
+}
+.vs-light-arrow-right:before {
+  content: "\ea5c";
+}
+.vs-light-arrow-small-down:before {
+  content: "\ea5d";
+}
+.vs-light-arrow-small-left:before {
+  content: "\ea5e";
+}
+.vs-light-arrow-small-right:before {
+  content: "\ea5f";
+}
+.vs-light-arrow-small-up:before {
+  content: "\ea60";
+}
+.vs-light-arrow-up:before {
+  content: "\ea61";
+}
+.vs-light-beaker:before {
+  content: "\ea62";
+}
+.vs-light-bell:before {
+  content: "\ea63";
+}
+.vs-light-bell-dot:before {
+  content: "\ea64";
+}
+.vs-light-blocked:before {
+  content: "\ea65";
+}
+.vs-light-bold:before {
+  content: "\ea66";
+}
+.vs-light-book:before {
+  content: "\ea67";
+}
+.vs-light-bookmark:before {
+  content: "\ea68";
+}
+.vs-light-briefcase:before {
+  content: "\ea69";
+}
+.vs-light-broadcast:before {
+  content: "\ea6a";
+}
+.vs-light-browser:before {
+  content: "\ea6b";
+}
+.vs-light-bug:before {
+  content: "\ea6c";
+}
+.vs-light-build:before {
+  content: "\ea6d";
+}
+.vs-light-calendar:before {
+  content: "\ea6e";
+}
+.vs-light-call-incoming:before {
+  content: "\ea6f";
+}
+.vs-light-call-outgoing:before {
+  content: "\ea70";
+}
+.vs-light-case-sensitive:before {
+  content: "\ea71";
+}
+.vs-light-check:before {
+  content: "\ea72";
+}
+.vs-light-checklist:before {
+  content: "\ea73";
+}
+.vs-light-chevron-down:before {
+  content: "\ea74";
+}
+.vs-light-chevron-left:before {
+  content: "\ea75";
+}
+.vs-light-chevron-right:before {
+  content: "\ea76";
+}
+.vs-light-chevron-up:before {
+  content: "\ea77";
+}
+.vs-light-chrome-close:before {
+  content: "\ea78";
+}
+.vs-light-chrome-maximize:before {
+  content: "\ea79";
+}
+.vs-light-chrome-minimize:before {
+  content: "\ea7a";
+}
+.vs-light-chrome-restore:before {
+  content: "\ea7b";
+}
+.vs-light-circle-filled:before {
+  content: "\ea7c";
+}
+.vs-light-circle-outline:before {
+  content: "\ea7d";
+}
+.vs-light-circle-slash:before {
+  content: "\ea7e";
+}
+.vs-light-circuit-board:before {
+  content: "\ea7f";
+}
+.vs-light-clear-all:before {
+  content: "\ea80";
+}
+.vs-light-clippy:before {
+  content: "\ea81";
+}
+.vs-light-close:before {
+  content: "\ea82";
+}
+.vs-light-close-all:before {
+  content: "\ea83";
+}
+.vs-light-cloud:before {
+  content: "\ea84";
+}
+.vs-light-cloud-download:before {
+  content: "\ea85";
+}
+.vs-light-cloud-upload:before {
+  content: "\ea86";
+}
+.vs-light-code:before {
+  content: "\ea87";
+}
+.vs-light-collapse-all:before {
+  content: "\ea88";
+}
+.vs-light-color-mode:before {
+  content: "\ea89";
+}
+.vs-light-comment:before {
+  content: "\ea8a";
+}
+.vs-light-comment-discussion:before {
+  content: "\ea8b";
+}
+.vs-light-comment-discussion-quote:before {
+  content: "\ea8c";
+}
+.vs-light-console:before {
+  content: "\ea8d";
+}
+.vs-light-credit-card:before {
+  content: "\ea8e";
+}
+.vs-light-dash:before {
+  content: "\ea8f";
+}
+.vs-light-dashboard:before {
+  content: "\ea90";
+}
+.vs-light-database:before {
+  content: "\ea91";
+}
+.vs-light-debug:before {
+  content: "\ea92";
+}
+.vs-light-debug-alt:before {
+  content: "\ea93";
+}
+.vs-light-debug-alt-small:before {
+  content: "\ea94";
+}
+.vs-light-debug-breakpoint-conditional:before {
+  content: "\ea95";
+  color: #e51400;
+}
+.vs-light-debug-breakpoint-conditional-unverified:before {
+  content: "\ea96";
+  color: #848484;
+}
+.vs-light-debug-breakpoint-data:before {
+  content: "\ea97";
+  color: #e51400;
+}
+.vs-light-debug-breakpoint-data-unverified:before {
+  content: "\ea98";
+}
+.vs-light-debug-breakpoint-function:before {
+  content: "\ea99";
+  color: #e51400;
+}
+.vs-light-debug-breakpoint-function-unverified:before {
+  content: "\ea9a";
+  color: #848484;
+}
+.vs-light-debug-breakpoint-log:before {
+  content: "\ea9b";
+  color: #e51400;
+}
+.vs-light-debug-breakpoint-log-unverified:before {
+  content: "\ea9c";
+  color: #848484;
+}
+.vs-light-debug-breakpoint-stackframe:before {
+  content: "\ea9d";
+  color: #ddb100;
+}
+.vs-light-debug-breakpoint-stackframe-active .path1:before {
+  content: "\ea9e";
+  color: rgb(229, 20, 0);
+}
+.vs-light-debug-breakpoint-stackframe-active .path2:before {
+  content: "\ea9f";
+  margin-left: -1em;
+  color: rgb(221, 177, 0);
+}
+.vs-light-debug-breakpoint-stackframe-dot:before {
+  content: "\eaa0";
+  color: #e51400;
+}
+.vs-light-debug-breakpoint-unsupported:before {
+  content: "\eaa1";
+  color: #e51400;
+}
+.vs-light-debug-console:before {
+  content: "\eaa2";
+}
+.vs-light-debug-continue:before {
+  content: "\eaa3";
+  color: #007acc;
+}
+.vs-light-debug-disconnect:before {
+  content: "\eaa4";
+  color: #a1260d;
+}
+.vs-light-debug-pause:before {
+  content: "\eaa5";
+  color: #007acc;
+}
+.vs-light-debug-restart:before {
+  content: "\eaa6";
+  color: #388a34;
+}
+.vs-light-debug-restart-frame:before {
+  content: "\eaa7";
+  color: #388a34;
+}
+.vs-light-debug-reverse-continue:before {
+  content: "\eaa8";
+  color: #007acc;
+}
+.vs-light-debug-start:before {
+  content: "\eaa9";
+  color: #388a34;
+}
+.vs-light-debug-step-back:before {
+  content: "\eaaa";
+  color: #007acc;
+}
+.vs-light-debug-step-into:before {
+  content: "\eaab";
+  color: #007acc;
+}
+.vs-light-debug-step-out:before {
+  content: "\eaac";
+  color: #007acc;
+}
+.vs-light-debug-step-over:before {
+  content: "\eaad";
+  color: #007acc;
+}
+.vs-light-debug-stop:before {
+  content: "\eaae";
+  color: #a1260d;
+}
+.vs-light-desktop-download:before {
+  content: "\eaaf";
+}
+.vs-light-device-camera:before {
+  content: "\eab0";
+}
+.vs-light-device-camera-video:before {
+  content: "\eab1";
+}
+.vs-light-device-mobile:before {
+  content: "\eab2";
+}
+.vs-light-diff:before {
+  content: "\eab3";
+}
+.vs-light-diff-added:before {
+  content: "\eab4";
+}
+.vs-light-diff-ignored:before {
+  content: "\eab5";
+}
+.vs-light-diff-modified:before {
+  content: "\eab6";
+}
+.vs-light-diff-removed:before {
+  content: "\eab7";
+}
+.vs-light-diff-renamed:before {
+  content: "\eab8";
+}
+.vs-light-discard:before {
+  content: "\eab9";
+}
+.vs-light-edit:before {
+  content: "\eaba";
+}
+.vs-light-editor-layout:before {
+  content: "\eabb";
+}
+.vs-light-ellipsis:before {
+  content: "\eabc";
+}
+.vs-light-empty-window:before {
+  content: "\eabd";
+}
+.vs-light-error:before {
+  content: "\eabe";
+  color: #a1260d;
+}
+.vs-light-exclude:before {
+  content: "\eabf";
+}
+.vs-light-expand-all:before {
+  content: "\eac0";
+}
+.vs-light-export:before {
+  content: "\eac1";
+}
+.vs-light-extensions:before {
+  content: "\eac2";
+}
+.vs-light-eye:before {
+  content: "\eac3";
+}
+.vs-light-eye-closed:before {
+  content: "\eac4";
+}
+.vs-light-feedback:before {
+  content: "\eac5";
+}
+.vs-light-file:before {
+  content: "\eac6";
+}
+.vs-light-file-binary:before {
+  content: "\eac7";
+}
+.vs-light-file-code:before {
+  content: "\eac8";
+}
+.vs-light-file-media:before {
+  content: "\eac9";
+}
+.vs-light-file-pdf:before {
+  content: "\eaca";
+}
+.vs-light-files:before {
+  content: "\eacb";
+}
+.vs-light-file-submodule:before {
+  content: "\eacc";
+}
+.vs-light-file-symlink-directory:before {
+  content: "\eacd";
+}
+.vs-light-file-symlink-file:before {
+  content: "\eace";
+}
+.vs-light-file-zip:before {
+  content: "\eacf";
+}
+.vs-light-filter:before {
+  content: "\ead0";
+}
+.vs-light-flame:before {
+  content: "\ead1";
+}
+.vs-light-fold:before {
+  content: "\ead2";
+}
+.vs-light-fold-down:before {
+  content: "\ead3";
+}
+.vs-light-folder:before {
+  content: "\ead4";
+}
+.vs-light-folder-active .path1:before {
+  content: "\ead5";
+  color: rgb(66, 66, 66);
+}
+.vs-light-folder-active .path2:before {
+  content: "\ead6";
+  margin-left: -1em;
+  color: rgb(56, 138, 52);
+}
+.vs-light-folder-opened:before {
+  content: "\ead7";
+}
+.vs-light-fold-up:before {
+  content: "\ead8";
+}
+.vs-light-gear:before {
+  content: "\ead9";
+}
+.vs-light-gift:before {
+  content: "\eada";
+}
+.vs-light-gist:before {
+  content: "\eadb";
+}
+.vs-light-gist-secret:before {
+  content: "\eadc";
+}
+.vs-light-git-commit:before {
+  content: "\eadd";
+}
+.vs-light-git-compare:before {
+  content: "\eade";
+}
+.vs-light-github-action:before {
+  content: "\eadf";
+}
+.vs-light-github-inverted:before {
+  content: "\eae0";
+}
+.vs-light-git-merge:before {
+  content: "\eae1";
+}
+.vs-light-git-pull-request:before {
+  content: "\eae2";
+}
+.vs-light-globe:before {
+  content: "\eae3";
+}
+.vs-light-go-to-file:before {
+  content: "\eae4";
+}
+.vs-light-grabber:before {
+  content: "\eae5";
+}
+.vs-light-graph:before {
+  content: "\eae6";
+}
+.vs-light-graph-left:before {
+  content: "\eae7";
+}
+.vs-light-gripper:before {
+  content: "\eae8";
+}
+.vs-light-group-by-ref-type:before {
+  content: "\eae9";
+}
+.vs-light-heart:before {
+  content: "\eaea";
+}
+.vs-light-help:before {
+  content: "\eaeb";
+}
+.vs-light-history:before {
+  content: "\eaec";
+}
+.vs-light-home:before {
+  content: "\eaed";
+}
+.vs-light-horizontal-rule:before {
+  content: "\eaee";
+}
+.vs-light-hubot:before {
+  content: "\eaef";
+}
+.vs-light-inbox:before {
+  content: "\eaf0";
+}
+.vs-light-info:before {
+  content: "\eaf1";
+  color: #007acc;
+}
+.vs-light-issue-closed:before {
+  content: "\eaf2";
+}
+.vs-light-issue-reopened:before {
+  content: "\eaf3";
+}
+.vs-light-issues:before {
+  content: "\eaf4";
+}
+.vs-light-italic:before {
+  content: "\eaf5";
+}
+.vs-light-jersey:before {
+  content: "\eaf6";
+}
+.vs-light-json:before {
+  content: "\eaf7";
+}
+.vs-light-kebab-vertical:before {
+  content: "\eaf8";
+}
+.vs-light-key:before {
+  content: "\eaf9";
+}
+.vs-light-law:before {
+  content: "\eafa";
+}
+.vs-light-library:before {
+  content: "\eafb";
+}
+.vs-light-lightbulb:before {
+  content: "\eafc";
+  color: #ddb100;
+}
+.vs-light-lightbulb-autofix:before {
+  content: "\eafd";
+  color: #007acc;
+}
+.vs-light-link:before {
+  content: "\eafe";
+}
+.vs-light-link-external:before {
+  content: "\eaff";
+}
+.vs-light-list-filter:before {
+  content: "\eb00";
+}
+.vs-light-list-flat:before {
+  content: "\eb01";
+}
+.vs-light-list-ordered:before {
+  content: "\eb02";
+}
+.vs-light-list-selection:before {
+  content: "\eb03";
+}
+.vs-light-list-tree:before {
+  content: "\eb04";
+}
+.vs-light-list-unordered:before {
+  content: "\eb05";
+}
+.vs-light-loading:before {
+  content: "\eb06";
+}
+.vs-light-location:before {
+  content: "\eb07";
+}
+.vs-light-lock:before {
+  content: "\eb08";
+}
+.vs-light-magnet:before {
+  content: "\eb09";
+}
+.vs-light-mail:before {
+  content: "\eb0a";
+}
+.vs-light-mail-read:before {
+  content: "\eb0b";
+}
+.vs-light-markdown:before {
+  content: "\eb0c";
+}
+.vs-light-megaphone:before {
+  content: "\eb0d";
+}
+.vs-light-mention:before {
+  content: "\eb0e";
+}
+.vs-light-menu:before {
+  content: "\eb0f";
+}
+.vs-light-merge:before {
+  content: "\eb10";
+}
+.vs-light-milestone:before {
+  content: "\eb11";
+}
+.vs-light-mirror:before {
+  content: "\eb12";
+}
+.vs-light-more:before {
+  content: "\eb13";
+}
+.vs-light-mortar-board:before {
+  content: "\eb14";
+}
+.vs-light-move:before {
+  content: "\eb15";
+}
+.vs-light-multiple-windows:before {
+  content: "\eb16";
+}
+.vs-light-mute:before {
+  content: "\eb17";
+}
+.vs-light-new-file:before {
+  content: "\eb18";
+}
+.vs-light-new-folder:before {
+  content: "\eb19";
+}
+.vs-light-no-newline:before {
+  content: "\eb1a";
+}
+.vs-light-note:before {
+  content: "\eb1b";
+}
+.vs-light-octoface:before {
+  content: "\eb1c";
+}
+.vs-light-open-preview:before {
+  content: "\eb1d";
+}
+.vs-light-organization:before {
+  content: "\eb1e";
+}
+.vs-light-output:before {
+  content: "\eb1f";
+}
+.vs-light-package:before {
+  content: "\eb20";
+}
+.vs-light-paintcan:before {
+  content: "\eb21";
+}
+.vs-light-pass:before {
+  content: "\eb22";
+  color: #388a34;
+}
+.vs-light-person:before {
+  content: "\eb23";
+}
+.vs-light-pin:before {
+  content: "\eb24";
+}
+.vs-light-pinned:before {
+  content: "\eb25";
+}
+.vs-light-play-circle:before {
+  content: "\eb26";
+}
+.vs-light-plug:before {
+  content: "\eb27";
+}
+.vs-light-preserve-case:before {
+  content: "\eb28";
+}
+.vs-light-preview:before {
+  content: "\eb29";
+}
+.vs-light-primitive-square:before {
+  content: "\eb2a";
+}
+.vs-light-project:before {
+  content: "\eb2b";
+}
+.vs-light-pulse:before {
+  content: "\eb2c";
+}
+.vs-light-question:before {
+  content: "\eb2d";
+}
+.vs-light-quote:before {
+  content: "\eb2e";
+}
+.vs-light-quotes:before {
+  content: "\eb2f";
+}
+.vs-light-radio-tower:before {
+  content: "\eb30";
+}
+.vs-light-reactions:before {
+  content: "\eb31";
+}
+.vs-light-record:before {
+  content: "\eb32";
+  color: #a1260d;
+}
+.vs-light-record-keys:before {
+  content: "\eb33";
+}
+.vs-light-record-start:before {
+  content: "\eb34";
+}
+.vs-light-record-stop:before {
+  content: "\eb35";
+}
+.vs-light-references:before {
+  content: "\eb36";
+}
+.vs-light-refresh:before {
+  content: "\eb37";
+}
+.vs-light-regex:before {
+  content: "\eb38";
+}
+.vs-light-remote:before {
+  content: "\eb39";
+}
+.vs-light-remote-explorer:before {
+  content: "\eb3a";
+}
+.vs-light-remove:before {
+  content: "\eb3b";
+}
+.vs-light-rename:before {
+  content: "\eb3c";
+}
+.vs-light-replace:before {
+  content: "\eb3d";
+}
+.vs-light-replace-all:before {
+  content: "\eb3e";
+}
+.vs-light-reply:before {
+  content: "\eb3f";
+}
+.vs-light-repo:before {
+  content: "\eb40";
+}
+.vs-light-repo-clone:before {
+  content: "\eb41";
+}
+.vs-light-repo-force-push:before {
+  content: "\eb42";
+}
+.vs-light-repo-forked:before {
+  content: "\eb43";
+}
+.vs-light-repo-pull:before {
+  content: "\eb44";
+}
+.vs-light-repo-push:before {
+  content: "\eb45";
+}
+.vs-light-report:before {
+  content: "\eb46";
+}
+.vs-light-request-changes:before {
+  content: "\eb47";
+}
+.vs-light-rocket:before {
+  content: "\eb48";
+}
+.vs-light-root-folder:before {
+  content: "\eb49";
+}
+.vs-light-root-folder-opened:before {
+  content: "\eb4a";
+}
+.vs-light-rss:before {
+  content: "\eb4b";
+}
+.vs-light-ruby:before {
+  content: "\eb4c";
+}
+.vs-light-run:before {
+  content: "\eb4d";
+}
+.vs-light-run-above:before {
+  content: "\eb4e";
+}
+.vs-light-run-all:before {
+  content: "\eb4f";
+}
+.vs-light-run-below:before {
+  content: "\eb50";
+}
+.vs-light-save:before {
+  content: "\eb51";
+}
+.vs-light-save-all:before {
+  content: "\eb52";
+}
+.vs-light-save-as:before {
+  content: "\eb53";
+}
+.vs-light-screen-full:before {
+  content: "\eb54";
+}
+.vs-light-screen-normal:before {
+  content: "\eb55";
+}
+.vs-light-search:before {
+  content: "\eb56";
+}
+.vs-light-search-stop:before {
+  content: "\eb57";
+}
+.vs-light-server:before {
+  content: "\eb58";
+}
+.vs-light-server-environment:before {
+  content: "\eb59";
+}
+.vs-light-server-process:before {
+  content: "\eb5a";
+}
+.vs-light-settings:before {
+  content: "\eb5b";
+}
+.vs-light-settings-gear:before {
+  content: "\eb5c";
+}
+.vs-light-shield:before {
+  content: "\eb5d";
+}
+.vs-light-sign-in:before {
+  content: "\eb5e";
+}
+.vs-light-sign-out:before {
+  content: "\eb5f";
+}
+.vs-light-smiley:before {
+  content: "\eb60";
+}
+.vs-light-sort-precedence:before {
+  content: "\eb61";
+}
+.vs-light-source-control:before {
+  content: "\eb62";
+}
+.vs-light-split-horizontal:before {
+  content: "\eb63";
+}
+.vs-light-split-vertical:before {
+  content: "\eb64";
+}
+.vs-light-squirrel:before {
+  content: "\eb65";
+}
+.vs-light-star-empty:before {
+  content: "\eb66";
+}
+.vs-light-star-full:before {
+  content: "\eb67";
+  color: #ff8e00;
+}
+.vs-light-star-half:before {
+  content: "\eb68";
+  color: #ff8e00;
+}
+.vs-light-stop-circle:before {
+  content: "\eb69";
+  color: #a1260d;
+}
+.vs-light-symbol-array:before {
+  content: "\eb6a";
+}
+.vs-light-symbol-boolean:before {
+  content: "\eb6b";
+}
+.vs-light-symbol-class:before {
+  content: "\eb6c";
+  color: #d67e00;
+}
+.vs-light-symbol-color:before {
+  content: "\eb6d";
+}
+.vs-light-symbol-constant:before {
+  content: "\eb6e";
+}
+.vs-light-symbol-enum:before {
+  content: "\eb6f";
+  color: #d67e00;
+}
+.vs-light-symbol-enum-member:before {
+  content: "\eb70";
+  color: #007acc;
+}
+.vs-light-symbol-event:before {
+  content: "\eb71";
+  color: #d67e00;
+}
+.vs-light-symbol-field:before {
+  content: "\eb72";
+  color: #007acc;
+}
+.vs-light-symbol-file:before {
+  content: "\eb73";
+}
+.vs-light-symbol-interface:before {
+  content: "\eb74";
+  color: #007acc;
+}
+.vs-light-symbol-key:before {
+  content: "\eb75";
+}
+.vs-light-symbol-keyword:before {
+  content: "\eb76";
+}
+.vs-light-symbol-method:before {
+  content: "\eb77";
+  color: #652d90;
+}
+.vs-light-symbol-misc:before {
+  content: "\eb78";
+}
+.vs-light-symbol-namespace:before {
+  content: "\eb79";
+}
+.vs-light-symbol-numeric:before {
+  content: "\eb7a";
+}
+.vs-light-symbol-operator:before {
+  content: "\eb7b";
+}
+.vs-light-symbol-parameter:before {
+  content: "\eb7c";
+}
+.vs-light-symbol-property:before {
+  content: "\eb7d";
+}
+.vs-light-symbol-ruler:before {
+  content: "\eb7e";
+}
+.vs-light-symbol-snippet:before {
+  content: "\eb7f";
+}
+.vs-light-symbol-string:before {
+  content: "\eb80";
+}
+.vs-light-symbol-structure:before {
+  content: "\eb81";
+}
+.vs-light-symbol-variable:before {
+  content: "\eb82";
+  color: #007acc;
+}
+.vs-light-sync:before {
+  content: "\eb83";
+}
+.vs-light-sync-ignored:before {
+  content: "\eb84";
+}
+.vs-light-tag:before {
+  content: "\eb85";
+}
+.vs-light-tasklist:before {
+  content: "\eb86";
+}
+.vs-light-telescope:before {
+  content: "\eb87";
+}
+.vs-light-terminal:before {
+  content: "\eb88";
+}
+.vs-light-text-size:before {
+  content: "\eb89";
+}
+.vs-light-three-bars:before {
+  content: "\eb8a";
+}
+.vs-light-thumbsdown:before {
+  content: "\eb8b";
+}
+.vs-light-thumbsup:before {
+  content: "\eb8c";
+}
+.vs-light-tools:before {
+  content: "\eb8d";
+}
+.vs-light-trash:before {
+  content: "\eb8e";
+}
+.vs-light-triangle-down:before {
+  content: "\eb8f";
+}
+.vs-light-triangle-left:before {
+  content: "\eb90";
+}
+.vs-light-triangle-right:before {
+  content: "\eb91";
+}
+.vs-light-triangle-up:before {
+  content: "\eb92";
+}
+.vs-light-twitter:before {
+  content: "\eb93";
+}
+.vs-light-unfold:before {
+  content: "\eb94";
+}
+.vs-light-ungroup-by-ref-type:before {
+  content: "\eb95";
+}
+.vs-light-unlock:before {
+  content: "\eb96";
+}
+.vs-light-unmute:before {
+  content: "\eb97";
+}
+.vs-light-unverified:before {
+  content: "\eb98";
+}
+.vs-light-verified:before {
+  content: "\eb99";
+}
+.vs-light-versions:before {
+  content: "\eb9a";
+}
+.vs-light-vm:before {
+  content: "\eb9b";
+}
+.vs-light-vm-active .path1:before {
+  content: "\eb9c";
+  color: rgb(66, 66, 66);
+}
+.vs-light-vm-active .path2:before {
+  content: "\eb9d";
+  margin-left: -1em;
+  color: rgb(56, 138, 52);
+}
+.vs-light-vm-connect:before {
+  content: "\eb9e";
+}
+.vs-light-vm-outline:before {
+  content: "\eb9f";
+}
+.vs-light-vm-pending:before {
+  content: "\eba0";
+}
+.vs-light-vm-running:before {
+  content: "\eba1";
+}
+.vs-light-warning:before {
+  content: "\eba2";
+  color: #ddb100;
+}
+.vs-light-watch:before {
+  content: "\eba3";
+}
+.vs-light-whitespace:before {
+  content: "\eba4";
+}
+.vs-light-whole-word:before {
+  content: "\eba5";
+}
+.vs-light-window:before {
+  content: "\eba6";
+}
+.vs-light-word-wrap:before {
+  content: "\eba7";
+}
+.vs-light-zoom-in:before {
+  content: "\eba8";
+}
+.vs-light-zoom-out:before {
+  content: "\eba9";
+}

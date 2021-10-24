@@ -13,13 +13,21 @@
     "build-all": "npm run semantic:build && next build"
   },
   "dependencies": {
+    "knex": "^0.95.11",
+    "lodash": "^4.17.21",
     "next": "^11.1.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "semantic-ui-react": "^2.0.4",
+    "sqlite3": "^5.0.2",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@types/knex": "^0.16.1",
+    "@types/lodash": "^4.14.176",
+    "@types/node": "^16.11.4",
     "@types/react": "^17.0.31",
+    "@types/sqlite3": "^3.1.7",
     "@types/styled-components": "^5.1.15",
     "babel-plugin-styled-components": "^1.13.3",
     "eslint": "^7.32.0",
