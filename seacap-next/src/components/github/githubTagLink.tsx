@@ -18,7 +18,7 @@ const GithubTagLink = (props: GithubTagLinkProps & React.HTMLAttributes<HTMLAnch
     }
 
     const url = `${gitWebUrl}/tree/${tag}`;
-    return <a href={url} target="_blank" {...rest}>{children}</a>;
+    return <a href={url} target="_blank" rel="noreferrer" {...rest}>{children}</a>;
 };
 
 export default GithubTagLink;

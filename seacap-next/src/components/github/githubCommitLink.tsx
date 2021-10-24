@@ -17,7 +17,7 @@ const GithubCommitLink = (props: GithubCommitLinkProps & React.HTMLAttributes<HT
     }
 
     const url = `${gitWebUrl}/commit/${commitHash}`;
-    return <a href={url} target="_blank" {...rest}>{children}</a>;
+    return <a href={url} target="_blank" rel="noreferrer" {...rest}>{children}</a>;
 };
 
 export default GithubCommitLink;

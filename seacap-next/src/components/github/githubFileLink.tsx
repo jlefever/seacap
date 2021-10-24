@@ -23,7 +23,7 @@ const GithubFileLink = (props: GithubFileLinkProps & React.HTMLAttributes<HTMLEl
         ? `${gitWebUrl}/blob/${gitRef}/${filename}`
         : `${gitWebUrl}/blob/${gitRef}/${filename}#L${linenos[0]}-L${linenos[1]}`;
 
-    return <a href={url} target="_blank" {...rest}>{children}</a>;
+    return <a href={url} target="_blank" rel="noreferrer" {...rest}>{children}</a>;
 };
 
 export default GithubFileLink;
