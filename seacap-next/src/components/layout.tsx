@@ -14,7 +14,10 @@ const StyledRootDiv = styled.div`
 `;
 
 const StyledMenuDiv = styled.div`
-    margin-bottom: 32px !important;
+    &&& {
+        margin-bottom: 0px;
+        border-radius: 0px;
+    }
 `;
 
 const StyledMain = styled.main`
@@ -27,7 +30,7 @@ const Layout = ({ children }: LayoutProps) =>
         <StyledMenuDiv className="ui inverted menu">
             <div className="ui container">
                 <Link href="/"><a className="header item">SEA Captain</a></Link>
-                <Link href="/"><a className="header item">Home</a></Link>
+                {/* <Link href="/"><a className="header item">Home</a></Link> */}
                 {/* <div className="ui simple dropdown item">
                     <MyIcon name="laptop code" />
                     <span>Projects</span>

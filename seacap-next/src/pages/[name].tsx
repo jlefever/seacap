@@ -1,3 +1,4 @@
+import PageTitle from "components/pageTitle";
 import Repo from "models/repo";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
@@ -14,7 +15,7 @@ const RepoPage = ({ repo }: RepoPageProps) =>
         <Head>
             <title>{repo.displayName}</title>
         </Head>
-        <h1 className="ui header">{repo.displayName}</h1>
+        <PageTitle className="ui header">{repo.displayName}</PageTitle>
         <p>{repo.description}</p>
     </div>
 );
