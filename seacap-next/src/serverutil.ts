@@ -66,7 +66,7 @@ export function query<T>(db: sqlite3.Database, sql: string): Promise<T[]>
     });
 }
 
-export async function getRepo(name: string, db: sqlite3.Database): Promise<Repo>
+export async function createRepo(name: string, db: sqlite3.Database): Promise<Repo>
 {
     const meta = new Map<string, string>();
 
@@ -97,6 +97,18 @@ export async function getRepos()
 
     return Promise.all(Array.from(dbs.entries(), ([name, db]) =>
     {
-        return getRepo(name, db);
+        return createRepo(name, db);
     }));
+}
+
+export async function getRepo(name: string)
+{
+    const db = (await getDbMap()).get(name);
+
+    if (db === undefined)
+    {
+        return null;
+    }
+
+    return await createRepo(name, db);
 }

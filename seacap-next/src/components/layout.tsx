@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
 
@@ -21,8 +22,8 @@ const Layout = ({ children }: LayoutProps) =>
     <StyledRootDiv>
         <div className="ui inverted menu">
             <div className="ui container">
-                <a href="#" className="header item">SEA Captain</a>
-                <a href="#" className="header item">Home</a>
+                <Link href="/"><a className="header item">SEA Captain</a></Link>
+                <Link href="/"><a className="header item">Home</a></Link>
                 {/* <div className="ui simple dropdown item">
                     <MyIcon name="laptop code" />
                     <span>Projects</span>
@@ -40,10 +41,10 @@ const Layout = ({ children }: LayoutProps) =>
         <footer className="ui fixed inverted vertical footer segment">
             <div className="ui center aligned container">
                 <div className="ui horizontal inverted small divided link list">
-                    <a className="item" href="#">Site Map</a>
-                    <a className="item" href="#">Contact Us</a>
-                    <a className="item" href="#">Terms and Conditions</a>
-                    <a className="item" href="#">Privacy Policy</a>
+                    <Link href="/"><a className="item">Site Map</a></Link>
+                    <Link href="/"><a className="item">Contact Us</a></Link>
+                    <Link href="/"><a className="item">Terms and Conditions</a></Link>
+                    <Link href="/"><a className="item">Privacy Policy</a></Link>
                 </div>
             </div>
         </footer>

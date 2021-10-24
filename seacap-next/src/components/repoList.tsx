@@ -1,6 +1,7 @@
-import Repo from "models/repo";
-import React from "react";
 import MyIcon from "components/myIcon";
+import Repo from "models/repo";
+import Link from "next/link";
+import React from "react";
 
 interface RepoListProps
 {
@@ -13,7 +14,9 @@ const RepoList = ({ repos }: RepoListProps) =>
         {repos.map(repo => (
             <div key={repo.name} className="item">
                 <div className="content">
-                    <a href="#" className="header">{repo.displayName}</a>
+                    <Link href={`/${encodeURIComponent(repo.name)}`}>
+                        <a className="header">{repo.displayName}</a>
+                    </Link>
                     <div className="meta">
                         <span>150 commits</span>
                         <span>&#183;</span>
