@@ -1,8 +1,9 @@
 {
   "extends": "fastify-tsconfig",
   "compilerOptions": {
+    "module": "commonjs",
     "baseUrl": "./",
-    "target": "es5",
+    "target": "es2017",
     "lib": [
       "esnext"
     ],
