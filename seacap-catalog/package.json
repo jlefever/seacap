@@ -5,11 +5,14 @@
     "watch": "tsc --watch --preserveWatchOutput --pretty",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "rimraf dist && tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "gentypes": "node genTypes.js"
   },
   "dependencies": {
     "cross-env": "^7.0.3",
-    "fastify": "^3.22.1"
+    "fastify": "^3.22.1",
+    "fastify-helmet": "^5.3.2",
+    "json-schema-to-typescript": "^10.1.5"
   },
   "devDependencies": {
     "@types/node": "^16.11.4",

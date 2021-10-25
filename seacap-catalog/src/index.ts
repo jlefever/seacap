@@ -1,10 +1,13 @@
-import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import fastifyHelmet from "fastify-helmet";
 
 const CATALOG_PORT = Number(process.env.CATALOG_PORT) || 3006;
 
-const server: FastifyInstance = Fastify({
+const server: FastifyInstance = fastify({
     logger: true
 });
+
+server.register(fastifyHelmet);
 
 const opts: RouteShorthandOptions = {
     schema: {

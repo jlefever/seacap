@@ -1,0 +1,33 @@
+{
+    "title": "Entity",
+    "description": "A source code entity such as a file, class, method, etc.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "A unique identifier for an entity",
+            "type": "integer"
+        },
+        "name": {
+            "description": "The local name of an entity",
+            "type": "string"
+        },
+        "kind": {
+            "description": "The kind of entity",
+            "type": "string"
+        },
+        "commits": {
+            "description": "The commits where this entity was touched",
+            "type": "array",
+            "items": {
+                "$ref": "./commit.schema.json"
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "id",
+        "name",
+        "kind",
+        "commits"
+    ]
+}
