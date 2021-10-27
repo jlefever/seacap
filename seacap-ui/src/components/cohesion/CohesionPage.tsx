@@ -16,11 +16,13 @@ import IconMenu from "./IconMenu";
 import PreprocessForm from "./PreprocessForm";
 import QuantMenu from "./QuantMenu";
 
-export interface CohesionPageProps {
-    repo: Repo
+export interface CohesionPageProps
+{
+    repo: Repo;
 };
 
-interface CohesionPageState {
+interface CohesionPageState
+{
     data?: [readonly Dep[], readonly Change[]];
     activeClusterView: string;
     activeItemView: string;
@@ -32,17 +34,22 @@ interface CohesionPageState {
     commitClusters: string[][];
 }
 
-function randClustering<T>(items: T[], k: number): T[][] {
+function randClustering<T>(items: T[], k: number): T[][]
+{
     return Object.values(_.groupBy(items, () => _.random(1, k)));
 }
 
 export default class CohesionPage extends React.Component<CohesionPageProps, CohesionPageState> {
-    constructor(props: CohesionPageProps) {
+    constructor(props: CohesionPageProps)
+    {
         super(props);
         this.state = {
             activeClusterView: "Browse",
             activeItemView: "Interfaces",
             clusterOptions: {
+                alg: "relational",
+                normalized: true,
+                numTotalClusters: 2,
                 numTargetClusters: 2,
                 numSourceClusters: 2,
                 numCommitClusters: 2
@@ -54,17 +61,24 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         };
     }
 
-    override render() {
+    override render()
+    {
         const { repo } = this.props;
 
         const header = <div className="ui container">
             <PreprocessForm repo={this.props.repo} onSubmit={(deps, changes) => this.setState({
-                data: [deps, changes]
+                data: [deps, changes],
+                sourceClusters: [],
+                targetClusters: [],
+                commitClusters: [],
+                activeClusterView: "Browse",
+                activeItemView: "Interfaces"
             })} />
             <div className="ui divider"></div>
         </div>;
 
-        if (!this.state.data) {
+        if (!this.state.data)
+        {
             return header;
         }
 
@@ -98,44 +112,54 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
         const sources = _.uniq(deps.map(d => d.source));
         const commits = _.uniq(changes.map(c => c.commitHash));
 
-        const view = (() => {
-            if (activeClusterView === "Clustering") {
-                if (activeItemView === "Interfaces") {
-                    return <ClusterView clusters={this.state.targetClusters} render={renderTargets} />
+        const view = (() =>
+        {
+            if (activeClusterView === "Clustering")
+            {
+                if (activeItemView === "Interfaces")
+                {
+                    return <ClusterView clusters={this.state.targetClusters} render={renderTargets} />;
                 }
 
-                if (activeItemView === "Clients") {
-                    return <ClusterView clusters={this.state.sourceClusters} render={renderSources} />
+                if (activeItemView === "Clients")
+                {
+                    return <ClusterView clusters={this.state.sourceClusters} render={renderSources} />;
                 }
 
-                if (activeItemView === "Commits") {
-                    return <ClusterView clusters={this.state.commitClusters} render={renderCommits} />
+                if (activeItemView === "Commits")
+                {
+                    return <ClusterView clusters={this.state.commitClusters} render={renderCommits} />;
                 }
             }
 
-            if (activeItemView === "Interfaces") {
+            if (activeItemView === "Interfaces")
+            {
                 return renderTargets(targets);
             }
 
-            if (activeItemView === "Clients") {
+            if (activeItemView === "Clients")
+            {
                 return renderSources(sources);
             }
 
-            if (activeItemView === "Commits") {
+            if (activeItemView === "Commits")
+            {
                 return renderCommits(commits);
             }
 
             throw new Error();
         })();
 
-        const cluster = (opts: ClusterOptions) => {
+        const cluster = (opts: ClusterOptions) =>
+        {
             const targetClusters = randClustering(targets, opts.numTargetClusters);
             const sourceClusters = randClustering(sources, opts.numSourceClusters);
             const commitClusters = randClustering(commits, opts.numCommitClusters);
             this.setState({ targetClusters, sourceClusters, commitClusters });
-        }
+        };
 
-        const cluster2 = () => {
+        const cluster2 = () =>
+        {
             this.setState({ waitingForRes: true });
             const opts = this.state.clusterOptions;
             type ChangeEdge = Edge<Entity, string>;
@@ -143,12 +167,6 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
             const s2tEdges = new EdgeBagImpl<Entity, Entity, Dep>(sources, targets, deps);
             const t2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(targets, commits, targetChanges.map(c => ({ source: c.entity, target: c.commitHash })));
             const s2cEdges = new EdgeBagImpl<Entity, string, ChangeEdge>(sources, commits, sourceChanges.map(c => ({ source: c.entity, target: c.commitHash })));
-
-            const numClusters = {
-                "interfaces": opts.numTargetClusters,
-                "clients": opts.numSourceClusters,
-                "commits": opts.numCommitClusters
-            }
 
             const datasets = [
                 {
@@ -158,12 +176,16 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                 {
                     name: "clients",
                     size: sources.length,
-                },
-                {
+                }
+            ];
+
+            if (commits.length !== 0)
+            {
+                datasets.push({
                     name: "commits",
                     size: commits.length,
-                },
-            ];
+                });
+            }
 
             const matrices = [
                 {
@@ -171,37 +193,73 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                     cols: "interfaces",
                     triples: new RelationImpl(s2tEdges).toTriplets()
                 },
-                {
+
+            ];
+
+            if (commits.length !== 0)
+            {
+                matrices.push({
                     rows: "interfaces",
                     cols: "commits",
                     triples: new RelationImpl(t2cEdges).toTriplets()
-                },
-                {
+                });
+                matrices.push({
                     rows: "clients",
                     cols: "commits",
                     triples: new RelationImpl(s2cEdges).toTriplets()
-                }
-            ];
+                });
+            }
 
-            const req = {
-                options: {
-                    numClusters: numClusters
-                },
+            let url = "";
+            let reqOptions = {};
+
+            if (opts.alg === "relational")
+            {
+                url = "/clustering/src";
+
+                reqOptions = {
+                    numClusters: {
+                        "interfaces": opts.numTargetClusters,
+                        "clients": opts.numSourceClusters,
+                    }
+                };
+
+                if (commits.length !== 0)
+                {
+                    // @ts-ignore
+                    reqOptions.numClusters["commits"] = opts.numCommitClusters;
+                }
+            }
+            else if (opts.alg === "spectral")
+            {
+                url = "/clustering/spectral";
+
+                reqOptions = {
+                    numClusters: opts.numTotalClusters,
+                    normalized: opts.normalized
+                };
+            }
+            else
+            {
+                throw new Error("Unrecognized algorithm");
+            }
+
+            const headers = {
+                "Content-Type": "application/json"
+            };
+
+            const body = JSON.stringify({
+                options: reqOptions,
                 graph: {
                     indexSets: datasets,
                     matrices: matrices,
                 }
-            };
+            });
 
-            const headers = {
-                "Content-Type": "application/json"
-            }
-
-            const body = JSON.stringify(req);
-
-            fetch("/clustering/src", { method: "POST", headers, body })
+            fetch(url, { method: "POST", headers, body })
                 .then(res => res.json())
-                .then(res => {
+                .then(res =>
+                {
                     console.log(res);
                     const targetClusters: any[] = [];
                     const sourceClusters: any[] = [];
@@ -210,16 +268,20 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                     const clusters = res["clusters"];
 
                     // @ts-ignore
-                    clusters.forEach(cluster => {
-                        if (cluster["set"] === "interfaces") {
+                    clusters.forEach(cluster =>
+                    {
+                        if (cluster["set"] === "interfaces")
+                        {
                             targetClusters.push(cluster["indices"].map((i: number) => targets[i]));
                         }
 
-                        if (cluster["set"] === "clients") {
+                        if (cluster["set"] === "clients")
+                        {
                             sourceClusters.push(cluster["indices"].map((i: number) => sources[i]));
                         }
 
-                        if (cluster["set"] === "commits") {
+                        if (cluster["set"] === "commits")
+                        {
                             commitClusters.push(cluster["indices"].map((i: number) => commits[i]));
                         }
                     });
@@ -227,8 +289,11 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                     // @ts-ignore
                     this.setState({ targetClusters, sourceClusters, commitClusters });
                 })
-                .then(_ => this.setState({ waitingForRes: false }));
-        }
+                .then(_ =>
+                {
+                    this.setState({ waitingForRes: false });
+                });
+        };
 
         return <>
             {header}
@@ -256,6 +321,6 @@ export default class CohesionPage extends React.Component<CohesionPageProps, Coh
                     </div>
                 </div>
             </div>
-        </>
+        </>;
     }
 }

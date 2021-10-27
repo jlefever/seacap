@@ -1,4 +1,5 @@
 import json
+import enum
 from collections import defaultdict
 from dataclasses import dataclass
 from timeit import default_timer as timer
@@ -139,6 +140,46 @@ class HeteroGraphSchema(Schema):
 
 
 @dataclass
+class SpectralOptions:
+    num_clusters: int
+    normalized: bool
+
+
+class SpectralOptionsSchema(Schema):
+    num_clusters = fields.Int(
+        required=True,
+        validate=[Range(min=1, error="numClusters must be greater than 0")],
+        data_key="numClusters",
+    )
+    normalized = fields.Bool(required=True)
+
+    class Meta:
+        ordered = True
+
+    @post_load
+    def make_spectral_options(self, data, **kwargs):
+        return SpectralOptions(**data)
+
+
+@dataclass
+class SpectralClusterReq:
+    options: SpectralOptions
+    graph: HeteroGraph
+
+
+class SpectralClusterReqSchema(Schema):
+    options = fields.Nested(SpectralOptionsSchema)
+    graph = fields.Nested(HeteroGraphSchema)
+
+    class Meta:
+        ordered = True
+
+    @post_load
+    def make_spectral_cluster_req(self, data, **kwargs):
+        return SpectralClusterReq(**data)
+
+
+@dataclass
 class SrOptions:
     num_clusters: Dict[str, int]
 
@@ -160,12 +201,12 @@ class SrOptionsSchema(Schema):
 
 
 @dataclass
-class ClusterReq:
+class SrClusterReq:
     options: SrOptions
     graph: HeteroGraph
 
 
-class ClusterReqSchema(Schema):
+class SrClusterReqSchema(Schema):
     options = fields.Nested(SrOptionsSchema)
     graph = fields.Nested(HeteroGraphSchema)
 
@@ -173,8 +214,8 @@ class ClusterReqSchema(Schema):
         ordered = True
 
     @post_load
-    def make_cluster_req(self, data, **kwargs):
-        return ClusterReq(**data)
+    def make_sr_cluster_req(self, data, **kwargs):
+        return SrClusterReq(**data)
 
 
 @dataclass
@@ -213,6 +254,77 @@ def onehot(length: int, index: int):
     v = np.zeros(length)
     v[index] = 1
     return v
+
+
+def to_adjacency_mat(graph: HeteroGraph) -> np.ndarray:
+    blocks = list()
+    for i_set in graph.index_sets:
+        row_blocks = list()
+        for j_set in graph.index_sets:
+            if graph.has_matrix(i_set.name, j_set.name):
+                matrix = graph.get_matrix(i_set.name, j_set.name)
+                row_blocks.append(matrix)
+            else:
+                row_blocks.append(np.zeros((i_set.size, j_set.size)))
+        blocks.append(row_blocks)
+    return np.block(blocks)
+
+
+def to_degree_mat(adj: np.ndarray) -> np.ndarray:
+    degrees = list()
+    for i in range(adj.shape[0]):
+        degrees.append(np.sum(adj[i]))
+    return np.diag(degrees)
+
+
+def to_local_index(graph: HeteroGraph, i) -> Tuple[IndexSet, int]:
+    running = 0
+    for index_set in graph.index_sets:
+        if i >= running and i < running + index_set.size:
+            local_i = i - running
+            return (index_set, local_i)
+        running += index_set.size
+    raise ValueError()
+
+
+def to_local_indices(
+    graph: HeteroGraph, index_set: IndexSet, indices: List[int]
+) -> List[int]:
+    local_indices = list()
+    for i in indices:
+        index_set_b, local_i = to_local_index(graph, i)
+        if index_set_b != index_set:
+            continue
+        local_indices.append(local_i)
+    return local_indices
+
+
+class SpectralAlgorithm:
+    def cluster(self, graph: HeteroGraph, opts: SpectralOptions) -> ClusterRes:
+        start = timer()
+        k = opts.num_clusters
+        W = to_adjacency_mat(graph)
+        D = to_degree_mat(W)
+        L = D - W
+        print(L)
+        M = np.copy(D) if opts.normalized else None
+        # Possible exception if M != None and M is not positive-definite
+        # AKA (in this case) has any zeros on the diagonal
+        # This happens when that index is not involved in any relations
+        # In practice, I don't think our application sends data like this
+        _, eigenvectors = scipy.sparse.linalg.eigsh(L, M=M, k=k, which="LM")
+        print(eigenvectors)
+        kmeans = sklearn.cluster.KMeans(n_clusters=k, random_state=0).fit(eigenvectors)
+        indicator = np.vstack(list(map(lambda c: onehot(k, c), kmeans.labels_)))
+        print(indicator)
+        clusters = []
+        for cluster_i in range(indicator.shape[1]):
+            indices = np.flatnonzero(indicator[:, cluster_i]).tolist()
+            for index_set in graph.index_sets:
+                local_indices = to_local_indices(graph, index_set, indices)
+                clusters.append(Cluster(index_set.name, cluster_i + 1, local_indices))
+        elapsed = timer() - start
+        return ClusterRes(clusters, -1, elapsed)
 
 
 class SrAlgorithm:
@@ -285,11 +397,22 @@ class SrAlgorithm:
 app = flask.Flask(__name__)
 
 
+@app.route("/clustering/spectral", methods=["POST"])
+def handle_spectral() -> Any:
+    data = flask.request.json
+    try:
+        req: SpectralClusterReq = SpectralClusterReqSchema().load(data)
+        res = SpectralAlgorithm().cluster(req.graph, req.options)
+        return ClusterResSchema().dump(res), 200
+    except ValidationError as e:
+        return e.messages, 400
+
+
 @app.route("/clustering/src", methods=["POST"])
 def handle_src() -> Any:
     data = flask.request.json
     try:
-        req: ClusterReq = ClusterReqSchema().load(data)
+        req: SrClusterReq = SrClusterReqSchema().load(data)
         res = SrAlgorithm().cluster(req.graph, req.options)
         return ClusterResSchema().dump(res), 200
     except ValidationError as e:

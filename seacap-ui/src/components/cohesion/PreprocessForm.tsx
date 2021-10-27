@@ -9,39 +9,48 @@ import Repo from "../../models/Repo";
 import FileDropdown from "./FileDropdown";
 import FileNotice from "./FileNotice";
 
-export interface PreprocessFormProps {
+export interface PreprocessFormProps
+{
     repo: Repo;
     onSubmit: (deps: Dep[], changes: Change[]) => void;
 }
 
-interface PreprocessFormState {
+interface PreprocessFormState
+{
     filename: string;
     bubbleTargets: boolean;
     bubbleSources: boolean;
     filterTargets: "all" | "only-leaves";
     filterSources: "all" | "only-leaves" | "only-files";
     filterDep: "all" | "only-external" | "only-internal";
+    includeHistory: boolean;
     linkage: "max" | "min" | "avg";
 }
 
-function getAllowFn(kind: "all" | "only-leaves" | "only-files") {
-    if (kind === "only-leaves") {
+function getAllowFn(kind: "all" | "only-leaves" | "only-files")
+{
+    if (kind === "only-leaves")
+    {
         return (e: Entity) => e.isLeaf;
     }
 
-    if (kind === "only-files") {
+    if (kind === "only-files")
+    {
         return (e: Entity) => e.isRoot;
     }
 
     return (_: Entity) => true;
 }
 
-function getAllowDep(kind: "all" | "only-external" | "only-internal") {
-    if (kind === "only-external") {
+function getAllowDep(kind: "all" | "only-external" | "only-internal")
+{
+    if (kind === "only-external")
+    {
         return (d: Dep) => d.source.file.id !== d.target.file.id;
     }
 
-    if (kind === "only-internal") {
+    if (kind === "only-internal")
+    {
         return (d: Dep) => d.source.file.id === d.target.file.id;
     }
 
@@ -49,19 +58,31 @@ function getAllowDep(kind: "all" | "only-external" | "only-internal") {
 }
 
 export default class PreprocessForm extends React.Component<PreprocessFormProps, PreprocessFormState> {
-    constructor(props: PreprocessFormProps) {
+    constructor(props: PreprocessFormProps)
+    {
         super(props);
-        this.state = { filename: "", bubbleTargets: false, bubbleSources: true, filterTargets: "only-leaves", filterSources: "all", filterDep: "only-external", linkage: "avg" };
+        this.state = {
+            filename: "",
+            bubbleTargets: false,
+            bubbleSources: true,
+            filterTargets: "only-leaves",
+            filterSources: "all",
+            filterDep: "only-external",
+            linkage: "avg",
+            includeHistory: true
+        };
 
         this.submit = this.submit.bind(this);
     }
 
-    submit(e?: React.MouseEvent) {
-        if (e) {
+    submit(e?: React.MouseEvent)
+    {
+        if (e)
+        {
             e.preventDefault();
         }
 
-        const { filename, bubbleTargets, bubbleSources, filterTargets, filterSources, filterDep, linkage } = this.state;
+        const { filename, bubbleTargets, bubbleSources, filterTargets, filterSources, filterDep, linkage, includeHistory } = this.state;
 
         const options = {
             filename: filename,
@@ -74,12 +95,13 @@ export default class PreprocessForm extends React.Component<PreprocessFormProps,
 
         const { repo } = this.props;
         const deps = preprocessDeps(repo.deps, options);
-        const changes = preprocessChanges(deps, repo.changes);
+        const changes = includeHistory ? preprocessChanges(deps, repo.changes) : [];
 
         this.props.onSubmit(deps, changes);
     }
 
-    override render() {
+    override render()
+    {
         const { repo } = this.props;
 
         return <form className="ui form">
@@ -87,6 +109,17 @@ export default class PreprocessForm extends React.Component<PreprocessFormProps,
                 <label>Interface File</label>
                 <FileDropdown repo={repo} onSelect={filename => this.setState({ filename })} />
                 <FileNotice repo={repo} filename={this.state.filename} />
+            </div>
+            <div className="field">
+                <label>History</label>
+                <Dropdown fluid selection
+                    // @ts-ignore
+                    onChange={(_, p) => this.setState({ includeHistory: p.value })}
+                    value={this.state.includeHistory}
+                    options={[
+                        { value: true, text: "Use History" },
+                        { value: false, text: "Ignore History" },
+                    ]} />
             </div>
             <div className="fields">
                 <div className="six wide field">
@@ -162,6 +195,6 @@ export default class PreprocessForm extends React.Component<PreprocessFormProps,
                 </div>
             </div>
             {/* <button className="ui fluid button" type="submit" onClick={this.submit}>Submit</button> */}
-        </form>
+        </form>;
     }
 }
